@@ -1,6 +1,6 @@
 # Developer Notes
 
-## dotnet
+## Create API project with dotnet
 
 ```powershell
 dotnet -h
@@ -9,10 +9,31 @@ dotnet new list
 
 # create solution
 dotnet new sln -n Restore
-
+# create API webapi project
+dotnet new webapi -o API
+# add project to solution
+dotnet sln add API
 ```
 
-## converts C# models to TypeScript
+## Refactor Controllers to Minimal APIs
+
+[YouTube Video](Fix Your Controllers By Refactoring To Minimal APIs)
+
+Add Carter Nuget Package to extend minimal APIs.
+
+## Nuget Packages
+
+### Carter
+
+[Documentation / Examples](https://github.com/CarterCommunity/Carter)
+
+[Nuget Package](https://www.nuget.org/packages/Carter)
+
+[HttpResponse with Carter](https://andrewlock.net/adding-content-negotiation-to-minimal-apis-with-carter/)
+
+## dotnet tools
+
+### converts C# models to TypeScript
 
 `CSharpToTypeScript.CliTool` is a .NET Core global tool that converts C# models to TypeScript. Here's how you can install and use it:
 
