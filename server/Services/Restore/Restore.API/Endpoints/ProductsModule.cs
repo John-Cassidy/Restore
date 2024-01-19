@@ -1,11 +1,12 @@
 ﻿using Carter;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Restore.Infrastructure.Data;
 
 namespace Restore.API.Endpoints;
 
 public class ProductsModule : CarterModule
 {
-    public ProductsModule() : base("/api/products")
+    public ProductsModule(StoreContext context) : base("/api/products")
     {
     }
     public override void AddRoutes(IEndpointRouteBuilder app)
@@ -15,7 +16,7 @@ public class ProductsModule : CarterModule
 
     }
 
-    private static async Task<Results<Ok<IEnumerable<string>>, BadRequest<string>>> GetProducts()
+    private async Task<Results<Ok<IEnumerable<string>>, BadRequest<string>>> GetProducts()
     {
         try
         {
@@ -29,7 +30,7 @@ public class ProductsModule : CarterModule
         }
     }
 
-    private static async Task<Results<Ok<string>, NotFound<string>>> GetProductById(int id)
+    private async Task<Results<Ok<string>, NotFound<string>>> GetProductById(int id)
     {
         try
         {
