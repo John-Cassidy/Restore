@@ -19,7 +19,7 @@ public static class HostingExtensions
         builder.Services.AddInfrastructureServices(builder.Configuration);
     }
 
-    public static WebApplication ConfigurePipeline(this WebApplication app)
+    public static async Task<WebApplication> ConfigurePipeline(this WebApplication app)
     {
         if (app.Environment.IsDevelopment())
         {
@@ -34,6 +34,21 @@ public static class HostingExtensions
 
         app.AddWeatherForecastEndpoints();
         app.MapCarter(); // app.MapFallbackToController("Index", "Fallback");
+
+        var scope = app.Services.CreateScope();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+        try
+        {
+            var context = scope.ServiceProvider.GetRequiredService<StoreContext>();
+            context.Database.Migrate();
+            context.Database.EnsureCreated();
+            await DbInitializer.InitializeAsync(context);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occurred during migration");
+        }
 
         return app;
     }

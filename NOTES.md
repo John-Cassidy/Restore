@@ -80,6 +80,14 @@ The migrations remove command is used to remove the created migration if it is n
 dotnet ef migrations remove -o Data/Migrations -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
 ```
 
+##### Migrations database drop command
+
+Drop / Delete database associated with the DbContext in the Restore.Api project. This is typically done when you want to completely reset the database, for example during development when you want to recreate the database from scratch.
+
+```powershell
+dotnet ef database drop -p server/Services/Restore/Restore.Api
+```
+
 ##### Apply pending migrations to the database
 
 To apply any pending migrations to the database, effectively updating the database schema. If no migrations are pending, this command has no effect.
@@ -98,7 +106,7 @@ Run command:
 
 > Add-Migration InitialCreate
 
-### converts C# models to TypeScript
+### Convert C# models to TypeScript
 
 `CSharpToTypeScript.CliTool` is a .NET Core global tool that converts C# models to TypeScript. Here's how you can install and use it:
 
@@ -122,4 +130,12 @@ Remember to consult the tool's documentation or use the `--help` option for more
 
 ```powershell
 csharptotypescript --help
+```
+
+### Bogus for .NET - load databases, UI and apps with fake data for your testing needs
+
+[Github](https://github.com/bchavez/Bogus)
+
+```powershell
+dotnet add package Bogus
 ```
