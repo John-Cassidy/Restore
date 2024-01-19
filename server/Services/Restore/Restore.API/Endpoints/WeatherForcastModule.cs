@@ -1,4 +1,4 @@
-﻿namespace API.Endpoints;
+﻿namespace Restore.API.Endpoints;
 
 public static class WeatherForcastModule
 {

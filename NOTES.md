@@ -13,6 +13,13 @@ dotnet new sln -n Restore
 dotnet new webapi -o API
 # add project to solution
 dotnet sln add API
+
+# refactor API into clean architecture structure
+# \server\Services\Restore
+# - Restore.API             - webapi
+# - Restore.Application     - classlibrary
+# - Restore.Core            - classlibrary
+# - Restore.Infrastructure  - classlibrary
 ```
 
 ## Refactor Controllers to Minimal APIs

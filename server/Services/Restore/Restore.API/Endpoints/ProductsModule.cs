@@ -1,7 +1,7 @@
 ﻿using Carter;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace API.Endpoints;
+namespace Restore.API.Endpoints;
 
 public class ProductsModule : CarterModule
 {

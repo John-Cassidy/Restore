@@ -1,7 +1,7 @@
-﻿using API.Endpoints;
+﻿using Restore.API.Endpoints;
 using Carter;
 
-namespace API.Extensions;
+namespace Restore.API.Extensions;
 
 public static class HostingExtensions
 {
