@@ -398,3 +398,8 @@ FodyWeavers.xsd
 *.sln.iml
 
 .developernotes/
+
+# SQLite db files
+*.db
+*.db-shm
+*.db-wal
