@@ -1,5 +1,8 @@
 ﻿using Restore.API.Endpoints;
 using Carter;
+using Restore.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using Restore.Infrastructure.Extensions;
 
 namespace Restore.API.Extensions;
 
@@ -11,8 +14,9 @@ public static class HostingExtensions
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-
         builder.Services.AddCarter();
+
+        builder.Services.AddInfrastructureServices(builder.Configuration);
     }
 
     public static WebApplication ConfigurePipeline(this WebApplication app)

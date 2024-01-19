@@ -13,20 +13,24 @@ dotnet new sln -n Restore
 dotnet new webapi -o API
 # add project to solution
 dotnet sln add API
-
-# refactor API into clean architecture structure
-# \server\Services\Restore
-# - Restore.API             - webapi
-# - Restore.Application     - classlibrary
-# - Restore.Core            - classlibrary
-# - Restore.Infrastructure  - classlibrary
 ```
 
-## Refactor Controllers to Minimal APIs
+## Refactor
+
+### Controllers to Minimal APIs
 
 [YouTube Video](Fix Your Controllers By Refactoring To Minimal APIs)
 
 Add Carter Nuget Package to extend minimal APIs.
+
+### Refactor API into clean architecture structure
+
+\server\Services\Restore
+
+- Restore.API - webapi
+- Restore.Application - classlibrary
+- Restore.Core - classlibrary
+- Restore.Infrastructure - classlibrary
 
 ## Nuget Packages
 
@@ -39,6 +43,16 @@ Add Carter Nuget Package to extend minimal APIs.
 [HttpResponse with Carter](https://andrewlock.net/adding-content-negotiation-to-minimal-apis-with-carter/)
 
 ## dotnet tools
+
+```powershell
+dotnet tool list -g
+```
+
+### dotnet-ef
+
+```powershell
+dotnet tool install --global dotnet-ef --version 8.0.1
+```
 
 ### converts C# models to TypeScript
 
