@@ -1,6 +1,6 @@
-@Restore.API_HostAddress = http://localhost:5196
+@Restore_API_HostAddress = http://localhost:5000
 
-GET {{Restore.API_HostAddress}}/weatherforecast/
+GET {{Restore_API_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###

@@ -1,7 +1,8 @@
-﻿using Restore.API.Endpoints;
-using Carter;
+﻿using Microsoft.EntityFrameworkCore;
+using Restore.API.Endpoints;
+using Restore.Application.Handlers;
+using Restore.Application.Extensions;
 using Restore.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 using Restore.Infrastructure.Extensions;
 
 namespace Restore.API.Extensions;
@@ -12,10 +13,12 @@ public static class HostingExtensions
     {
         // Add services to the container.
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+        builder.Services.AddLogging();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-        builder.Services.AddCarter();
 
+        builder.Services.AddApplicationServices();
         builder.Services.AddInfrastructureServices(builder.Configuration);
     }
 
@@ -33,7 +36,7 @@ public static class HostingExtensions
         }
 
         app.AddWeatherForecastEndpoints();
-        app.MapCarter(); // app.MapFallbackToController("Index", "Fallback");
+        app.AddProductsEndpoints();
 
         var scope = app.Services.CreateScope();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
