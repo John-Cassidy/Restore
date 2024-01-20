@@ -2,24 +2,12 @@
 
 namespace Restore.Infrastructure.Data;
 
+
 public static class DbInitializer
 {
     public static async Task InitializeAsync(StoreContext context)
     {
         if (context.Products.Any()) return;
-
-        // // Nuget Package: Bogus for .NET - load databases, UI and apps with fake data for your testing needs
-        // var products = new Bogus.Faker<Product>()
-        //     // remove the rule for the Id property in your Bogus.Faker<Product> setup. EF Core will then generate and assign the Id values when you add the Product entities to the context and call SaveChanges().
-        //     // .RuleFor(p => p.Id, f => f.Random.Int(1, 100))
-        //     .RuleFor(p => p.Name, f => f.Commerce.ProductName())
-        //     .RuleFor(p => p.Description, f => f.Lorem.Sentence())
-        //     .RuleFor(p => p.Price, f => f.Finance.Amount(1000, 25000))
-        //     .RuleFor(p => p.PictureUrl, f => f.Internet.Avatar())
-        //     .RuleFor(p => p.Type, f => f.Commerce.Product())
-        //     .RuleFor(p => p.Brand, f => f.Company.CompanyName())
-        //     .RuleFor(p => p.QuantityInStock, f => f.Random.Int(0, 100))
-        //     .Generate(20); // Generate 20 products
 
         var products = new List<Product>
             {
@@ -227,3 +215,4 @@ public static class DbInitializer
 
     }
 }
+

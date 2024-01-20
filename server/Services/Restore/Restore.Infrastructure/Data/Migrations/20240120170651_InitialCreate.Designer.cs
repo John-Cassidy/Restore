@@ -10,7 +10,7 @@ using Restore.Infrastructure.Data;
 namespace Restore.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20240119161152_InitialCreate")]
+    [Migration("20240120170651_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -26,15 +26,19 @@ namespace Restore.Infrastructure.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Brand")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PictureUrl")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<long>("Price")
@@ -44,6 +48,7 @@ namespace Restore.Infrastructure.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Type")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
