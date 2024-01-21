@@ -33,4 +33,12 @@ public class ProductRepository : IProductRepository
         var items = await query.Skip((productParams.PageNumber - 1) * productParams.PageSize).Take(productParams.PageSize).ToListAsync();
         return new PagedList<Product>(items, count, productParams.PageNumber, productParams.PageSize);
     }
+
+    public async Task<Product?> GetByIdAsync(int id)
+    {
+        return await _context
+            .Products
+            .FindAsync(id);
+    }
+
 }
