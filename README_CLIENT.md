@@ -26,3 +26,9 @@ Done. Now run:
 - Redux
 - Forms (React-hook-form)
 - React-Router - version????
+
+## Translate C# Class to Json to TypeScript
+
+[Json To C#](https://json2csharp.com/)
+[C# To Json](https://csharp2json.azurewebsites.net/)
+[Json To Typescript](https://json2ts.vercel.app/)
