@@ -1,6 +1,14 @@
-@Restore_API_HostAddress = http://localhost:5000
+@baseUrl = http://localhost:5000
 
-GET {{Restore_API_HostAddress}}/weatherforecast/
+GET {{baseUrl}}/throwException
+
+###
+
+GET {{baseUrl}}/throwNotFound
+
+###
+
+GET {{baseUrl}}/weatherforecast/
 Accept: application/json
 
 ###

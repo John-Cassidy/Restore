@@ -4,6 +4,9 @@ using Restore.Application.Handlers;
 using Restore.Application.Extensions;
 using Restore.Infrastructure.Data;
 using Restore.Infrastructure.Extensions;
+using Restore.API.Handlers;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Restore.Core.Exceptions;
 
 namespace Restore.API.Extensions;
 
@@ -20,6 +23,9 @@ public static class HostingExtensions
 
         builder.Services.AddApplicationServices();
         builder.Services.AddInfrastructureServices(builder.Configuration);
+
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+        builder.Services.AddExceptionHandler<GeneralExceptionHandler>();
     }
 
     public static async Task<WebApplication> ConfigurePipeline(this WebApplication app)
@@ -34,6 +40,11 @@ public static class HostingExtensions
         {
             app.UseHttpsRedirection();
         }
+
+        app.UseExceptionHandler(_ => { });
+
+        app.MapGet("/throwException", (_) => throw new Exception());
+        app.MapGet("/throwNotFound", (_) => throw new NotFoundException("Not found"));
 
         app.AddWeatherForecastEndpoints();
         app.AddProductsEndpoints();

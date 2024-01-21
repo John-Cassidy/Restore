@@ -139,3 +139,115 @@ csharptotypescript --help
 ```powershell
 dotnet add package Bogus
 ```
+
+## Implement Error Handling using the Result Pattern
+
+[Youtube Video](https://www.youtube.com/watch?v=uOEDM0c9BNI)
+
+### IExceptionHandler Interface for handling unhandled exceptions globally
+
+[Youtube Video](https://www.youtube.com/watch?v=f4zMGR3m70Y)
+
+```csharp
+using Microsoft.AspNetCore.Diagnostics;
+using Restore.Core.Exceptions;
+
+namespace Restore.API.Handlers;
+
+public class GlobalExceptionHandler : IExceptionHandler
+{
+    private readonly ILogger<GlobalExceptionHandler> _logger;
+
+    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
+    {
+        _logger = logger;
+    }
+
+    public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
+    {
+        (int statusCode, string errorMessage) = exception switch
+        {
+            InvalidCastException invalidCastException => (StatusCodes.Status400BadRequest, invalidCastException.Message),
+            AggregateException aggregateException => (StatusCodes.Status400BadRequest, aggregateException.Message),
+            ArgumentNullException argumentNullException => (StatusCodes.Status400BadRequest, argumentNullException.Message),
+            ArgumentException argumentException => (StatusCodes.Status400BadRequest, argumentException.Message),
+            // ValidationException validationException => (StatusCodes.Status400BadRequest, validationException.Message),
+            KeyNotFoundException keyNotFoundException => (StatusCodes.Status400BadRequest, keyNotFoundException.Message),
+            FormatException formatException => (StatusCodes.Status400BadRequest, formatException.Message),
+            // ForbidException forbidException => (StatusCodes.Status403Forbidden, "Forbidden"),
+            BadHttpRequestException => (StatusCodes.Status400BadRequest, "Bad request"),
+            NotFoundException notFoundException => (StatusCodes.Status404NotFound, notFoundException.Message),
+            _ => (500, "An error occured @" + exception.Message)
+        };
+        _logger.LogError(exception, "Exception occured: {Message}", exception.Message);
+        httpContext.Response.StatusCode = statusCode;
+        await httpContext.Response.WriteAsJsonAsync(errorMessage);
+
+        return true;
+        // return new ValueTask<bool>(true);
+    }
+}
+```
+
+### Result Pattern for handling both handled/unhandled expceptions
+
+[Article](https://www.milanjovanovic.tech/blog/functional-error-handling-in-dotnet-with-the-result-pattern)
+
+```csharp
+// Utility, Shared, Domain or Core project:
+namespace Restore.Core.ResultPattern;
+
+public class Result<T>
+{
+    public T Value { get; set; }
+    public bool IsSuccess { get; set; }
+    public string Error { get; set; }
+
+    public static Result<T> Success(T value) => new Result<T> { Value = value, IsSuccess = true };
+    public static Result<T> CreateFailure(string error) => new Result<T> { Error = error, IsSuccess = false };
+}
+
+namespace Restore.Core.ResultPattern;
+
+public class AppException
+{
+    public AppException(int statusCode, string message, string? details = null)
+    {
+        StatusCode = statusCode;
+        Message = message;
+        Details = details;
+    }
+
+    public int StatusCode { get; set; }
+    public string Message { get; set; }
+    public string? Details { get; set; }
+
+}
+
+// Handler classes
+public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, Result<Product>>
+{
+    // ...
+
+    public async Task<Result<Product>> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
+    {
+        var product = await _productRepository.GetByIdAsync(request.Id);
+        if (product == null)
+        {
+            return Result<Product>.Failure("Product not found");
+        }
+
+        return Result<Product>.Success(product);
+    }
+}
+
+
+
+
+
+// API project Program.cs:
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+// before app.UseEndPoints...
+```
+
+## New
