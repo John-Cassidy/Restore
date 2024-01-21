@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { IPaginatedResponse } from './pagination';
-import { IProduct } from './product';
+import { IPaginatedResponse } from '../models/pagination';
+import { IProduct } from '../models/product';
 
 export const App = () => {
   const [products, setProducts] = useState<IProduct[]>([]);

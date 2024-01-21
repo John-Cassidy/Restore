@@ -1,6 +1,6 @@
-import './index.css';
+import './app/layout/styles.css';
 
-import { App } from './App.tsx';
+import { App } from './app/layout/App.tsx';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
