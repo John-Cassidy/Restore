@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { Catalog } from '../../features/catalog/Catalog';
 import { IPaginatedResponse } from '../models/pagination';
 import { IProduct } from '../models/product';
 
@@ -12,7 +13,7 @@ export const App = () => {
       .then((data: IPaginatedResponse<IProduct>) => setProducts(data.data));
   }, []);
 
-  const addProducts = () => {
+  const addProduct = () => {
     setProducts((prevState) => [
       ...prevState,
       {
@@ -29,14 +30,7 @@ export const App = () => {
   return (
     <div>
       <h1>Re-Store</h1>
-      <button onClick={addProducts}>Add products</button>
-      <ul>
-        {products.map((product) => (
-          <li key={product.id}>
-            {product.name} - {product.price}
-          </li>
-        ))}
-      </ul>
+      <Catalog products={products} addProduct={addProduct} />
     </div>
   );
 };
