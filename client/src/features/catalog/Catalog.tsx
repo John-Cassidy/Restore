@@ -8,7 +8,7 @@ export const Catalog = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/products?PageNumber=1&PageSize=30')
+    fetch('http://localhost:5000/api/products?PageNumber=1&PageSize=30')
       .then((res: Response) => res.json())
       .then((data: IPaginatedResponse<IProduct>) => setProducts(data.data));
   }, []);

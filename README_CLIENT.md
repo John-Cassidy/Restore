@@ -40,6 +40,22 @@ npm install @mui/icons-material
 
 ```
 
+### React Router
+
+[Documentation React Router v6+](https://reactrouter.com/en/main/start/overview)
+
+```powershell
+npm i react-router-dom
+```
+
+### Axios
+
+HTTP Client
+
+```powershell
+npm install axios
+```
+
 ## Translate C# Class to Json to TypeScript
 
 [Json To C#](https://json2csharp.com/)
