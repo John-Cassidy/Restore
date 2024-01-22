@@ -1,19 +1,21 @@
-import { Button } from '@mui/material';
+import { useEffect, useState } from 'react';
+
+import { IPaginatedResponse } from '../../app/models/pagination';
 import { IProduct } from '../../app/models/product';
 import { ProductList } from './ProductList';
 
-interface IProps {
-  products: IProduct[];
-  addProduct: () => void;
-}
+export const Catalog = () => {
+  const [products, setProducts] = useState<IProduct[]>([]);
 
-export const Catalog = ({ products, addProduct }: IProps) => {
+  useEffect(() => {
+    fetch('http://localhost:5000/products?PageNumber=1&PageSize=30')
+      .then((res: Response) => res.json())
+      .then((data: IPaginatedResponse<IProduct>) => setProducts(data.data));
+  }, []);
+
   return (
     <>
       <ProductList products={products} />
-      <Button variant='contained' onClick={addProduct}>
-        Add products
-      </Button>
     </>
   );
 };
