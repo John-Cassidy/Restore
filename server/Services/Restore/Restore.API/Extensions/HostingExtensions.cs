@@ -24,11 +24,13 @@ public static class HostingExtensions
         builder.Services.AddApplicationServices();
         builder.Services.AddInfrastructureServices(builder.Configuration);
 
+        builder.Services.AddCors();
+
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddExceptionHandler<GeneralExceptionHandler>();
     }
 
-    public static async Task<WebApplication> ConfigurePipeline(this WebApplication app)
+    public static async Task<WebApplication> ConfigurePipeline(this WebApplication app, ConfigurationManager configuration)
     {
         if (app.Environment.IsDevelopment())
         {
@@ -40,6 +42,11 @@ public static class HostingExtensions
         {
             app.UseHttpsRedirection();
         }
+
+        app.UseCors(opt =>
+        {
+            opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(configuration["Cors:ClientAddress"]);
+        });
 
         app.UseExceptionHandler(_ => { });
 

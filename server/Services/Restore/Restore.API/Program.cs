@@ -6,7 +6,7 @@ builder.ConfigureServices();
 
 var app = builder.Build();
 
-await app.ConfigurePipeline();
+await app.ConfigurePipeline(builder.Configuration);
 
 app.Run();
 
