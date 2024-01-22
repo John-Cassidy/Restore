@@ -1,5 +1,6 @@
+import { Button } from '@mui/material';
 import { IProduct } from '../../app/models/product';
-import React from 'react';
+import { ProductList } from './ProductList';
 
 interface IProps {
   products: IProduct[];
@@ -9,14 +10,10 @@ interface IProps {
 export const Catalog = ({ products, addProduct }: IProps) => {
   return (
     <>
-      <button onClick={addProduct}>Add products</button>
-      <ul>
-        {products.map((product) => (
-          <li key={product.id}>
-            {product.name} - {product.price}
-          </li>
-        ))}
-      </ul>
+      <Button variant='contained' onClick={addProduct}>
+        Add products
+      </Button>
+      <ProductList products={products} />
     </>
   );
 };
