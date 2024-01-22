@@ -3,7 +3,7 @@
 import { AboutPage } from '../../features/about/AboutPage';
 import { App } from '../layout/App';
 import { Catalog } from '../../features/catalog/Catalog';
-import { ContactPage } from '@mui/icons-material';
+import { ContactPage } from '../../features/contact/ContactPage';
 import { HomePage } from '../../features/home/HomePage';
 import { ProductDetails } from '../../features/catalog/ProductDetails';
 import { createBrowserRouter } from 'react-router-dom';
