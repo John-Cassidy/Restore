@@ -12,7 +12,7 @@ public static class ProductsModule
 {
     public static IEndpointRouteBuilder AddProductsEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapGet("/products",
+        endpoints.MapGet("/api/products",
             async (IMediator mediator, [AsParameters] ProductParams productParams) =>
             {
                 try
@@ -32,7 +32,7 @@ public static class ProductsModule
             .Produces<PagedList<ProductResponse>>(StatusCodes.Status200OK)
             .Produces<string>(StatusCodes.Status400BadRequest);
 
-        endpoints.MapGet("/products/{id}",
+        endpoints.MapGet("/api/products/{id}",
                 async (IMediator mediator, int id) =>
                 {
                     try
