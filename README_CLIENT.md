@@ -27,6 +27,19 @@ Done. Now run:
 - Forms (React-hook-form)
 - React-Router - version????
 
+### Material UI
+
+[Documentation](https://mui.com/material-ui/)
+
+```powershell
+npm install @mui/material @emotion/react @emotion/styled
+
+npm install @fontsource/roboto
+
+npm install @mui/icons-material
+
+```
+
 ## Translate C# Class to Json to TypeScript
 
 [Json To C#](https://json2csharp.com/)
