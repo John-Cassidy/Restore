@@ -1,5 +1,6 @@
+import { Grid, List } from '@mui/material';
+
 import { IProduct } from '../../app/models/product';
-import { List } from '@mui/material';
 import { ProductCard } from './ProductCard';
 
 interface IProps {
@@ -8,10 +9,12 @@ interface IProps {
 
 export const ProductList = ({ products }: IProps) => {
   return (
-    <List>
+    <Grid container spacing={4}>
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <Grid item xs={3} key={product.id}>
+          <ProductCard product={product} />
+        </Grid>
       ))}
-    </List>
+    </Grid>
   );
 };

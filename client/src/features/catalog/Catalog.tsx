@@ -10,10 +10,10 @@ interface IProps {
 export const Catalog = ({ products, addProduct }: IProps) => {
   return (
     <>
+      <ProductList products={products} />
       <Button variant='contained' onClick={addProduct}>
         Add products
       </Button>
-      <ProductList products={products} />
     </>
   );
 };
