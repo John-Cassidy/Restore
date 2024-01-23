@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Restore.Core.Exceptions;
 using System.Runtime.Serialization;
 using Restore.Core;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace Restore.API.Extensions;
 
@@ -22,6 +24,8 @@ public static class HostingExtensions
         builder.Services.AddLogging();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        builder.Services.AddScoped<IValidationExceptionHandler, ValidationExceptionHandler>();
 
         builder.Services.AddApplicationServices();
         builder.Services.AddInfrastructureServices(builder.Configuration);
@@ -61,23 +65,17 @@ public static class HostingExtensions
             app.MapGet("/api/throwNotFound", (_) => throw new NotFoundException("Not found"));
             app.MapGet("/api/throwException", (_) => throw new Exception("Something went wrong"));
 
-            app.MapGet("/api/validation-error", () =>
+            app.MapGet("/api/validation-error", (IValidationExceptionHandler validationExceptionHandler) =>
             {
-                var error = new ValidationError("This is the first error", "This is the second error");
-
-                // Perform your validation here. If the validation fails:
-                if (!string.IsNullOrEmpty(error.Problem1) || !string.IsNullOrEmpty(error.Problem2))
+                var ex = new ValidationException("Validation error", new List<ValidationFailure>
                 {
-                    var response = new ProblemDetails
-                    (
-                        StatusCodes.Status400BadRequest,
-                        "Validation Error",
-                        $"Problem1: {error.Problem1}, Problem2: {error.Problem2}"
-                    );
-                    return Results.Problem(detail: response.Detail, statusCode: response.Status, title: response.Title);
-                }
+                    new ValidationFailure("Problem1", "Problem1 is required"),
+                    new ValidationFailure("Problem2", "Problem2 is required")
+                });
 
-                return Results.Ok();
+                // var validationExceptionHandler = app.Services.GetRequiredService<IValidationExceptionHandler>();
+                var problemDetails = validationExceptionHandler.Handle(ex);
+                return Results.Problem(title: problemDetails.Title, statusCode: problemDetails.Status);
             });
         }
 

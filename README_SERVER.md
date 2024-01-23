@@ -44,6 +44,23 @@ Add Carter Nuget Package to extend minimal APIs.
 
 [HttpResponse with Carter](https://andrewlock.net/adding-content-negotiation-to-minimal-apis-with-carter/)
 
+### Automapper
+
+[Automapper](https://automapper.org/)
+[Documentation to create manual IMapper for Minimal APIs](https://github.com/AutoMapper/AutoMapper)
+
+### Fluent Validation
+
+The FluentValidation.AspNetCore package is no longer being maintained and is now unsupported. We encourage users move away from this package and use the core FluentValidation package with a manual validation approach as detailed at
+[https://docs.fluentvalidation.net/en/latest/aspnet.html](https://docs.fluentvalidation.net/en/latest/aspnet.html)
+
+Install 2 Nuget Packages:
+
+- FluentValidation
+- FluentValidation.AspNetCore
+
+Setup manual validation approach.
+
 ## dotnet tools
 
 ```powershell
@@ -142,11 +159,11 @@ csharptotypescript --help
 dotnet add package Bogus
 ```
 
-## Implement Error Handling using the Result Pattern
+## Implement Error Handling
 
 [Youtube Video](https://www.youtube.com/watch?v=uOEDM0c9BNI)
 
-### IExceptionHandler Interface for handling unhandled exceptions globally
+### Option 1: IExceptionHandler Interface for handling unhandled exceptions globally
 
 [Youtube Video](https://www.youtube.com/watch?v=f4zMGR3m70Y)
 
@@ -191,7 +208,7 @@ public class GlobalExceptionHandler : IExceptionHandler
 }
 ```
 
-### Result Pattern for handling both handled/unhandled expceptions
+### Option 2: Result Pattern for handling both handled/unhandled expceptions
 
 [Article](https://www.milanjovanovic.tech/blog/functional-error-handling-in-dotnet-with-the-result-pattern)
 
