@@ -8,10 +8,10 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { IProduct } from '../../app/models/product';
-import axios from 'axios';
+import { agent } from '../../app/api/agent';
 import { useParams } from 'react-router-dom';
 
 export const ProductDetails = () => {
@@ -20,17 +20,17 @@ export const ProductDetails = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:5000/api/products/${id}`)
-      .then((response) => {
-        setProduct(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    id &&
+      agent.Catalog.details(parseInt(id))
+        .then((response) => {
+          setProduct(response);
+        })
+        .catch((error) => {
+          console.log(error.response);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
   }, [id]);
 
   if (loading) return <Typography variant='h2'>Loading...</Typography>;

@@ -7,6 +7,8 @@ using Restore.Infrastructure.Extensions;
 using Restore.API.Handlers;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Restore.Core.Exceptions;
+using System.Runtime.Serialization;
+using Restore.Core;
 
 namespace Restore.API.Extensions;
 
@@ -52,8 +54,31 @@ public static class HostingExtensions
 
         if (app.Environment.IsDevelopment())
         {
-            app.MapGet("/throwException", (_) => throw new Exception("Something went wrong"));
-            app.MapGet("/throwNotFound", (_) => throw new NotFoundException("Not found"));
+            app.MapGet("/api/throwBadHttpRequest", (_) => throw new BadHttpRequestException("Bad request"));
+
+            app.MapGet("/api/throwBadRequest", (_) => throw new BadRequestException("Bad request"));
+            app.MapGet("/api/throwUnauthorized", (_) => throw new UnauthorizedException("Unauthorized"));
+            app.MapGet("/api/throwNotFound", (_) => throw new NotFoundException("Not found"));
+            app.MapGet("/api/throwException", (_) => throw new Exception("Something went wrong"));
+
+            app.MapGet("/api/validation-error", () =>
+            {
+                var error = new ValidationError("This is the first error", "This is the second error");
+
+                // Perform your validation here. If the validation fails:
+                if (!string.IsNullOrEmpty(error.Problem1) || !string.IsNullOrEmpty(error.Problem2))
+                {
+                    var response = new ProblemDetails
+                    (
+                        StatusCodes.Status400BadRequest,
+                        "Validation Error",
+                        $"Problem1: {error.Problem1}, Problem2: {error.Problem2}"
+                    );
+                    return Results.Problem(detail: response.Detail, statusCode: response.Status, title: response.Title);
+                }
+
+                return Results.Ok();
+            });
         }
 
         app.AddWeatherForecastEndpoints();

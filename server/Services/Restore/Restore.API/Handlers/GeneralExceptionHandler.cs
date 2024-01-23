@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics;
+using Restore.Core;
 
 namespace Restore.API.Handlers;
 
@@ -29,7 +30,6 @@ public class GeneralExceptionHandler : IExceptionHandler
         var json = JsonSerializer.Serialize(response, options);
 
         await httpContext.Response.WriteAsync(json);
-
         // await httpContext.Response.WriteAsync("Something went wrong..");
 
         return true;

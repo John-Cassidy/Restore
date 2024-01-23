@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics;
+using Restore.Core;
 using Restore.Core.Exceptions;
 
 namespace Restore.API.Handlers;
@@ -23,11 +24,13 @@ public class GlobalExceptionHandler : IExceptionHandler
             AggregateException aggregateException => (StatusCodes.Status400BadRequest, aggregateException.Message),
             ArgumentNullException argumentNullException => (StatusCodes.Status400BadRequest, argumentNullException.Message),
             ArgumentException argumentException => (StatusCodes.Status400BadRequest, argumentException.Message),
-            // ValidationException validationException => (StatusCodes.Status400BadRequest, validationException.Message),
+            //System.ComponentModel.DataAnnotations.ValidationException validationException => (StatusCodes.Status400BadRequest, validationException.Message),
             KeyNotFoundException keyNotFoundException => (StatusCodes.Status400BadRequest, keyNotFoundException.Message),
             FormatException formatException => (StatusCodes.Status400BadRequest, formatException.Message),
             // ForbidException forbidException => (StatusCodes.Status403Forbidden, "Forbidden"),
-            BadHttpRequestException => (StatusCodes.Status400BadRequest, "Bad request"),
+            BadHttpRequestException badHttpRequestException  => (StatusCodes.Status400BadRequest, badHttpRequestException.Message),
+            BadRequestException badRequestException => (StatusCodes.Status400BadRequest, badRequestException.Message),
+            UnauthorizedException unauthorizedException => (StatusCodes.Status401Unauthorized, unauthorizedException.Message),
             NotFoundException notFoundException => (StatusCodes.Status404NotFound, notFoundException.Message),
             _ => default
         };
@@ -50,17 +53,9 @@ public class GlobalExceptionHandler : IExceptionHandler
         var json = JsonSerializer.Serialize(response, options);
 
         await httpContext.Response.WriteAsync(json);
-
         // await httpContext.Response.WriteAsJsonAsync(errorMessage);
 
         return true;
         // return new ValueTask<bool>(true);
     }
-}
-
-internal class ProblemDetails(int status, string? detail, string title)
-{
-    public int Status => status;
-    public string? Detail => detail;
-    public string Title => title;
 }

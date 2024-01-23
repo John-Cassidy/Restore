@@ -21,6 +21,8 @@ dotnet sln add API
 
 [YouTube Video](Fix Your Controllers By Refactoring To Minimal APIs)
 
+[Parameter Binding](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis?view=aspnetcore-8.0#parameter-binding)
+
 Add Carter Nuget Package to extend minimal APIs.
 
 ### Refactor API into clean architecture structure

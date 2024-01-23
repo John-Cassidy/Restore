@@ -41,7 +41,8 @@ public static class ProductsModule
                         var result = await mediator.Send(query);
                         if (result == null)
                         {
-                            return Results.NotFound();
+                            return Results.Problem(title: $"Product with id {id} not found", statusCode: StatusCodes.Status404NotFound);
+                            // return Results.NotFound();
                         }
 
                         return Results.Ok(result);
