@@ -50,8 +50,11 @@ public static class HostingExtensions
 
         app.UseExceptionHandler(_ => { });
 
-        app.MapGet("/throwException", (_) => throw new Exception());
-        app.MapGet("/throwNotFound", (_) => throw new NotFoundException("Not found"));
+        if (app.Environment.IsDevelopment())
+        {
+            app.MapGet("/throwException", (_) => throw new Exception("Something went wrong"));
+            app.MapGet("/throwNotFound", (_) => throw new NotFoundException("Not found"));
+        }
 
         app.AddWeatherForecastEndpoints();
         app.AddProductsEndpoints();

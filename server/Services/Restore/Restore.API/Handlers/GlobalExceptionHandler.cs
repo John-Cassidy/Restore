@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.Diagnostics;
 using Restore.Core.Exceptions;
 
 namespace Restore.API.Handlers;
@@ -6,10 +7,12 @@ namespace Restore.API.Handlers;
 public class GlobalExceptionHandler : IExceptionHandler
 {
     private readonly ILogger<GlobalExceptionHandler> _logger;
+    private readonly IHostEnvironment _env;
 
-    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
+    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IHostEnvironment env)
     {
         _logger = logger;
+        _env = env;
     }
 
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
@@ -36,9 +39,28 @@ public class GlobalExceptionHandler : IExceptionHandler
 
         _logger.LogError(exception, "Exception occured: {Message}", exception.Message);
         httpContext.Response.StatusCode = statusCode;
-        await httpContext.Response.WriteAsJsonAsync(errorMessage);
+
+        var response = new ProblemDetails
+        (
+            statusCode,
+            _env.IsDevelopment() ? exception.StackTrace?.ToString() : null,
+            errorMessage
+        );
+        var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+        var json = JsonSerializer.Serialize(response, options);
+
+        await httpContext.Response.WriteAsync(json);
+
+        // await httpContext.Response.WriteAsJsonAsync(errorMessage);
 
         return true;
         // return new ValueTask<bool>(true);
     }
+}
+
+internal class ProblemDetails(int status, string? detail, string title)
+{
+    public int Status => status;
+    public string? Detail => detail;
+    public string Title => title;
 }
