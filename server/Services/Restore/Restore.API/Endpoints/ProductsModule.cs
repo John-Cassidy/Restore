@@ -37,7 +37,7 @@ public static class ProductsModule
             .Produces<string>(StatusCodes.Status400BadRequest);
 
         endpoints.MapGet("/api/products/{id}",
-                async (IMediator mediator, IValidationExceptionHandler validationExceptionHandler, int id) =>
+                async (HttpContext context, IMediator mediator, IValidationExceptionHandler validationExceptionHandler, int id) =>
                 {
                     try
                     {

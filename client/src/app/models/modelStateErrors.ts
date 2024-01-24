@@ -7,8 +7,8 @@ export interface IModelStateErrors {
 export interface IError {
   PropertyName: string;
   ErrorMessage: string;
-  AttemptedValue?: any;
-  CustomState?: any;
+  AttemptedValue?: unknown;
+  CustomState?: unknown;
   Severity: Severity;
   ErrorCode?: string;
   FormattedMessagePlaceholderValues?: Record<string, unknown>;
