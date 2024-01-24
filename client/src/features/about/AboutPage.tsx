@@ -9,23 +9,65 @@ import {
   ListItemText,
   Typography,
 } from '@mui/material';
-import React, { useState } from 'react';
+import { IError, IModelStateErrors } from '../../app/models/modelStateErrors';
 
 import { agent } from '../../app/api/agent';
+import { useState } from 'react';
 
 export const AboutPage = () => {
-  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [validationErrors, setValidationErrors] = useState<IError[]>([]);
+
+  const getProductNotFound = () => {
+    agent.TestErrors.getProductNotFound()
+      .then(() => console.log('should not see this!'))
+      .catch((error) => {
+        console.log(error);
+        if (error.data.detail) {
+          const modelStateErrors: IModelStateErrors = JSON.parse(
+            error.data.detail
+          );
+          console.log(modelStateErrors);
+          // const errorDetail: Record<string, string[]> = JSON.parse(
+          //   error.data.detail
+          // );
+          setValidationErrors(modelStateErrors.Errors);
+        }
+      });
+  };
 
   function getValidationError() {
     agent.TestErrors.getValidationError()
       .then(() => console.log('should not see this!'))
       .catch((error) => {
         console.log(error);
-        const errorMessages = error.data.title
-          .split(',')
-          .map((err: string) => err.trim());
-        setValidationErrors(errorMessages);
+        if (error.data.detail) {
+          const modelStateErrors: IModelStateErrors = JSON.parse(
+            error.data.detail
+          );
+          console.log(modelStateErrors);
+          // const errorDetail: Record<string, string[]> = JSON.parse(
+          //   error.data.detail
+          // );
+          setValidationErrors(modelStateErrors.Errors);
+        }
       });
+    // .catch((error) => {
+    //   console.log(error);
+    //   if (error.data.detail) {
+    //     const errorMessages: string[] = [];
+    //     for (const key in error.data.detail) {
+    //       if (error.data.detail[key]) {
+    //         errorMessages.push(error.data.detail[key]);
+    //       }
+    //     }
+    //     setValidationErrors(errorMessages);
+    //   }
+
+    //   // const errorMessages = error.data.detail
+    //   //   .split(',')
+    //   //   .map((err: string) => err.trim());
+    //   // setValidationErrors(errorMessages);
+    // });
   }
 
   return (
@@ -79,29 +121,36 @@ export const AboutPage = () => {
         <Button onClick={getValidationError} variant={'contained'}>
           Test 400 validation error
         </Button>
-        <Button
-          onClick={() =>
-            agent.TestErrors.getProductNotFound().catch((error) =>
-              console.log(error)
-            )
-          }
-          variant={'contained'}
-        >
+        <Button onClick={getProductNotFound} variant={'contained'}>
           Test Product Not Found error
         </Button>
       </ButtonGroup>
+
       {validationErrors.length > 0 && (
         <Alert severity='error'>
           <AlertTitle>Validation Errors</AlertTitle>
           <List>
             {validationErrors.map((error) => (
-              <ListItem key={error}>
-                <ListItemText>{error}</ListItemText>
+              <ListItem key={error.PropertyName}>
+                <ListItemText>{error.ErrorMessage}</ListItemText>
               </ListItem>
             ))}
           </List>
         </Alert>
       )}
+
+      {/* {validationErrors && (
+        <Alert severity={'error'}>
+          <AlertTitle>Validation errors</AlertTitle>
+          <List>
+            {Object.entries(validationErrors).map(([key, value]) => (
+              <ListItem key={key}>
+                <ListItemText primary={key} secondary={value} />
+              </ListItem>
+            ))}
+          </List>
+        </Alert>
+      )} */}
     </Container>
   );
 };

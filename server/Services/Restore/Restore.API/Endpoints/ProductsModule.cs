@@ -54,7 +54,7 @@ public static class ProductsModule
                     catch (ValidationException ex)
                     {
                         var problemDetails = validationExceptionHandler.Handle(ex);
-                        return Results.Problem(title: problemDetails.Title, statusCode: problemDetails.Status);
+                        return Results.Problem(title: problemDetails.Title, statusCode: problemDetails.Status, detail: problemDetails.Detail);
                     }
                     catch (Exception ex)
                     {

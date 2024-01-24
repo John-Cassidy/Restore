@@ -75,7 +75,7 @@ public static class HostingExtensions
 
                 // var validationExceptionHandler = app.Services.GetRequiredService<IValidationExceptionHandler>();
                 var problemDetails = validationExceptionHandler.Handle(ex);
-                return Results.Problem(title: problemDetails.Title, statusCode: problemDetails.Status);
+                return Results.Problem(title: problemDetails.Title, statusCode: problemDetails.Status, detail: problemDetails.Detail);
             });
         }
 

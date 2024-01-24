@@ -23,8 +23,8 @@ public class GeneralExceptionHandler : IExceptionHandler
         var response = new ProblemDetails
         (
             StatusCodes.Status500InternalServerError,
-            _env.IsDevelopment() ? exception.StackTrace?.ToString() : null,
-            exception.Message
+            exception.Message,
+            _env.IsDevelopment() ? exception.StackTrace?.ToString() : null
         );
         var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
         var json = JsonSerializer.Serialize(response, options);

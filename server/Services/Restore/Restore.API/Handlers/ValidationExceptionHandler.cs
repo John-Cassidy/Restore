@@ -17,15 +17,15 @@ public class ValidationExceptionHandler : IValidationExceptionHandler
         var validationResult = new ValidationResult(ex.Errors);
         if (validationResult.Errors.Count == 0)
         {
-            return new ProblemDetails(StatusCodes.Status400BadRequest, null, ex.Message);
+            return new ProblemDetails(StatusCodes.Status400BadRequest, ex.Message);
         }
-        var validationResults = validationResult.ToDictionary();
+        // var validationResults = validationResult.ToDictionary();
         var options = new JsonSerializerOptions
         {
             Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
-        var jsonString = JsonSerializer.Serialize(validationResults, options);
+        var jsonString = JsonSerializer.Serialize(validationResult, options);
 
-        return new ProblemDetails(StatusCodes.Status400BadRequest, null, jsonString);
+        return new ProblemDetails(StatusCodes.Status400BadRequest, "Validation failed", detail: jsonString);
     }
 }

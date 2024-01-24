@@ -28,7 +28,7 @@ public class GlobalExceptionHandler : IExceptionHandler
             KeyNotFoundException keyNotFoundException => (StatusCodes.Status400BadRequest, keyNotFoundException.Message),
             FormatException formatException => (StatusCodes.Status400BadRequest, formatException.Message),
             // ForbidException forbidException => (StatusCodes.Status403Forbidden, "Forbidden"),
-            BadHttpRequestException badHttpRequestException  => (StatusCodes.Status400BadRequest, badHttpRequestException.Message),
+            BadHttpRequestException badHttpRequestException => (StatusCodes.Status400BadRequest, badHttpRequestException.Message),
             BadRequestException badRequestException => (StatusCodes.Status400BadRequest, badRequestException.Message),
             UnauthorizedException unauthorizedException => (StatusCodes.Status401Unauthorized, unauthorizedException.Message),
             NotFoundException notFoundException => (StatusCodes.Status404NotFound, notFoundException.Message),
@@ -46,8 +46,9 @@ public class GlobalExceptionHandler : IExceptionHandler
         var response = new ProblemDetails
         (
             statusCode,
-            _env.IsDevelopment() ? exception.StackTrace?.ToString() : null,
-            errorMessage
+            errorMessage,
+            _env.IsDevelopment() ? exception.StackTrace?.ToString() : null
+
         );
         var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
         var json = JsonSerializer.Serialize(response, options);

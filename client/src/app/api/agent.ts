@@ -14,6 +14,23 @@ axios.interceptors.response.use(
     const { data, status } = error.response as AxiosResponse;
     switch (status) {
       case 400:
+        // // option 1
+        // if (data.detail) {
+        //   const modelStateErrors: Record<string, string[]> = JSON.parse(
+        //     data.detail
+        //   );
+        //   throw modelStateErrors;
+        // }
+        // // option 2
+        // if (data.detail) {
+        //   const modelStateErrors: string[] = [];
+        //   for (const key in data.detail) {
+        //     if (data.detail[key]) {
+        //       modelStateErrors.push(data.detail[key]);
+        //     }
+        //   }
+        //   throw modelStateErrors.flat();
+        // }
         toast.error(data.title);
         break;
       case 401:
@@ -52,8 +69,7 @@ const TestErrors = {
   get404Error: () => requests.get('throwNotFound'),
   get500Error: () => requests.get('throwException'),
   getValidationError: () => requests.get('validation-error'),
-  getProductNotFound: () => requests.get('products/999'),
-  //   getValidationError: () => requests.post('products', {}),
+  getProductNotFound: () => requests.get('products/0'),
 };
 
 export const agent = {
