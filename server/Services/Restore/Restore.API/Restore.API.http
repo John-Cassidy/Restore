@@ -1,14 +1,19 @@
 @baseUrl = http://localhost:5000
 
-GET {{baseUrl}}/throwException
-
+GET {{baseUrl}}/api/throwBadHttpRequest
 ###
-
-GET {{baseUrl}}/throwNotFound
-
+GET {{baseUrl}}/api/throwBadRequest
 ###
-
+GET {{baseUrl}}/api/throwUnauthorized
+###
+GET {{baseUrl}}/api/throwNotFound
+###
+GET {{baseUrl}}/api/validation-error
+###
+Get {{baseUrl}}/api/products/999
+###
+Get {{baseUrl}}/api/products
+###
 GET {{baseUrl}}/weatherforecast/
 Accept: application/json
-
 ###

@@ -56,6 +56,16 @@ HTTP Client
 npm install axios
 ```
 
+### react-toastify
+
+[NPM](https://www.npmjs.com/package/react-toastify)
+[Playground](https://fkhadra.github.io/react-toastify/introduction/)
+[Using React-Toastify to style your toast messages](https://blog.logrocket.com/using-react-toastify-style-toast-messages/)
+
+```powershell
+npm i react-toastify
+```
+
 ## Translate C# Class to Json to TypeScript
 
 [Json To C#](https://json2csharp.com/)

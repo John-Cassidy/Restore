@@ -1,3 +1,5 @@
+import 'react-toastify/dist/ReactToastify.css';
+
 import {
   Container,
   CssBaseline,
@@ -7,6 +9,7 @@ import {
 
 import { Header } from './Header';
 import { Outlet } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import { useState } from 'react';
 
 export const App = () => {
@@ -28,6 +31,11 @@ export const App = () => {
   return (
     <div>
       <ThemeProvider theme={theme}>
+        <ToastContainer
+          position='bottom-right'
+          hideProgressBar
+          theme='colored'
+        />
         <CssBaseline />
         <Header darkMode={darkMode} handleThemeChange={handleThemeChange} />
         <Container>

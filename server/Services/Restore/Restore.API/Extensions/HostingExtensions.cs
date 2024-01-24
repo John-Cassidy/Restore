@@ -7,6 +7,10 @@ using Restore.Infrastructure.Extensions;
 using Restore.API.Handlers;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Restore.Core.Exceptions;
+using System.Runtime.Serialization;
+using Restore.Core;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace Restore.API.Extensions;
 
@@ -20,6 +24,8 @@ public static class HostingExtensions
         builder.Services.AddLogging();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        builder.Services.AddScoped<IValidationExceptionHandler, ValidationExceptionHandler>();
 
         builder.Services.AddApplicationServices();
         builder.Services.AddInfrastructureServices(builder.Configuration);
@@ -50,8 +56,28 @@ public static class HostingExtensions
 
         app.UseExceptionHandler(_ => { });
 
-        app.MapGet("/throwException", (_) => throw new Exception());
-        app.MapGet("/throwNotFound", (_) => throw new NotFoundException("Not found"));
+        if (app.Environment.IsDevelopment())
+        {
+            app.MapGet("/api/throwBadHttpRequest", (_) => throw new BadHttpRequestException("Bad request"));
+
+            app.MapGet("/api/throwBadRequest", (_) => throw new BadRequestException("Bad request"));
+            app.MapGet("/api/throwUnauthorized", (_) => throw new UnauthorizedException("Unauthorized"));
+            app.MapGet("/api/throwNotFound", (_) => throw new NotFoundException("Not found"));
+            app.MapGet("/api/throwException", (_) => throw new Exception("Something went wrong"));
+
+            app.MapGet("/api/validation-error", (IValidationExceptionHandler validationExceptionHandler) =>
+            {
+                var ex = new ValidationException("Validation error", new List<ValidationFailure>
+                {
+                    new ValidationFailure("Problem1", "Problem1 is required"),
+                    new ValidationFailure("Problem2", "Problem2 is required")
+                });
+
+                // var validationExceptionHandler = app.Services.GetRequiredService<IValidationExceptionHandler>();
+                var problemDetails = validationExceptionHandler.Handle(ex);
+                return Results.Problem(title: problemDetails.Title, statusCode: problemDetails.Status, detail: problemDetails.Detail);
+            });
+        }
 
         app.AddWeatherForecastEndpoints();
         app.AddProductsEndpoints();

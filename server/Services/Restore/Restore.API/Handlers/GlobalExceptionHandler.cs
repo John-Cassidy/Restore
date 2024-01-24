@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.Diagnostics;
+using Restore.Core;
 using Restore.Core.Exceptions;
 
 namespace Restore.API.Handlers;
@@ -6,10 +8,12 @@ namespace Restore.API.Handlers;
 public class GlobalExceptionHandler : IExceptionHandler
 {
     private readonly ILogger<GlobalExceptionHandler> _logger;
+    private readonly IHostEnvironment _env;
 
-    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
+    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IHostEnvironment env)
     {
         _logger = logger;
+        _env = env;
     }
 
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
@@ -20,11 +24,13 @@ public class GlobalExceptionHandler : IExceptionHandler
             AggregateException aggregateException => (StatusCodes.Status400BadRequest, aggregateException.Message),
             ArgumentNullException argumentNullException => (StatusCodes.Status400BadRequest, argumentNullException.Message),
             ArgumentException argumentException => (StatusCodes.Status400BadRequest, argumentException.Message),
-            // ValidationException validationException => (StatusCodes.Status400BadRequest, validationException.Message),
+            //System.ComponentModel.DataAnnotations.ValidationException validationException => (StatusCodes.Status400BadRequest, validationException.Message),
             KeyNotFoundException keyNotFoundException => (StatusCodes.Status400BadRequest, keyNotFoundException.Message),
             FormatException formatException => (StatusCodes.Status400BadRequest, formatException.Message),
             // ForbidException forbidException => (StatusCodes.Status403Forbidden, "Forbidden"),
-            BadHttpRequestException => (StatusCodes.Status400BadRequest, "Bad request"),
+            BadHttpRequestException badHttpRequestException => (StatusCodes.Status400BadRequest, badHttpRequestException.Message),
+            BadRequestException badRequestException => (StatusCodes.Status400BadRequest, badRequestException.Message),
+            UnauthorizedException unauthorizedException => (StatusCodes.Status401Unauthorized, unauthorizedException.Message),
             NotFoundException notFoundException => (StatusCodes.Status404NotFound, notFoundException.Message),
             _ => default
         };
@@ -36,7 +42,19 @@ public class GlobalExceptionHandler : IExceptionHandler
 
         _logger.LogError(exception, "Exception occured: {Message}", exception.Message);
         httpContext.Response.StatusCode = statusCode;
-        await httpContext.Response.WriteAsJsonAsync(errorMessage);
+
+        var response = new ProblemDetails
+        (
+            statusCode,
+            errorMessage,
+            _env.IsDevelopment() ? exception.StackTrace?.ToString() : null
+
+        );
+        var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+        var json = JsonSerializer.Serialize(response, options);
+
+        await httpContext.Response.WriteAsync(json);
+        // await httpContext.Response.WriteAsJsonAsync(errorMessage);
 
         return true;
         // return new ValueTask<bool>(true);

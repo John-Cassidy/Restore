@@ -30,8 +30,8 @@ public class ProductRepository : IProductRepository
             .AsQueryable();
 
         var count = await query.CountAsync();
-        var items = await query.Skip((productParams.PageNumber - 1) * productParams.PageSize).Take(productParams.PageSize).ToListAsync();
-        return new PagedList<Product>(items, count, productParams.PageNumber, productParams.PageSize);
+        var items = await query.Skip((productParams.PageNumber.Value - 1) * productParams.PageSize.Value).Take(productParams.PageSize.Value).ToListAsync();
+        return new PagedList<Product>(items, count, productParams.PageNumber.Value, productParams.PageSize.Value);
     }
 
     public async Task<Product?> GetByIdAsync(int id)

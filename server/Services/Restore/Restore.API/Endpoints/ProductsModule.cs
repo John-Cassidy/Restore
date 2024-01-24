@@ -5,6 +5,10 @@ using Restore.Core.Pagination;
 using Restore.Core.Repositories;
 using Microsoft.AspNetCore.Http;
 using Restore.Application.Responses;
+using FluentValidation.Results;
+using FluentValidation;
+using System.Text.Json;
+using Restore.API.Handlers;
 
 namespace Restore.API.Endpoints;
 
@@ -33,7 +37,7 @@ public static class ProductsModule
             .Produces<string>(StatusCodes.Status400BadRequest);
 
         endpoints.MapGet("/api/products/{id}",
-                async (IMediator mediator, int id) =>
+                async (IMediator mediator, IValidationExceptionHandler validationExceptionHandler, int id) =>
                 {
                     try
                     {
@@ -41,14 +45,21 @@ public static class ProductsModule
                         var result = await mediator.Send(query);
                         if (result == null)
                         {
-                            return Results.NotFound();
+                            return Results.Problem(title: $"Product with id {id} not found", statusCode: StatusCodes.Status404NotFound);
+                            // return Results.NotFound();
                         }
 
                         return Results.Ok(result);
                     }
+                    catch (ValidationException ex)
+                    {
+                        var problemDetails = validationExceptionHandler.Handle(ex);
+                        return Results.Problem(title: problemDetails.Title, statusCode: problemDetails.Status, detail: problemDetails.Detail);
+                    }
                     catch (Exception ex)
                     {
-                        return Results.BadRequest(ex.Message);
+                        return Results.Problem(title: ex.Message, statusCode: StatusCodes.Status400BadRequest);
+                        // return Results.BadRequest(ex.Message);
                     }
                 })
                 .WithName("GetProduct")
