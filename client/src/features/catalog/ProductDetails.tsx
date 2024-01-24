@@ -11,6 +11,7 @@ import {
 import { useEffect, useState } from 'react';
 
 import { IProduct } from '../../app/models/product';
+import { LoadingComponent } from '../../app/layout/LoadingComponent';
 import NotFound from '../../app/errors/NotFound';
 import { agent } from '../../app/api/agent';
 import { useParams } from 'react-router-dom';
@@ -34,7 +35,7 @@ export const ProductDetails = () => {
         });
   }, [id]);
 
-  if (loading) return <Typography variant='h2'>Loading...</Typography>;
+  if (loading) return <LoadingComponent message='Loading product...' />;
 
   if (!product) return <NotFound />;
 

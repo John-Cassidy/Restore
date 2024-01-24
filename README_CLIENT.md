@@ -71,3 +71,9 @@ npm i react-toastify
 [Json To C#](https://json2csharp.com/)
 [C# To Json](https://csharp2json.azurewebsites.net/)
 [Json To Typescript](https://json2ts.vercel.app/)
+
+## Linting
+
+```powershell
+npm run lint
+```
