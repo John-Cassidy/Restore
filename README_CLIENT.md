@@ -77,3 +77,5 @@ npm i react-toastify
 ```powershell
 npm run lint
 ```
+
+## Shopping Cart
