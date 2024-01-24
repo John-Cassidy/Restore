@@ -1,12 +1,15 @@
 // createBrowserRouter() from reat-router-dom
 
+import { Navigate, createBrowserRouter } from 'react-router-dom';
+
 import { AboutPage } from '../../features/about/AboutPage';
 import { App } from '../layout/App';
 import { Catalog } from '../../features/catalog/Catalog';
 import { ContactPage } from '../../features/contact/ContactPage';
 import { HomePage } from '../../features/home/HomePage';
+import NotFound from '../errors/NotFound';
 import { ProductDetails } from '../../features/catalog/ProductDetails';
-import { createBrowserRouter } from 'react-router-dom';
+import ServerError from '../errors/ServerError';
 
 export const router = createBrowserRouter([
   {
@@ -33,6 +36,9 @@ export const router = createBrowserRouter([
         path: 'contact',
         element: <ContactPage />,
       },
+      { path: '/server-error', element: <ServerError /> },
+      { path: '/not-found', element: <NotFound /> },
+      { path: '*', element: <Navigate replace to='/not-found' /> },
     ],
   },
 ]);

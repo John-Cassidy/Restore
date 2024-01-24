@@ -11,6 +11,7 @@ import {
 import { useEffect, useState } from 'react';
 
 import { IProduct } from '../../app/models/product';
+import NotFound from '../../app/errors/NotFound';
 import { agent } from '../../app/api/agent';
 import { useParams } from 'react-router-dom';
 
@@ -35,7 +36,7 @@ export const ProductDetails = () => {
 
   if (loading) return <Typography variant='h2'>Loading...</Typography>;
 
-  if (!product) return <Typography variant='h2'>Product not found</Typography>;
+  if (!product) return <NotFound />;
 
   return (
     <Grid container spacing={6}>
