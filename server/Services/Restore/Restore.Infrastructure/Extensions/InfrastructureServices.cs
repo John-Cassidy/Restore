@@ -21,6 +21,7 @@ public static class InfrastructureServices
             options.UseSqlite(connectionString), ServiceLifetime.Scoped);
 
         services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IBasketRepository, BasketRepository>();
 
         return services;
     }
