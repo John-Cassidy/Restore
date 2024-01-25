@@ -14,6 +14,7 @@ import { IProduct } from '../../app/models/product';
 import { LoadingComponent } from '../../app/layout/LoadingComponent';
 import NotFound from '../../app/errors/NotFound';
 import { agent } from '../../app/api/agent';
+import { currencyFormat } from '../../app/util/util';
 import { useParams } from 'react-router-dom';
 
 export const ProductDetails = () => {
@@ -52,7 +53,7 @@ export const ProductDetails = () => {
         <Typography variant='h2'>{product.name}</Typography>
         <Divider sx={{ mb: 2 }} />
         <Typography variant='h4' color='secondary'>
-          ${(product.price / 100).toFixed(2)}
+          {currencyFormat(product.price)}
         </Typography>
 
         <TableContainer>
