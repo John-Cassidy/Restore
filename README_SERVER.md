@@ -269,4 +269,61 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 // before app.UseEndPoints...
 ```
 
-## New
+## Shopping Cart
+
+Implement ability for users to add/update/remove items from and view basket
+
+```powershell
+# add migration
+dotnet ef migrations add BasketEntityAdded -o Data/Migrations -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
+
+# review and then remove this migration in order to adjust entities and their relations.
+dotnet ef migrations remove -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
+
+# apply pending migration
+dotnet ef database update -s server/Services/Restore/Restore.Api
+
+Build started...
+Build succeeded.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (8ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*) FROM "sqlite_master" WHERE "name" = '__EFMigrationsHistory' AND "type" = 'table';
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*) FROM "sqlite_master" WHERE "name" = '__EFMigrationsHistory' AND "type" = 'table';
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "MigrationId", "ProductVersion"
+      FROM "__EFMigrationsHistory"
+      ORDER BY "MigrationId";
+info: Microsoft.EntityFrameworkCore.Migrations[20402]
+      Applying migration '20240124161403_BasketEntityAdded'.
+Applying migration '20240124161403_BasketEntityAdded'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE "Baskets" (
+          "Id" INTEGER NOT NULL CONSTRAINT "PK_Baskets" PRIMARY KEY AUTOINCREMENT,
+          "BuyerId" TEXT NULL
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE "BasketItems" (
+          "Id" INTEGER NOT NULL CONSTRAINT "PK_BasketItems" PRIMARY KEY AUTOINCREMENT,
+          "Quantity" INTEGER NOT NULL,
+          "ProductId" INTEGER NOT NULL,
+          "BasketId" INTEGER NOT NULL,
+          CONSTRAINT "FK_BasketItems_Baskets_BasketId" FOREIGN KEY ("BasketId") REFERENCES "Baskets" ("Id") ON DELETE CASCADE,
+          CONSTRAINT "FK_BasketItems_Products_ProductId" FOREIGN KEY ("ProductId") REFERENCES "Products" ("Id") ON DELETE CASCADE
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX "IX_BasketItems_BasketId" ON "BasketItems" ("BasketId");
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX "IX_BasketItems_ProductId" ON "BasketItems" ("ProductId");
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+      VALUES ('20240124161403_BasketEntityAdded', '8.0.1');
+Done.
+```

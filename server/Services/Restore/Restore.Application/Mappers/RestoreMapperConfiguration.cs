@@ -5,12 +5,13 @@ using Restore.Core.Pagination;
 
 namespace Restore.Application.Mappers;
 
-public class ProductMapperConfiguration : MapperConfiguration
+public class RestoreMapperConfiguration : MapperConfiguration
 {
-    public ProductMapperConfiguration() : base(cfg =>
+    public RestoreMapperConfiguration() : base(cfg =>
     {
         cfg.ShouldMapProperty = p => p.GetMethod.IsPublic || p.GetMethod.IsAssembly;
         cfg.AddProfile<ProductMappingProfile>();
+        cfg.AddProfile<BasketMappingProfile>();
     })
     { }
 }

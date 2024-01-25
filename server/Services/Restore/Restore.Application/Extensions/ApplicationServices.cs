@@ -16,7 +16,7 @@ public static class ApplicationServices
         services.AddMediatR(cfg =>
             cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
-        var configuration = new ProductMapperConfiguration();
+        var configuration = new RestoreMapperConfiguration();
         // only during development, validate your mappings; remove it before release
 #if DEBUG
         configuration.AssertConfigurationIsValid();

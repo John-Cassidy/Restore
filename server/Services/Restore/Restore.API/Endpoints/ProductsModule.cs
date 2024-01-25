@@ -37,27 +37,20 @@ public static class ProductsModule
             .Produces<string>(StatusCodes.Status400BadRequest);
 
         endpoints.MapGet("/api/products/{id}",
-                async (HttpContext context, IMediator mediator, IValidationExceptionHandler validationExceptionHandler, int id) =>
-                {
-                    try
-                    {
+                async (HttpContext context, IMediator mediator, IValidationExceptionHandler validationExceptionHandler, int id) => {
+                    try {
                         var query = new GetProductByIdQuery(id);
                         var result = await mediator.Send(query);
-                        if (result == null)
-                        {
+                        if (result == null) {
                             return Results.Problem(title: $"Product with id {id} not found", statusCode: StatusCodes.Status404NotFound);
                             // return Results.NotFound();
                         }
 
                         return Results.Ok(result);
-                    }
-                    catch (ValidationException ex)
-                    {
+                    } catch (ValidationException ex) {
                         var problemDetails = validationExceptionHandler.Handle(ex);
                         return Results.Problem(title: problemDetails.Title, statusCode: problemDetails.Status, detail: problemDetails.Detail);
-                    }
-                    catch (Exception ex)
-                    {
+                    } catch (Exception ex) {
                         return Results.Problem(title: ex.Message, statusCode: StatusCodes.Status400BadRequest);
                         // return Results.BadRequest(ex.Message);
                     }
