@@ -1,6 +1,7 @@
 import { Add, Delete, Remove } from '@mui/icons-material';
 import {
   Box,
+  Button,
   Grid,
   Paper,
   Table,
@@ -13,6 +14,7 @@ import {
 } from '@mui/material';
 
 import { BasketSummary } from './BasketSummary';
+import { Link } from 'react-router-dom';
 import { LoadingButton } from '@mui/lab';
 import { agent } from '../../app/api/agent';
 import { currencyFormat } from '../../app/util/util';
@@ -153,6 +155,15 @@ export const BasketPage = () => {
         <Grid item xs={6} />
         <Grid item xs={6}>
           <BasketSummary />
+          <Button
+            component={Link}
+            to={'/checkout'}
+            variant='contained'
+            size='large'
+            fullWidth
+          >
+            Checkout
+          </Button>
         </Grid>
       </Grid>
     </>
