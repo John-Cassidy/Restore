@@ -1,5 +1,4 @@
 import {
-  Icon,
   IconButton,
   Paper,
   Table,
