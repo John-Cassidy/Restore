@@ -11,12 +11,31 @@ import {
 
 import { IProduct } from '../../app/models/product';
 import { Link } from 'react-router-dom';
+import { LoadingButton } from '@mui/lab';
+import { agent } from '../../app/api/agent';
+import { useState } from 'react';
 
 interface IProps {
   product: IProduct;
 }
 
 export const ProductCard = ({ product }: IProps) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleAddItem = (productId: number) => {
+    setLoading(true);
+    try {
+      agent.Basket.addItem(productId)
+        .then(() => console.log('Item added to basket'))
+        .catch((error) => console.log(error))
+        .finally(() => setLoading(false));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Card>
       <CardHeader
@@ -48,7 +67,13 @@ export const ProductCard = ({ product }: IProps) => {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size='small'>ADD TO CART</Button>
+        <LoadingButton
+          loading={loading}
+          onClick={() => handleAddItem(product.id)}
+          size='small'
+        >
+          ADD TO CART
+        </LoadingButton>
         <Button component={Link} to={`/catalog/${product.id}`} size='small'>
           VIEW
         </Button>
