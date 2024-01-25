@@ -9,26 +9,12 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
 
 import { Delete } from '@mui/icons-material';
-import { IBasket } from '../../app/models/basket';
-import { LoadingComponent } from '../../app/layout/LoadingComponent';
-import { agent } from '../../app/api/agent';
+import { useStoreContext } from '../../app/context/StoreContext';
 
 export const BasketPage = () => {
-  const [loading, setLoading] = useState(true);
-  const [basket, setBasket] = useState<IBasket | null>(null);
-
-  useEffect(() => {
-    agent.Basket.get()
-      .then((basket) => setBasket(basket))
-      .catch((error) => console.log(error))
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading)
-    return <LoadingComponent message='Loading basket...'></LoadingComponent>;
+  const { basket } = useStoreContext();
 
   if (!basket)
     return <Typography variant='h3'>Your basket is empty</Typography>;

@@ -12,6 +12,7 @@ import {
 import { Link, NavLink } from 'react-router-dom';
 
 import { ShoppingCart } from '@mui/icons-material';
+import { useStoreContext } from '../context/StoreContext';
 
 const midLinks = [
   { title: 'catalog', path: '/catalog' },
@@ -42,6 +43,10 @@ interface IProps {
 }
 
 export const Header = ({ handleThemeChange, darkMode }: IProps) => {
+  const { basket } = useStoreContext();
+  // reduce array of items to a single number
+  const itemCount = basket?.items.reduce((acc, item) => acc + item.quantity, 0);
+
   return (
     <AppBar position='static' sx={{ mb: 4 }}>
       <Toolbar
@@ -87,7 +92,7 @@ export const Header = ({ handleThemeChange, darkMode }: IProps) => {
             color='inherit'
             sx={{ mr: 2 }}
           >
-            <Badge badgeContent={4} color='secondary'>
+            <Badge badgeContent={itemCount} color='secondary'>
               <ShoppingCart />
             </Badge>
           </IconButton>
