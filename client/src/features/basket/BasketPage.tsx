@@ -1,7 +1,7 @@
 import { Add, Delete, Remove } from '@mui/icons-material';
 import {
   Box,
-  IconButton,
+  Grid,
   Paper,
   Table,
   TableBody,
@@ -12,6 +12,7 @@ import {
   Typography,
 } from '@mui/material';
 
+import { BasketSummary } from './BasketSummary';
 import { LoadingButton } from '@mui/lab';
 import { agent } from '../../app/api/agent';
 import { useState } from 'react';
@@ -60,89 +61,99 @@ export const BasketPage = () => {
     return <Typography variant='h3'>Your basket is empty</Typography>;
 
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label='simple table'>
-        <TableHead>
-          <TableRow>
-            <TableCell>Product</TableCell>
-            <TableCell align='center'>Price</TableCell>
-            <TableCell align='center'>Quantity</TableCell>
-            <TableCell align='right'>Subtotal</TableCell>
-            <TableCell align='right'></TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {basket.items.map((item) => (
-            <TableRow
-              key={item.productId}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component='th' scope='row'>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <img
-                    src={item.pictureUrl}
-                    alt={item.name}
-                    style={{ width: 50, marginRight: 20 }}
-                  />
-                  <span>{item.name}</span>
-                </Box>
-              </TableCell>
-              <TableCell align='center'>
-                ${(item.price / 100).toFixed(2)}
-              </TableCell>
-              <TableCell align='center'>
-                <LoadingButton
-                  loading={
-                    status.loading && status.name === 'remove' + item.productId
-                  }
-                  onClick={() =>
-                    handleRemoveItem(
-                      item.productId,
-                      1,
-                      'remove' + item.productId
-                    )
-                  }
-                  color='error'
-                >
-                  <Remove />
-                </LoadingButton>
-                {item.quantity}
-                <LoadingButton
-                  loading={
-                    status.loading && status.name === 'add' + item.productId
-                  }
-                  onClick={() =>
-                    handleAddItem(item.productId, 'add' + item.productId)
-                  }
-                  color='secondary'
-                >
-                  <Add />
-                </LoadingButton>
-              </TableCell>
-              <TableCell align='right'>
-                {((item.price / 100) * item.quantity).toFixed(2)}
-              </TableCell>
-              <TableCell align='right'>
-                <LoadingButton
-                  loading={
-                    status.loading && status.name === 'remove' + item.productId
-                  }
-                  onClick={() =>
-                    handleRemoveItem(
-                      item.productId,
-                      item.quantity,
-                      'remove' + item.productId
-                    )
-                  }
-                  color='error'
-                >
-                  <Delete />
-                </LoadingButton>
-              </TableCell>
+    <>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label='simple table'>
+          <TableHead>
+            <TableRow>
+              <TableCell>Product</TableCell>
+              <TableCell align='center'>Price</TableCell>
+              <TableCell align='center'>Quantity</TableCell>
+              <TableCell align='right'>Subtotal</TableCell>
+              <TableCell align='right'></TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {basket.items.map((item) => (
+              <TableRow
+                key={item.productId}
+                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              >
+                <TableCell component='th' scope='row'>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <img
+                      src={item.pictureUrl}
+                      alt={item.name}
+                      style={{ width: 50, marginRight: 20 }}
+                    />
+                    <span>{item.name}</span>
+                  </Box>
+                </TableCell>
+                <TableCell align='center'>
+                  ${(item.price / 100).toFixed(2)}
+                </TableCell>
+                <TableCell align='center'>
+                  <LoadingButton
+                    loading={
+                      status.loading &&
+                      status.name === 'remove' + item.productId
+                    }
+                    onClick={() =>
+                      handleRemoveItem(
+                        item.productId,
+                        1,
+                        'remove' + item.productId
+                      )
+                    }
+                    color='error'
+                  >
+                    <Remove />
+                  </LoadingButton>
+                  {item.quantity}
+                  <LoadingButton
+                    loading={
+                      status.loading && status.name === 'add' + item.productId
+                    }
+                    onClick={() =>
+                      handleAddItem(item.productId, 'add' + item.productId)
+                    }
+                    color='secondary'
+                  >
+                    <Add />
+                  </LoadingButton>
+                </TableCell>
+                <TableCell align='right'>
+                  {((item.price / 100) * item.quantity).toFixed(2)}
+                </TableCell>
+                <TableCell align='right'>
+                  <LoadingButton
+                    loading={
+                      status.loading &&
+                      status.name === 'remove' + item.productId
+                    }
+                    onClick={() =>
+                      handleRemoveItem(
+                        item.productId,
+                        item.quantity,
+                        'remove' + item.productId
+                      )
+                    }
+                    color='error'
+                  >
+                    <Delete />
+                  </LoadingButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Grid container>
+        <Grid item xs={6} />
+        <Grid item xs={6}>
+          <BasketSummary />
+        </Grid>
+      </Grid>
+    </>
   );
 };
