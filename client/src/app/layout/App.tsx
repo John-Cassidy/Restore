@@ -14,23 +14,24 @@ import { Outlet } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { agent } from '../api/agent';
 import { getCookie } from '../util/util';
-import { useStoreContext } from '../context/StoreContext';
+import { setBasket } from '../../features/basket/basketSlice';
+import { useAppDispatch } from '../store/configureStore';
 
 export const App = () => {
-  const { setBasket } = useStoreContext();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const buyerId = getCookie('buyerId');
     if (buyerId) {
       agent.Basket.get()
-        .then((basket) => setBasket(basket))
+        .then((basket) => dispatch(setBasket(basket)))
         .catch((error) => console.log(error))
         .finally(() => setLoading(false));
     } else {
       setLoading(false);
     }
-  }, [setBasket]);
+  }, [dispatch]);
 
   const [darkMode, setDarkMode] = useState(true);
   const palleteType = darkMode ? 'dark' : 'light';
