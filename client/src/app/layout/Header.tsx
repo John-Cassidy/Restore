@@ -12,7 +12,7 @@ import {
 import { Link, NavLink } from 'react-router-dom';
 
 import { ShoppingCart } from '@mui/icons-material';
-import { useStoreContext } from '../context/StoreContext';
+import { useAppSelector } from '../store/configureStore';
 
 const midLinks = [
   { title: 'catalog', path: '/catalog' },
@@ -43,7 +43,7 @@ interface IProps {
 }
 
 export const Header = ({ handleThemeChange, darkMode }: IProps) => {
-  const { basket } = useStoreContext();
+  const { basket } = useAppSelector((state) => state.basket);
   // reduce array of items to a single number
   const itemCount = basket?.items.reduce((acc, item) => acc + item.quantity, 0);
 
