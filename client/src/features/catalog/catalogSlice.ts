@@ -18,22 +18,22 @@ export interface CatalogState {
 
 export const fetchProductsAsync = createAsyncThunk<
   IPaginatedResponse<IProduct>
->('catalog/fetchProductsAsync', async () => {
+>('catalog/fetchProductsAsync', async (_, thunkAPI) => {
   try {
     return await agent.Catalog.list();
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue({ error: error.data });
   }
 });
 
 export const fetchProductAsync = createAsyncThunk<IProduct, number>(
   'catalog/fetchProductAsync',
-  async (productId) => {
+  async (productId, thunkAPI) => {
     try {
       const product = await agent.Catalog.details(productId);
       return product;
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.data });
     }
   }
 );
@@ -50,7 +50,8 @@ export const catalogSlice = createSlice({
       .addCase(fetchProductsAsync.pending, (state) => {
         state.status = 'pendingFetchProducts';
       })
-      .addCase(fetchProductsAsync.rejected, (state) => {
+      .addCase(fetchProductsAsync.rejected, (state, action) => {
+        console.log(action?.payload);
         state.status = 'idle';
       })
       .addCase(fetchProductsAsync.fulfilled, (state, action) => {
@@ -61,7 +62,8 @@ export const catalogSlice = createSlice({
       .addCase(fetchProductAsync.pending, (state) => {
         state.status = 'pendingFetchProduct';
       })
-      .addCase(fetchProductAsync.rejected, (state) => {
+      .addCase(fetchProductAsync.rejected, (state, action) => {
+        console.log(action?.payload);
         state.status = 'idle';
       })
       .addCase(fetchProductAsync.fulfilled, (state, action) => {
