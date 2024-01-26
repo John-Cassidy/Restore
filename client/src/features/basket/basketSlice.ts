@@ -17,24 +17,25 @@ const initialState: BasketState = {
 export const addBasketItemAsync = createAsyncThunk<
   IBasket,
   { productId: number; quantity?: number }
->('basket/addBasketItemAsync', async ({ productId, quantity = 1 }) => {
-  try {
-    return await agent.Basket.addItem(productId, quantity);
-  } catch (error) {
-    console.log(error);
-    //   return thunkAPI.rejectWithValue({ error: error.data });
+>(
+  'basket/addBasketItemAsync',
+  async ({ productId, quantity = 1 }, thunkAPI) => {
+    try {
+      return await agent.Basket.addItem(productId, quantity);
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.data });
+    }
   }
-});
+);
 
 export const removeBasketItemAsync = createAsyncThunk<
   void,
   { productId: number; quantity: number; name?: string }
->('basket/removeBasketItemAsync', async ({ productId, quantity }) => {
+>('basket/removeBasketItemAsync', async ({ productId, quantity }, thunkAPI) => {
   try {
     await agent.Basket.removeItem(productId, quantity);
-  } catch (error) {
-    console.log(error);
-    //   return thunkAPI.rejectWithValue({ error: error.data });
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue({ error: error.data });
   }
 });
 
@@ -51,7 +52,8 @@ export const basketSlice = createSlice({
       .addCase(addBasketItemAsync.pending, (state, action) => {
         state.status = 'pendingAddItem' + action.meta.arg.productId;
       })
-      .addCase(addBasketItemAsync.rejected, (state) => {
+      .addCase(addBasketItemAsync.rejected, (state, action) => {
+        console.log(action.payload);
         state.status = 'idle';
       })
       .addCase(addBasketItemAsync.fulfilled, (state, action) => {
@@ -65,7 +67,8 @@ export const basketSlice = createSlice({
           action.meta.arg.productId +
           action.meta.arg.name;
       })
-      .addCase(removeBasketItemAsync.rejected, (state) => {
+      .addCase(removeBasketItemAsync.rejected, (state, action) => {
+        console.log(action.payload);
         state.status = 'idle';
       })
       .addCase(removeBasketItemAsync.fulfilled, (state, action) => {
