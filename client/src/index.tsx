@@ -9,10 +9,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 import { StoreProvider } from './app/context/StoreContext.tsx';
-import { configureStore } from './app/store/configureStore.ts';
 import { router } from './app/router/Routes.tsx';
-
-const store = configureStore();
+import { store } from './app/store/configureStore.ts';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
