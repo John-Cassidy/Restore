@@ -79,3 +79,21 @@ npm run lint
 ```
 
 ## Shopping Cart
+
+## Redux
+
+This section implements state management with the following:
+
+- [Redux](https://redux.js.org/)
+- React-Redux
+- [Redux Toolkit](https://redux-toolkit.js.org/)
+- Redux Dev tools
+
+```powershell
+
+npm i redux react-redux
+npm i @reduxjs/toolkit
+
+```
+
+## New
