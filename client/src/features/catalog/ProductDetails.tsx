@@ -10,6 +10,8 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { removeItem, setBasket } from '../basket/basketSlice';
+import { useAppDispatch, useAppSelector } from '../../app/store/configureStore';
 
 import { IProduct } from '../../app/models/product';
 import { LoadingButton } from '@mui/lab';
@@ -18,10 +20,10 @@ import NotFound from '../../app/errors/NotFound';
 import { agent } from '../../app/api/agent';
 import { currencyFormat } from '../../app/util/util';
 import { useParams } from 'react-router-dom';
-import { useStoreContext } from '../../app/context/StoreContext';
 
 export const ProductDetails = () => {
-  const { basket, setBasket, removeItem } = useStoreContext();
+  const { basket } = useAppSelector((state) => state.basket);
+  const dispatch = useAppDispatch();
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<IProduct | null>(null);
   const [loading, setLoading] = useState(true);
@@ -61,13 +63,17 @@ export const ProductDetails = () => {
     if (!item || quantity > item.quantity) {
       const updatedQuantity = item ? quantity - item.quantity : quantity;
       agent.Basket.addItem(product.id, updatedQuantity)
-        .then((basket) => setBasket(basket))
+        .then((basket) => dispatch(setBasket(basket)))
         .catch((error) => console.log(error))
         .finally(() => setSubmitting(false));
     } else {
       const updatedQuantity = item.quantity - quantity;
       agent.Basket.removeItem(product.id, updatedQuantity)
-        .then(() => removeItem(product.id, updatedQuantity))
+        .then(() =>
+          dispatch(
+            removeItem({ productId: product.id, quantity: updatedQuantity })
+          )
+        )
         .catch((error) => console.log(error))
         .finally(() => setSubmitting(false));
     }

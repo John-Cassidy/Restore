@@ -1,7 +1,8 @@
 // create BaseketSlice
 
 import { IBasket, IBasketItem } from '../../app/models/basket';
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+
+import { createSlice } from '@reduxjs/toolkit';
 
 // create initial state
 interface BasketState {
@@ -16,10 +17,10 @@ export const basketSlice = createSlice({
   name: 'basket',
   initialState,
   reducers: {
-    setBasket: (state, action: PayloadAction<IBasket>) => {
+    setBasket: (state, action) => {
       state.basket = action.payload;
     },
-    removeItem: (state, action: PayloadAction<IBasketItem>) => {
+    removeItem: (state, action) => {
       const { productId, quantity } = action.payload;
       const itemIndex = state.basket?.items.findIndex(
         (x: IBasketItem) => x.productId === productId

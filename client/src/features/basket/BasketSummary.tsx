@@ -8,15 +8,15 @@ import {
 } from '@mui/material';
 
 import { currencyFormat } from '../../app/util/util';
-import { useStoreContext } from '../../app/context/StoreContext';
+import { useAppSelector } from '../../app/store/configureStore';
 
 export const BasketSummary = () => {
-  const { basket } = useStoreContext();
+  const { basket } = useAppSelector((state) => state.basket);
   // reduce basket items array into single value and get subtotal
   const subtotal =
     basket?.items.reduce((a, b) => a + b.price * b.quantity, 0) ?? 0;
 
-  const deliveryFee = subtotal > 10000 ? 0 : 500;
+  const deliveryFee = subtotal == 0 ? 0 : subtotal > 10000 ? 0 : 500;
 
   return (
     <>
