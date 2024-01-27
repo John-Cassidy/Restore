@@ -13,6 +13,16 @@ const responseBody = (response: AxiosResponse) => response.data;
 axios.interceptors.response.use(
   async (response) => {
     await sleep();
+    const pagination = response.headers['pagination'];
+    if (pagination) {
+      response.data = { ...response.data, metaData: JSON.parse(pagination) };
+      // response.data = new PaginatedResponse(
+      //   response.data,
+      //   JSON.parse(pagination)
+      // );
+      return response;
+    }
+
     return response;
   },
   (error: AxiosError) => {
@@ -56,7 +66,8 @@ axios.interceptors.response.use(
 );
 
 const requests = {
-  get: (url: string) => axios.get(url).then(responseBody),
+  get: (url: string, params?: URLSearchParams) =>
+    axios.get(url, { params }).then(responseBody),
   post: (url: string, body: object) => axios.post(url, body).then(responseBody),
   put: (url: string, body: object) => axios.put(url, body).then(responseBody),
   delete: (url: string) => axios.delete(url).then(responseBody),
@@ -71,8 +82,9 @@ const Basket = {
 };
 
 const Catalog = {
-  list: () => requests.get('products'),
+  list: (params: URLSearchParams) => requests.get('products', params),
   details: (id: number) => requests.get(`products/${id}`),
+  filters: () => requests.get('products/filters'),
 };
 
 const TestErrors = {

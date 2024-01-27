@@ -5,7 +5,12 @@ export interface IMetaData {
   totalCount: number;
 }
 
-export interface IPaginatedResponse<T extends object> {
+export class PaginatedResponse<T extends object> {
   data: T[];
   metaData: IMetaData;
+
+  constructor(data: T[], metaData: IMetaData) {
+    this.data = data;
+    this.metaData = metaData;
+  }
 }

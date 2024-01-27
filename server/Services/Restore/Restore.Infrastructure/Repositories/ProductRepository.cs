@@ -41,4 +41,10 @@ public class ProductRepository : IProductRepository
             .FindAsync(id);
     }
 
+    public async Task<(List<string> Brands, List<string> Types)> GetProductsFilters()
+    {
+        var brands = await _context.Products.Select(p => p.Brand).Distinct().ToListAsync();
+        var types = await _context.Products.Select(p => p.Type).Distinct().ToListAsync();
+        return (Brands: brands, Types: types);
+    }
 }
