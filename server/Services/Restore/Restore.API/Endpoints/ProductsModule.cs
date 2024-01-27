@@ -25,6 +25,7 @@ public static class ProductsModule
                     var query = new GetProductsQuery(productParams);
                     var result = await mediator.Send(query);
                     context.Response.AddPaginationHeader(result.MetaData);
+                    result.MetaData = null; // passing metadata in header
                     return Results.Ok(result);
                 }
                 catch (Exception ex)

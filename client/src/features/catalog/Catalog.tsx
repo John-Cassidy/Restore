@@ -1,19 +1,38 @@
+import { Grid, Paper } from '@mui/material';
 import {
   fetchFiltersAsync,
   fetchProductsAsync,
   productsSelectors,
+  setPageNumber,
+  setProductParams,
 } from './catalogSlice';
 import { useAppDispatch, useAppSelector } from '../../app/store/configureStore';
 
+import { AppPagination } from '../../app/components/AppPagination';
+import { CheckboxButtons } from '../../app/components/CheckboxButtons';
 import { LoadingComponent } from '../../app/layout/LoadingComponent';
 import { ProductList } from './ProductList';
+import { ProductSearch } from './ProductSearch';
+import { RadioButtonGroup } from '../../app/components/RadioButtonGroup';
 import { useEffect } from 'react';
+
+const sortOptions = [
+  { value: 'name', label: 'Alphabetical' },
+  { value: 'priceDesc', label: 'Price - High to Low' },
+  { value: 'priceAsc', label: 'Price - Low to High' },
+];
 
 export const Catalog = () => {
   const products = useAppSelector(productsSelectors.selectAll);
-  const { productsLoaded, status, filtersLoaded } = useAppSelector(
-    (state) => state.catalog
-  );
+  const {
+    productsLoaded,
+    status,
+    filtersLoaded,
+    brands,
+    types,
+    productParams,
+    metaData,
+  } = useAppSelector((state) => state.catalog);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -24,12 +43,55 @@ export const Catalog = () => {
     if (!filtersLoaded) dispatch(fetchFiltersAsync());
   }, [filtersLoaded, dispatch]);
 
-  if (status.includes('pending'))
+  if (status.includes('pending') || !metaData)
     return <LoadingComponent message='Loading products...' />;
 
   return (
-    <>
-      <ProductList products={products} />
-    </>
+    <Grid container columnSpacing={4}>
+      <Grid item xs={3}>
+        <Paper sx={{ mb: 2 }}>
+          <ProductSearch />
+        </Paper>
+        <Paper sx={{ mb: 2, p: 2 }}>
+          <RadioButtonGroup
+            options={sortOptions}
+            selectedValue={productParams.orderBy}
+            onChange={(e) =>
+              dispatch(setProductParams({ orderBy: e.target.value }))
+            }
+          />
+        </Paper>
+        <Paper sx={{ mb: 2 }}>
+          <CheckboxButtons
+            items={brands}
+            checked={productParams.brands}
+            onChange={(items: string[]) =>
+              dispatch(setProductParams({ brands: items }))
+            }
+          />
+        </Paper>
+        <Paper sx={{ mb: 2 }}>
+          <CheckboxButtons
+            items={types}
+            checked={productParams.types}
+            onChange={(items: string[]) =>
+              dispatch(setProductParams({ types: items }))
+            }
+          />
+        </Paper>
+      </Grid>
+      <Grid item xs={9}>
+        <ProductList products={products} />
+      </Grid>
+      <Grid item xs={3}></Grid>
+      <Grid item xs={9} sx={{ mb: 2 }}>
+        {metaData && (
+          <AppPagination
+            metaData={metaData}
+            onPageChange={(page: number) => dispatch(setPageNumber(page))}
+          />
+        )}
+      </Grid>
+    </Grid>
   );
 };

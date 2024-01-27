@@ -1,11 +1,8 @@
-export interface ProductParams extends PaginationParams {
-  orderBy?: string;
+export interface IProductParams {
+  orderBy: string;
   searchTerm?: string;
-  types?: string;
-  brands?: string;
-}
-
-export interface PaginationParams {
+  types?: string[];
+  brands?: string[];
   pageNumber: number;
   pageSize: number;
 }
