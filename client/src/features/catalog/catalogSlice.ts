@@ -1,10 +1,10 @@
-import { IMetaData, PaginatedResponse } from '../../app/models/pagination';
 import {
   createAsyncThunk,
   createEntityAdapter,
   createSlice,
 } from '@reduxjs/toolkit';
 
+import { IMetaData } from '../../app/models/pagination';
 import { IProduct } from '../../app/models/product';
 import { IProductParams } from '../../app/models/productParams';
 import { RootState } from '@reduxjs/toolkit/query';

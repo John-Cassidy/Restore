@@ -26,7 +26,6 @@ export const Catalog = () => {
   const products = useAppSelector(productsSelectors.selectAll);
   const {
     productsLoaded,
-    status,
     filtersLoaded,
     brands,
     types,
@@ -43,8 +42,7 @@ export const Catalog = () => {
     if (!filtersLoaded) dispatch(fetchFiltersAsync());
   }, [filtersLoaded, dispatch]);
 
-  if (status.includes('pending') || !metaData)
-    return <LoadingComponent message='Loading products...' />;
+  if (!filtersLoaded) return <LoadingComponent message='Loading products...' />;
 
   return (
     <Grid container columnSpacing={4}>
