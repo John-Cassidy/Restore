@@ -16,23 +16,12 @@ public static class IdentityExtensions
         .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<StoreContext>();
 
-        // services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        // .AddJwtBearer();
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer();
 
-        // services.ConfigureOptions<JwtOptionsConfiguration>();
-        // services.ConfigureOptions<JwtBearerOptionsConfiguration>();
-        // // .AddJwtBearer(o => o.TokenValidationParameters = new TokenValidationParameters
-        // // {
-        // //     ValidateIssuer = true,
-        // //     ValidateAudience = ""
-        // // });
-        // // .AddJwtBearer(options =>
-        // // {
-        // //     options.Authority = "https://localhost:5001";
-        // //     options.Audience = "api";
-        // // });
+        services.ConfigureOptions<JwtOptionsConfiguration>();
+        services.ConfigureOptions<JwtBearerOptionsConfiguration>();
 
-        services.AddAuthentication();
         services.AddAuthorization();
 
         return services;

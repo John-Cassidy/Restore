@@ -1,46 +1,62 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Restore.Application.Abstractions.Authentication;
+using Restore.Core.Entities;
 
 namespace Restore.Infrastructure.Authentication;
 
 public class JwtProvider : IJwtProvider
 {
     private readonly JwtOptions _options;
+    private readonly UserManager<User> _userManager;
 
-    public JwtProvider(IOptions<JwtOptions> options)
+    public JwtProvider(UserManager<User> userManager, IOptions<JwtOptions> options)
     {
         _options = options.Value;
-    }
-    public string GenerateJwtToken(string userId, string userName, string secret)
-    {
-        throw new NotImplementedException();
+        _userManager = userManager;
     }
 
-    public string GenerateJwtToken(string email, string memberId)
+    public async Task<string> GenerateToken(User user)
     {
         var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.Sub, memberId),
-            new Claim(JwtRegisteredClaimNames.Email, email),
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email),
+            new Claim(JwtRegisteredClaimNames.Name, user.UserName)
         };
 
-        var signingCredentials = new SigningCredentials(
-            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey)),
+        var roles = await _userManager.GetRolesAsync(user);
+        foreach (var role in roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey));
+        var credentials = new SigningCredentials(
+            key,
             SecurityAlgorithms.HmacSha256);
 
-        var token = new JwtSecurityToken(
-            _options.Issuer,
-            _options.Audience,
-            claims,
-            null,
-            DateTime.Now.AddMinutes(30),
-            signingCredentials
-        );
+        var tokenOptions = new JwtSecurityToken(
+       issuer: null,
+       audience: null,
+       claims: claims,
+       expires: DateTime.Now.AddDays(7),
+       signingCredentials: credentials
+   );
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        // var tokenOptions = new JwtSecurityToken(
+        //     _options.Issuer,
+        //     _options.Audience,
+        //     claims,
+        //     null,
+        //     DateTime.Now.AddMinutes(30),
+        //     credentials
+        // );
+
+        return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
     }
 }

@@ -17,14 +17,23 @@ public class JwtBearerOptionsConfiguration : IConfigureOptions<JwtBearerOptions>
 
     public void Configure(JwtBearerOptions options)
     {
+        // options.TokenValidationParameters = new TokenValidationParameters
+        // {
+        //     ValidateIssuer = true,
+        //     ValidateAudience = true,
+        //     ValidateLifetime = true,
+        //     ValidateIssuerSigningKey = true,
+        //     ValidIssuer = _jwtOptions.Issuer,
+        //     ValidAudience = _jwtOptions.Audience,
+        //     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.SecretKey))
+        // };
+
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true,
-            ValidateAudience = true,
+            ValidateIssuer = false,
+            ValidateAudience = false,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = _jwtOptions.Issuer,
-            ValidAudience = _jwtOptions.Audience,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.SecretKey))
         };
     }
