@@ -68,4 +68,33 @@ public class BasketRepository : IBasketRepository
 
         return result ? Result<Basket>.Success(basket) : Result<Basket>.Failure("Problem removing item from basket");
     }
+
+    public async Task<Result<bool>> UpdateBasketAsync(string buyerId, string username)
+    {
+        var basket = await _context.Baskets
+        .FirstOrDefaultAsync(b => b.BuyerId == buyerId);
+
+        if (basket == null) return Result<bool>.Failure("Basket not found");
+
+        basket.BuyerId = username;
+
+        var result = await _context.SaveChangesAsync() > 0;
+
+        return result ? Result<bool>.Success(true) : Result<bool>.Failure("Problem updating basket");
+    }
+
+    public async Task<Result<bool>> DeleteBasketAsync(string buyerId)
+    {
+
+        var basket = await _context.Baskets
+        .FirstOrDefaultAsync(b => b.BuyerId == buyerId);
+
+        if (basket == null) return Result<bool>.Success(true);
+
+        _context.Baskets.Remove(basket);
+        var result = await _context.SaveChangesAsync() > 0;
+        return result ? Result<bool>.Success(true) : Result<bool>.Failure("Problem deleting basket");
+    }
+
+
 }
