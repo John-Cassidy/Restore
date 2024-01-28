@@ -11,6 +11,9 @@ using System.Runtime.Serialization;
 using Restore.Core;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Restore.Core.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace Restore.API.Extensions;
 
@@ -18,9 +21,6 @@ public static class HostingExtensions
 {
     public static void ConfigureServices(this WebApplicationBuilder builder)
     {
-        // Add services to the container.
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-
         builder.Services.AddLogging();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
@@ -31,6 +31,8 @@ public static class HostingExtensions
         builder.Services.AddInfrastructureServices(builder.Configuration);
 
         builder.Services.AddCors();
+
+        builder.Services.AddIdentityServices(builder.Configuration);
 
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddExceptionHandler<GeneralExceptionHandler>();
@@ -56,28 +58,10 @@ public static class HostingExtensions
 
         app.UseExceptionHandler(_ => { });
 
-        if (app.Environment.IsDevelopment())
-        {
-            app.MapGet("/api/throwBadHttpRequest", (_) => throw new BadHttpRequestException("Bad request"));
+        app.UseAuthentication();
+        app.UseAuthorization();
 
-            app.MapGet("/api/throwBadRequest", (_) => throw new BadRequestException("Bad request"));
-            app.MapGet("/api/throwUnauthorized", (_) => throw new UnauthorizedException("Unauthorized"));
-            app.MapGet("/api/throwNotFound", (_) => throw new NotFoundException("Not found"));
-            app.MapGet("/api/throwException", (_) => throw new Exception("Something went wrong"));
-
-            app.MapGet("/api/validation-error", (IValidationExceptionHandler validationExceptionHandler) =>
-            {
-                var ex = new ValidationException("Validation error", new List<ValidationFailure>
-                {
-                    new ValidationFailure("Problem1", "Problem1 is required"),
-                    new ValidationFailure("Problem2", "Problem2 is required")
-                });
-
-                // var validationExceptionHandler = app.Services.GetRequiredService<IValidationExceptionHandler>();
-                var problemDetails = validationExceptionHandler.Handle(ex);
-                return Results.Problem(title: problemDetails.Title, statusCode: problemDetails.Status, detail: problemDetails.Detail);
-            });
-        }
+        app.UseExceptionEndpoints();
 
         app.AddWeatherForecastEndpoints();
         app.AddProductsEndpoints();
@@ -85,13 +69,15 @@ public static class HostingExtensions
 
         var scope = app.Services.CreateScope();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        var context = scope.ServiceProvider.GetRequiredService<StoreContext>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
 
         try
         {
-            var context = scope.ServiceProvider.GetRequiredService<StoreContext>();
-            context.Database.Migrate();
-            context.Database.EnsureCreated();
-            await DbInitializer.InitializeAsync(context);
+
+            await context.Database.MigrateAsync();
+            await context.Database.EnsureCreatedAsync();
+            await DbInitializer.InitializeAsync(context, userManager);
         }
         catch (Exception ex)
         {

@@ -94,8 +94,18 @@ This section implements state management with the following:
 npm i redux react-redux
 npm i @reduxjs/toolkit
 
-npm 
+npm
 
 ```
+
+## Identity
+
+- Setting up ASP.NET Identity
+- Using EF with Identity
+- JWT Tokens
+- Using Forms in React
+- Validating form inputs
+- App initialization
+- Transfering anonymous basket to logged in user
 
 ## New
