@@ -9,12 +9,12 @@ using Restore.Core.Entities;
 
 namespace Restore.Infrastructure.Authentication;
 
-public class JwtProvider : IJwtProvider
+public class TokenService : ITokenService
 {
     private readonly JwtOptions _options;
     private readonly UserManager<User> _userManager;
 
-    public JwtProvider(UserManager<User> userManager, IOptions<JwtOptions> options)
+    public TokenService(UserManager<User> userManager, IOptions<JwtOptions> options)
     {
         _options = options.Value;
         _userManager = userManager;

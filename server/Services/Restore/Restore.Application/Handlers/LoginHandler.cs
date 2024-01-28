@@ -11,9 +11,9 @@ namespace Restore.Application.Handlers;
 public class LoginHandler : IRequestHandler<LoginCommand, Result<UserResponse>>
 {
     private readonly IUserRepository _userRepository;
-    private readonly IJwtProvider _jwtProvider;
+    private readonly ITokenService _jwtProvider;
 
-    public LoginHandler(IUserRepository userRepository, IJwtProvider jwtProvider)
+    public LoginHandler(IUserRepository userRepository, ITokenService jwtProvider)
     {
         _userRepository = userRepository;
         _jwtProvider = jwtProvider;

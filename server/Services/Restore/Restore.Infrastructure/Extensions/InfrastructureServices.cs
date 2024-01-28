@@ -26,7 +26,7 @@ public static class InfrastructureServices
         services.AddScoped<IBasketRepository, BasketRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
 
-        services.AddScoped<IJwtProvider, JwtProvider>();
+        services.AddScoped<ITokenService, TokenService>();
 
         return services;
     }

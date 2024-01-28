@@ -10,9 +10,9 @@ namespace Restore.Infrastructure.Repositories;
 public class UserRepository : IUserRepository
 {
     private readonly UserManager<User> _userManager;
-    private readonly IJwtProvider _jwtProvider;
+    private readonly ITokenService _jwtProvider;
 
-    public UserRepository(UserManager<User> userManager, IJwtProvider jwtProvider)
+    public UserRepository(UserManager<User> userManager, ITokenService jwtProvider)
     {
         _userManager = userManager;
         _jwtProvider = jwtProvider;
@@ -34,11 +34,12 @@ public class UserRepository : IUserRepository
         if (user != null)
             return Result<User>.Failure("Username already exists");
 
-        var result = await _userManager.CreateAsync(new User
+        user = new User
         {
             UserName = username,
             Email = email
-        }, password);
+        };
+        var result = await _userManager.CreateAsync(user, password);
 
         if (!result.Succeeded)
         {
@@ -46,8 +47,8 @@ public class UserRepository : IUserRepository
             return Result<User>.Failure("Validation Error(s): " + string.Join(", ", errors));
         }
 
-        user = await _userManager.FindByNameAsync(username);
+        await _userManager.AddToRoleAsync(user, "Member");
 
-        return Result<User>.Success(user!);
+        return Result<User>.Success(user);
     }
 }
