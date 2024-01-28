@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Restore.API.DTOs;
 using Restore.API.Extensions;
 using Restore.Application.Commands;
@@ -98,6 +99,58 @@ public static class AccountModule
             .WithOpenApi()
             .Produces<BasketDto>(StatusCodes.Status201Created)
             .Produces<string>(StatusCodes.Status400BadRequest);
+
+
+        /*
+        create GetCurrentUser endpoint that returns a UserDto with Microsoft.AspNetCore.Authorization attribute to ensure that the user is authenticated. 
+        Use User.Identity to get the username and pass it to the GetBasketQuery to get the basket for the user. 
+        If the user is not authenticated, return a 401 Unauthorized response.
+        */
+        endpoints.MapGet("/api/account/current",
+         async (HttpContext context, IMediator mediator) =>
+            {
+                try
+                {
+                    var username = context.User.Identity?.Name;
+                    if (string.IsNullOrEmpty(username))
+                    {
+                        return Results.Unauthorized();
+                    }
+
+                    var query = new GetCurrentUserQuery(username);
+                    var user = await mediator.Send(query);
+                    if (!user.IsSuccess)
+                    {
+                        return Results.Problem(title: user.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
+                    }
+
+                    var basketQuery = new GetBasketQuery(username);
+                    var basketResult = await mediator.Send(basketQuery);
+                    if (!basketResult.IsSuccess)
+                    {
+                        return Results.Problem(title: basketResult.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
+                    }
+
+                    var userDto = new UserDto(
+                        user.Value.Email,
+                        user.Value.Token,
+                        basketResult.Value.MapBasketToDto()
+                    );
+
+                    return Results.Ok(userDto);
+                }
+                catch (Exception ex)
+                {
+                    return Results.BadRequest(ex.Message);
+                }
+            })
+            .WithName("GetCurrentUser")
+            .WithOpenApi()
+            .Produces<UserDto>(StatusCodes.Status200OK)
+            .Produces<string>(StatusCodes.Status401Unauthorized)
+            .Produces<string>(StatusCodes.Status400BadRequest);
+
+
 
         return endpoints;
     }

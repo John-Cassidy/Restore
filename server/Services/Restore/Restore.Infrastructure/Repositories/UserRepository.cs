@@ -10,12 +10,19 @@ namespace Restore.Infrastructure.Repositories;
 public class UserRepository : IUserRepository
 {
     private readonly UserManager<User> _userManager;
-    private readonly ITokenService _jwtProvider;
 
-    public UserRepository(UserManager<User> userManager, ITokenService jwtProvider)
+    public UserRepository(UserManager<User> userManager)
     {
         _userManager = userManager;
-        _jwtProvider = jwtProvider;
+    }
+
+    public async Task<Result<User>> GetUserAsync(string username)
+    {
+        var user = await _userManager.FindByNameAsync(username);
+        if (user == null)
+            return Result<User>.Failure("User not found");
+
+        return Result<User>.Success(user);
     }
 
     public async Task<Result<User>> LoginAsync(string username, string password)
