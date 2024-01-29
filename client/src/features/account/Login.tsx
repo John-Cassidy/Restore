@@ -1,18 +1,21 @@
 import { FieldValues, useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
 
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import { Link } from 'react-router-dom';
 import { LoadingButton } from '@mui/lab';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { Paper } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { agent } from '../../app/api/agent';
+import { signInUser } from './accountSlice';
+import { useAppDispatch } from '../../app/store/configureStore';
 
 export const Login = () => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const {
     register,
     handleSubmit,
@@ -22,11 +25,8 @@ export const Login = () => {
   });
 
   const submitForm = async (data: FieldValues) => {
-    try {
-      await agent.Account.login(data);
-    } catch (error) {
-      console.log(error);
-    }
+    await dispatch(signInUser(data));
+    navigate('/catalog');
   };
 
   return (
