@@ -22,7 +22,7 @@ public static class BasketModule
             {
                 try
                 {
-                    var buyerId = GetBuyerId(context);
+                    var buyerId = context.GetBuyerId();
                     var query = new GetBasketQuery(buyerId);
                     Result<BasketResponse>? result = await mediator.Send(query);
                     if (!result.IsSuccess)
@@ -46,7 +46,7 @@ public static class BasketModule
         {
             try
             {
-                var buyerId = GetBuyerId(context);
+                var buyerId = context.GetBuyerId();
                 var command = new AddItemToBasketCommand(buyerId, productId, quantity);
                 var result = await mediator.Send(command);
 
@@ -100,17 +100,5 @@ public static class BasketModule
         .Produces<string>(StatusCodes.Status400BadRequest);
 
         return endpoints;
-    }
-
-    private static string GetBuyerId(HttpContext context)
-    {
-        var buyerId = context.Request.Cookies["buyerId"];
-        if (buyerId == null)
-        {
-            buyerId = Guid.NewGuid().ToString();
-            var cookieOptions = new CookieOptions { IsEssential = true, Expires = DateTime.Now.AddDays(30) };
-            context.Response.Cookies.Append("buyerId", buyerId, cookieOptions);
-        }
-        return buyerId;
     }
 }

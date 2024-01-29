@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Restore.Application.Abstractions.Authentication;
 using Restore.Core.Repositories;
+using Restore.Infrastructure.Authentication;
 using Restore.Infrastructure.Data;
 using Restore.Infrastructure.Repositories;
 
@@ -22,6 +24,9 @@ public static class InfrastructureServices
 
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IBasketRepository, BasketRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+
+        services.AddScoped<ITokenService, TokenService>();
 
         return services;
     }

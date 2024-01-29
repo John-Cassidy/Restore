@@ -327,3 +327,78 @@ info: Microsoft.EntityFrameworkCore.Database.Command[20101]
       VALUES ('20240124161403_BasketEntityAdded', '8.0.1');
 Done.
 ```
+
+## Identity
+
+- Setting up ASP.NET Identity
+- Using EF with Identity
+- JWT Tokens
+- Using Forms in React
+- Validating form inputs
+- App initialization
+- Transfering anonymous basket to logged in user
+
+### Nuget Packages
+
+Add Nuget Package to Core project:
+
+- Microsoft.Extensions.Identity.Stores
+
+Create User.cs file in the Restore.Core project
+
+```csharp
+using Microsoft.AspNetCore.Identity;
+
+namespace Restore.Core
+{
+    public class User : IdentityUser<int>
+    {
+        public UserAddress Address { get; set; }
+    }
+}
+```
+
+Add Nuget Packages to Infrastructure project:
+
+- Microsoft.AspNetCore.Authentication.JwtBearer
+- Microsoft.AspNetCore.Identity.EntityFrameworkCore
+
+Create AccountRepository.cs file in the Restore.Infrastructure project
+
+```csharp
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Restore.Core;
+
+namespace Restore.Infrastructure
+{
+    public class AccountRepository
+    {
+        private readonly IdentityDbContext<User> _context;
+
+        public AccountRepository(IdentityDbContext<User> context)
+        {
+            _context = context;
+        }
+
+        // Add methods for interacting with the User entities in the database here
+    }
+}
+```
+
+### Migrations
+
+``powershell
+
+# add migration
+
+dotnet ef migrations add IdentityAdded -o Data/Migrations -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
+
+# review and then if needed, remove this migration in order to adjust entities and their relations.
+
+dotnet ef migrations remove -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
+
+# apply pending migration
+
+dotnet ef database update -s server/Services/Restore/Restore.Api
+
+## New
