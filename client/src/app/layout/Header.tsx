@@ -12,6 +12,7 @@ import {
 import { Link, NavLink } from 'react-router-dom';
 
 import { ShoppingCart } from '@mui/icons-material';
+import { SignedInMenu } from './SignedInMenu';
 import { useAppSelector } from '../store/configureStore';
 
 const midLinks = [
@@ -43,6 +44,7 @@ interface IProps {
 }
 
 export const Header = ({ handleThemeChange, darkMode }: IProps) => {
+  const { user } = useAppSelector((state) => state.account);
   const { basket } = useAppSelector((state) => state.basket);
   // reduce array of items to a single number
   const itemCount = basket?.items.reduce((acc, item) => acc + item.quantity, 0);
@@ -96,18 +98,22 @@ export const Header = ({ handleThemeChange, darkMode }: IProps) => {
               <ShoppingCart />
             </Badge>
           </IconButton>
-          <List sx={{ display: 'flex' }}>
-            {rightLinks.map(({ title, path }) => (
-              <ListItem
-                component={NavLink}
-                to={path}
-                key={path}
-                sx={navLinkStyles}
-              >
-                {title.toUpperCase()}
-              </ListItem>
-            ))}
-          </List>
+          {user ? (
+            <SignedInMenu />
+          ) : (
+            <List sx={{ display: 'flex' }}>
+              {rightLinks.map(({ title, path }) => (
+                <ListItem
+                  component={NavLink}
+                  to={path}
+                  key={path}
+                  sx={navLinkStyles}
+                >
+                  {title.toUpperCase()}
+                </ListItem>
+              ))}
+            </List>
+          )}
         </Box>
       </Toolbar>
     </AppBar>

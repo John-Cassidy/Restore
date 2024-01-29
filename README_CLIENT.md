@@ -108,4 +108,12 @@ npm
 - App initialization
 - Transfering anonymous basket to logged in user
 
-## New
+## React Hook Form
+
+[Documentation](https://react-hook-form.com/)
+
+[useForm API](https://react-hook-form.com/docs/useform)
+
+```powershell
+npm i react-hook-form
+```
