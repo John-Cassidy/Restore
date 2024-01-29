@@ -107,7 +107,7 @@ public static class AccountModule
         If the user is not authenticated, return a 401 Unauthorized response.
         */
         endpoints.MapGet("/api/account/current",
-         async (HttpContext context, IMediator mediator) =>
+         [Authorize] async (HttpContext context, IMediator mediator) =>
             {
                 try
                 {

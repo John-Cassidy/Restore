@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using Restore.Core.Entities;
 using Restore.Infrastructure.Data;
 
@@ -16,11 +18,24 @@ public static class IdentityExtensions
         .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<StoreContext>();
 
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer();
 
         services.ConfigureOptions<JwtOptionsConfiguration>();
-        services.ConfigureOptions<JwtBearerOptionsConfiguration>();
+        // services.ConfigureOptions<JwtBearerOptionsConfiguration>();
+
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(opt =>
+        {
+            opt.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                NameClaimType = "name", // Add this line
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
+                .GetBytes(configuration["Jwt:SecretKey"]))
+            };
+        });
 
         services.AddAuthorization();
 

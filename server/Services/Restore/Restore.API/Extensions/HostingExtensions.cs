@@ -14,6 +14,7 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Restore.Core.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.OpenApi.Models;
 
 namespace Restore.API.Extensions;
 
@@ -23,7 +24,32 @@ public static class HostingExtensions
     {
         builder.Services.AddLogging();
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(c =>
+        {
+            // Include 'SecurityScheme' to use JWT Authentication
+            var jwtSecurityScheme = new OpenApiSecurityScheme
+            {
+                BearerFormat = "JWT",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = JwtBearerDefaults.AuthenticationScheme,
+                Description = "Put Bearer + your token in the box below",
+
+                Reference = new OpenApiReference
+                {
+                    Id = JwtBearerDefaults.AuthenticationScheme,
+                    Type = ReferenceType.SecurityScheme
+                }
+            };
+
+            c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                { jwtSecurityScheme, Array.Empty<string>() }
+            });
+        });
 
         builder.Services.AddScoped<IValidationExceptionHandler, ValidationExceptionHandler>();
 
@@ -43,7 +69,10 @@ public static class HostingExtensions
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(c =>
+            {
+                c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
+            });
         }
 
         if (app.Environment.IsProduction())
