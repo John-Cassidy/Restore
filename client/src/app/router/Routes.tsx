@@ -9,8 +9,10 @@ import { Catalog } from '../../features/catalog/Catalog';
 import { CheckoutPage } from '../../features/checkout/CheckoutPage';
 import { ContactPage } from '../../features/contact/ContactPage';
 import { HomePage } from '../../features/home/HomePage';
+import { Login } from '../../features/account/Login';
 import NotFound from '../errors/NotFound';
 import { ProductDetails } from '../../features/catalog/ProductDetails';
+import { Register } from '../../features/account/Register';
 import ServerError from '../errors/ServerError';
 
 export const router = createBrowserRouter([
@@ -41,6 +43,8 @@ export const router = createBrowserRouter([
       { path: '/server-error', element: <ServerError /> },
       { path: '/not-found', element: <NotFound /> },
       { path: '/basket', element: <BasketPage /> },
+      { path: '/login', element: <Login /> },
+      { path: '/register', element: <Register /> },
       { path: '/checkout', element: <CheckoutPage /> },
       { path: '*', element: <Navigate replace to='/not-found' /> },
     ],

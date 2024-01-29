@@ -14,7 +14,7 @@ public static class AccountModule
     public static IEndpointRouteBuilder AddAccountEndpoints(this IEndpointRouteBuilder endpoints)
     {
         endpoints.MapPost("/api/account/login",
-            async (HttpContext context, IMediator mediator, [AsParameters] LoginDto loginDto) =>
+            async (HttpContext context, IMediator mediator, LoginDto loginDto) =>
             {
                 try
                 {

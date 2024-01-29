@@ -73,6 +73,12 @@ const requests = {
   delete: (url: string) => axios.delete(url).then(responseBody),
 };
 
+const Account = {
+  login: (values: any) => requests.post('account/login', values),
+  register: (values: any) => requests.post('account/register', values),
+  current: () => requests.get('account/current'),
+};
+
 const Basket = {
   get: () => requests.get('basket'),
   addItem: (productId: number, quantity = 1) =>
@@ -98,6 +104,7 @@ const TestErrors = {
 };
 
 export const agent = {
+  Account,
   Basket,
   Catalog,
   TestErrors,
