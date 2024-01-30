@@ -1,11 +1,3 @@
-import {
-  Alert,
-  AlertTitle,
-  List,
-  ListItem,
-  ListItemText,
-  Paper,
-} from '@mui/material';
 import { IError, IModelStateErrors } from '../../app/models/modelStateErrors';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -15,16 +7,15 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import { LoadingButton } from '@mui/lab';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { Paper } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { agent } from '../../app/api/agent';
 import { toast } from 'react-toastify';
-import { useAppDispatch } from '../../app/store/configureStore';
 import { useForm } from 'react-hook-form';
 
 export const Register = () => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const {
     register,
     handleSubmit,
