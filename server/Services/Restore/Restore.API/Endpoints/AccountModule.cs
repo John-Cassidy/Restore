@@ -8,6 +8,7 @@ using Restore.API.Extensions;
 using Restore.API.Handlers;
 using Restore.Application.Commands;
 using Restore.Application.Queries;
+using Restore.Application.Responses;
 using Restore.Core.Entities;
 using Restore.Core.Results;
 
@@ -29,16 +30,20 @@ public static class AccountModule
                         return Results.Problem(title: userResult.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
                     }
 
-                    // get basket
-                    string buyerId = context.GetBuyerId();
+                    // get basket                    
 
                     var basketQuery = new GetBasketQuery(userResult.Value.Username);
                     var userBasket = await mediator.Send(basketQuery);
 
-                    basketQuery = new GetBasketQuery(buyerId);
-                    var anonBasket = await mediator.Send(basketQuery);
+                    Result<BasketResponse>? anonBasket = null;
+                    string buyerId = context.Request.Cookies["buyerId"];
+                    if (buyerId is not null)
+                    {
+                        basketQuery = new GetBasketQuery(buyerId);
+                        anonBasket = await mediator.Send(basketQuery);
+                    }
 
-                    if (anonBasket.Value.Id > 0)
+                    if (anonBasket is not null && anonBasket.Value.Id > 0)
                     {
                         if (userBasket.Value.Id > 0)
                         {
@@ -65,7 +70,7 @@ public static class AccountModule
                     var userDto = new UserDto(
                         userResult.Value.Email,
                         userResult.Value.Token,
-                        anonBasket.Value.Id > 0 ? anonBasket.Value.MapBasketToDto() : userBasket.Value.MapBasketToDto()
+                        anonBasket?.Value?.Id > 0 ? anonBasket.Value.MapBasketToDto() : userBasket.Value.MapBasketToDto()
                     );
 
                     return Results.Ok(userDto);
