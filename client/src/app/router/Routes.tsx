@@ -13,6 +13,7 @@ import { Login } from '../../features/account/Login';
 import NotFound from '../errors/NotFound';
 import { ProductDetails } from '../../features/catalog/ProductDetails';
 import { Register } from '../../features/account/Register';
+import { RequireAuth } from './RequireAuth';
 import ServerError from '../errors/ServerError';
 
 export const router = createBrowserRouter([
@@ -20,6 +21,11 @@ export const router = createBrowserRouter([
     path: '/',
     element: <App />,
     children: [
+      {
+        // authenticated routes
+        element: <RequireAuth />,
+        children: [{ path: '/checkout', element: <CheckoutPage /> }],
+      },
       {
         path: '',
         element: <HomePage />,
@@ -45,7 +51,6 @@ export const router = createBrowserRouter([
       { path: '/basket', element: <BasketPage /> },
       { path: '/login', element: <Login /> },
       { path: '/register', element: <Register /> },
-      { path: '/checkout', element: <CheckoutPage /> },
       { path: '*', element: <Navigate replace to='/not-found' /> },
     ],
   },

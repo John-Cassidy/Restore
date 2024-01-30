@@ -1,9 +1,14 @@
-﻿using MediatR;
+﻿using System.Text.Json;
+using FluentValidation;
+using FluentValidation.Results;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Restore.API.DTOs;
 using Restore.API.Extensions;
+using Restore.API.Handlers;
 using Restore.Application.Commands;
 using Restore.Application.Queries;
+using Restore.Application.Responses;
 using Restore.Core.Entities;
 using Restore.Core.Results;
 
@@ -25,16 +30,20 @@ public static class AccountModule
                         return Results.Problem(title: userResult.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
                     }
 
-                    // get basket
-                    string buyerId = context.GetBuyerId();
+                    // get basket                    
 
                     var basketQuery = new GetBasketQuery(userResult.Value.Username);
                     var userBasket = await mediator.Send(basketQuery);
 
-                    basketQuery = new GetBasketQuery(buyerId);
-                    var anonBasket = await mediator.Send(basketQuery);
+                    Result<BasketResponse>? anonBasket = null;
+                    string buyerId = context.Request.Cookies["buyerId"];
+                    if (buyerId is not null)
+                    {
+                        basketQuery = new GetBasketQuery(buyerId);
+                        anonBasket = await mediator.Send(basketQuery);
+                    }
 
-                    if (anonBasket.Value.Id > 0)
+                    if (anonBasket is not null && anonBasket.Value.Id > 0)
                     {
                         if (userBasket.Value.Id > 0)
                         {
@@ -61,7 +70,7 @@ public static class AccountModule
                     var userDto = new UserDto(
                         userResult.Value.Email,
                         userResult.Value.Token,
-                        anonBasket.Value.Id > 0 ? anonBasket.Value.MapBasketToDto() : userBasket.Value.MapBasketToDto()
+                        anonBasket?.Value?.Id > 0 ? anonBasket.Value.MapBasketToDto() : userBasket.Value.MapBasketToDto()
                     );
 
                     return Results.Ok(userDto);
@@ -77,15 +86,18 @@ public static class AccountModule
             .Produces<string>(StatusCodes.Status400BadRequest);
 
         endpoints.MapPost("/api/account/register",
-            async (HttpContext context, IMediator mediator, [AsParameters] RegisterDto registerDto) =>
+            async (HttpContext context, IMediator mediator, IValidationExceptionHandler validationExceptionHandler, RegisterDto registerDto) =>
             {
                 try
                 {
                     var command = new RegisterCommand(registerDto.Username, registerDto.Password, registerDto.Email);
-                    var result = await mediator.Send(command);
+                    Result<Unit>? result = await mediator.Send(command);
+
                     if (!result.IsSuccess)
                     {
-                        return Results.Problem(title: result.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
+                        var validationException = validationExceptionHandler.CreateValidationExceptionFromErrorMessage(result.ErrorMessage);
+                        Restore.Core.ProblemDetails? problemDetails = validationExceptionHandler.Handle(validationException);
+                        return Results.Problem(title: problemDetails.Title, statusCode: problemDetails.Status, detail: problemDetails.Detail);
                     }
 
                     return Results.Created("/api/account/login", result.Value);
@@ -149,8 +161,6 @@ public static class AccountModule
             .Produces<UserDto>(StatusCodes.Status200OK)
             .Produces<string>(StatusCodes.Status401Unauthorized)
             .Produces<string>(StatusCodes.Status400BadRequest);
-
-
 
         return endpoints;
     }

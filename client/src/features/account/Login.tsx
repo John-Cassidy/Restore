@@ -1,5 +1,5 @@
 import { FieldValues, useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -15,6 +15,7 @@ import { useAppDispatch } from '../../app/store/configureStore';
 
 export const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useAppDispatch();
   const {
     register,
@@ -25,8 +26,12 @@ export const Login = () => {
   });
 
   const submitForm = async (data: FieldValues) => {
-    await dispatch(signInUser(data));
-    navigate('/catalog');
+    try {
+      await dispatch(signInUser(data));
+      navigate(location.state?.from || '/catalog');
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

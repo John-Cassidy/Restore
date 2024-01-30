@@ -72,7 +72,7 @@ public static class BasketModule
         {
             try
             {
-                var buyerId = context.Request.Cookies["buyerId"];
+                var buyerId = context.GetBuyerId();
                 if (buyerId == null)
                 {
                     return Results.Problem(title: "No Basket Found", statusCode: StatusCodes.Status404NotFound);
