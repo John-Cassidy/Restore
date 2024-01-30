@@ -1,6 +1,4 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Identity;
-using Restore.Application.Abstractions.Authentication;
+﻿using Microsoft.AspNetCore.Identity;
 using Restore.Core.Entities;
 using Restore.Core.Repositories;
 using Restore.Core.Results;
@@ -39,7 +37,7 @@ public class UserRepository : IUserRepository
         var user = await _userManager.FindByNameAsync(username);
 
         if (user != null)
-            return Result<User>.Failure("Username already exists");
+            return Result<User>.Failure("key: Username already exists");
 
         user = new User
         {
@@ -50,8 +48,8 @@ public class UserRepository : IUserRepository
 
         if (!result.Succeeded)
         {
-            var errors = result.Errors.Select(x => x.Description);
-            return Result<User>.Failure("Validation Error(s): " + string.Join(", ", errors));
+            IEnumerable<string>? errors = result.Errors.Select((error, index) => $"{(string)("key" + index)}: {error.Description}");
+            return Result<User>.Failure(string.Join(", ", errors));
         }
 
         await _userManager.AddToRoleAsync(user, "Member");

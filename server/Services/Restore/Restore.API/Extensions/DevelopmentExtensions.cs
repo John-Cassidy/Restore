@@ -29,7 +29,7 @@ public static class DevelopmentExtensions
                 var logger = app.Services.GetRequiredService<ILogger<Program>>();
                 logger.LogError(ex, "Validation error occurred");
 
-                var problemDetails = validationExceptionHandler.Handle(ex);
+                Restore.Core.ProblemDetails? problemDetails = validationExceptionHandler.Handle(ex);
                 return Results.Problem(title: problemDetails.Title, statusCode: problemDetails.Status, detail: problemDetails.Detail);
             });
         }

@@ -1,7 +1,11 @@
-﻿using MediatR;
+﻿using System.Text.Json;
+using FluentValidation;
+using FluentValidation.Results;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Restore.API.DTOs;
 using Restore.API.Extensions;
+using Restore.API.Handlers;
 using Restore.Application.Commands;
 using Restore.Application.Queries;
 using Restore.Core.Entities;
@@ -77,15 +81,18 @@ public static class AccountModule
             .Produces<string>(StatusCodes.Status400BadRequest);
 
         endpoints.MapPost("/api/account/register",
-            async (HttpContext context, IMediator mediator, [AsParameters] RegisterDto registerDto) =>
+            async (HttpContext context, IMediator mediator, IValidationExceptionHandler validationExceptionHandler, RegisterDto registerDto) =>
             {
                 try
                 {
                     var command = new RegisterCommand(registerDto.Username, registerDto.Password, registerDto.Email);
-                    var result = await mediator.Send(command);
+                    Result<Unit>? result = await mediator.Send(command);
+
                     if (!result.IsSuccess)
                     {
-                        return Results.Problem(title: result.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
+                        var validationException = validationExceptionHandler.CreateValidationExceptionFromErrorMessage(result.ErrorMessage);
+                        Restore.Core.ProblemDetails? problemDetails = validationExceptionHandler.Handle(validationException);
+                        return Results.Problem(title: problemDetails.Title, statusCode: problemDetails.Status, detail: problemDetails.Detail);
                     }
 
                     return Results.Created("/api/account/login", result.Value);
