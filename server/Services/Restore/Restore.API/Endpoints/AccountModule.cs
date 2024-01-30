@@ -157,8 +157,6 @@ public static class AccountModule
             .Produces<string>(StatusCodes.Status401Unauthorized)
             .Produces<string>(StatusCodes.Status400BadRequest);
 
-
-
         return endpoints;
     }
 }

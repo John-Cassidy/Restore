@@ -37,7 +37,7 @@ public class UserRepository : IUserRepository
         var user = await _userManager.FindByNameAsync(username);
 
         if (user != null)
-            return Result<User>.Failure("key: Username already exists");
+            return Result<User>.Failure("username: Username already exists");
 
         user = new User
         {
@@ -48,7 +48,7 @@ public class UserRepository : IUserRepository
 
         if (!result.Succeeded)
         {
-            IEnumerable<string>? errors = result.Errors.Select((error, index) => $"{(string)("key" + index)}: {error.Description}");
+            IEnumerable<string>? errors = result.Errors.Select((error, index) => $"{(string)("password" + index)}: {error.Description}");
             return Result<User>.Failure(string.Join(", ", errors));
         }
 

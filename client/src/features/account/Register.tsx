@@ -18,37 +18,44 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { agent } from '../../app/api/agent';
+import { toast } from 'react-toastify';
 import { useAppDispatch } from '../../app/store/configureStore';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
 
 export const Register = () => {
-  const [validationErrors, setValidationErrors] = useState<IError[]>([]);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const {
     register,
     handleSubmit,
+    setError,
     formState: { isSubmitting, errors, isValid },
   } = useForm({
     mode: 'onTouched',
   });
 
-  // const handleApiErrors = (errors: any) => {
-  //   console.log(errors);
-  //   if (errors) {
-  //     errors.foreach((error: string) => {
-  //       if (error.includes('password')) {
-  //         console.log('password', { message: error });
-  //       } else if (error.includes('email')) {
-  //         console.log('email', { message: error });
-  //       } else if (error.includes('username')) {
-  //         console.log('username', { message: error });
-  //       }
-  //     });
-  //     setValidationErrors(errors);
-  //   }
-  // };
+  const handleApiErrors = (errors: any) => {
+    console.log(errors);
+
+    if (errors?.data?.detail) {
+      const modelStateErrors: IModelStateErrors = JSON.parse(
+        errors.data.detail
+      );
+      if (modelStateErrors?.Errors) {
+        modelStateErrors.Errors.forEach((error: IError) => {
+          if (error.ErrorMessage.toLocaleLowerCase().includes('password')) {
+            setError('password', { message: error.ErrorMessage });
+          } else if (error.ErrorMessage.toLocaleLowerCase().includes('email')) {
+            setError('email', { message: error.ErrorMessage });
+          } else if (
+            error.ErrorMessage.toLocaleLowerCase().includes('username')
+          ) {
+            setError('username', { message: error.ErrorMessage });
+          }
+        });
+      }
+    }
+  };
 
   return (
     <Container
@@ -70,21 +77,19 @@ export const Register = () => {
       <Box
         component='form'
         onSubmit={handleSubmit((data) =>
-          agent.Account.register(data).catch((error) => {
-            if (error.data.detail) {
-              const modelStateErrors: IModelStateErrors = JSON.parse(
-                error.data.detail
-              );
-              console.log(modelStateErrors);
-              setValidationErrors(modelStateErrors.Errors);
-            }
-          })
+          agent.Account.register(data)
+            .then(() => {
+              toast.success('Registration successful - you can now login');
+              navigate('/login');
+            })
+            .catch((error) => handleApiErrors(error))
         )}
         noValidate
         sx={{ mt: 1 }}
       >
         <TextField
           margin='normal'
+          required
           fullWidth
           label='Username'
           autoComplete='username'
@@ -99,7 +104,13 @@ export const Register = () => {
           label='Email'
           type='email'
           autoComplete='email'
-          {...register('email', { required: 'Email is required' })}
+          {...register('email', {
+            required: 'Email is required',
+            pattern: {
+              value: /^\w+[\w-.]*@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/,
+              message: 'Not a valid email address',
+            },
+          })}
           error={!!errors.email}
           helperText={errors.email?.message as string}
         />
@@ -109,22 +120,17 @@ export const Register = () => {
           fullWidth
           label='Password'
           type='password'
-          {...register('password', { required: 'Password is required' })}
-          error={!!errors.email}
-          helperText={errors.email?.message as string}
+          {...register('password', {
+            required: 'password is required',
+            pattern: {
+              value:
+                /(?=^.{6,10}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&amp;*()_+}{&quot;:;'?/&gt;.&lt;,])(?!.*\s).*$/,
+              message: 'Password does not meet complexity requirements',
+            },
+          })}
+          error={!!errors.password}
+          helperText={errors.password?.message as string}
         />
-        {validationErrors.length > 0 && (
-          <Alert severity='error'>
-            <AlertTitle>Validation Errors</AlertTitle>
-            <List>
-              {validationErrors.map((error: any) => (
-                <ListItem key={error.PropertyName}>
-                  <ListItemText>{error.ErrorMessage}</ListItemText>
-                </ListItem>
-              ))}
-            </List>
-          </Alert>
-        )}
         <LoadingButton
           loading={isSubmitting}
           disabled={!isValid || isSubmitting}
