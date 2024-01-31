@@ -1,12 +1,15 @@
-﻿namespace Restore.Core.Entities.OrderAggregate;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Restore.Core.Entities.OrderAggregate;
 
 public class Order
 {
     public int Id { get; set; }
     public string BuyerId { get; set; }
 
-    public ShippingAddress ShipToAddress { get; set; }
-    public DateTime OrderDate { get; set; }
+    [Required]
+    public ShippingAddress ShippingAddress { get; set; }
+    public DateTime OrderDate { get; set; } = DateTime.UtcNow;
     public List<OrderItem> OrderItems { get; set; }
     public long Subtotal { get; set; }
     public long DeliveryFee { get; set; }

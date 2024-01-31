@@ -15,7 +15,7 @@ public static class IdentityExtensions
         {
             opt.User.RequireUniqueEmail = true;
         })
-        .AddRoles<IdentityRole>()
+        .AddRoles<Role>()
         .AddEntityFrameworkStores<StoreContext>();
 
 
