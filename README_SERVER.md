@@ -385,20 +385,231 @@ namespace Restore.Infrastructure
 }
 ```
 
-### Migrations
+### Identity Migrations
 
-``powershell
+```powershell
 
 # add migration
-
 dotnet ef migrations add IdentityAdded -o Data/Migrations -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
 
 # review and then if needed, remove this migration in order to adjust entities and their relations.
-
 dotnet ef migrations remove -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
 
 # apply pending migration
-
 dotnet ef database update -s server/Services/Restore/Restore.Api
+```
+
+## Checkout
+
+install nuget package in Restore.Core project to allow for ef relationships:
+
+- Microsoft.EntityFrameworkCore.Abstractions
+
+### Create OrderAggregate Entities
+
+- Order
+- OrderItem
+- OrderStatus
+- ProductItemOrdered
+- ShippingAddress
+
+```csharp
+// Update StoreContext: protected override void OnModelCreating(ModelBuilder builder)
+
+ builder.Entity<User>()
+            .HasOne(a => a.Address)
+            .WithOne()
+            .HasForeignKey<UserAddress>(a => a.Id)
+            .OnDelete(DeleteBehavior.Cascade);
+
+```
+
+### Order Status
+
+The OrderStatus enum in OrderStatus.cs represents the different stages an order can go through in an e-commerce application. Here's what each status means:
+
+Pending: The order has been created but payment has not yet been processed. This is usually the initial status after a customer places an order.
+
+PaymentReceived: The payment for the order has been successfully received. This status is typically set after the payment gateway confirms the transaction.
+
+PaymentFailed: The payment for the order failed. This could be due to insufficient funds, a declined credit card, or other issues with the payment gateway.
+
+OrderShipped: The order has been shipped to the customer. This status is usually set after the order has been packaged and handed over to a shipping carrier.
+
+OrderDelivered: The order has been delivered to the customer. This status is typically set after the shipping carrier confirms delivery.
+
+These statuses help track the lifecycle of an order and can be used to update customers about the status of their orders.
+
+```csharp
+namespace Restore.Core;
+
+public enum OrderStatus
+{
+    Pending,
+    PaymentReceived,
+    PaymentFailed
+}
+```
+
+#### Proposed Additional Statuses
+
+Here are some potential additional OrderStatus values that could be useful in an e-commerce application:
+
+Processing: This status could be used after PaymentReceived to indicate that the order is being prepared for shipment. This could involve picking the items from the warehouse, packaging them, and preparing the shipping label.
+
+Cancelled: This status could be used to indicate that the order has been cancelled. This could happen if the customer decides to cancel the order, or if the order cannot be fulfilled for some reason.
+
+Refunded: This status could be used to indicate that the customer has been refunded for the order. This could happen if the order is returned, or if there was an issue with the order that warranted a refund.
+
+Returned: This status could be used to indicate that the order has been returned by the customer.
+
+FailedDelivery: This status could be used to indicate that the delivery of the order failed. This could happen if the customer was not available to receive the order, or if there was an issue with the shipping address.
+
+Here's how you could add these to the OrderStatus enum:
+
+```csharp
+namespace Restore.Core;
+
+public enum OrderStatus
+{
+    Pending,
+    PaymentReceived,
+    PaymentFailed,
+    Processing,
+    OrderShipped,
+    OrderDelivered,
+    Cancelled,
+    Refunded,
+    Returned,
+    FailedDelivery
+}
+```
+
+#### Actions Triggered by Different OrderStatus
+
+Different OrderStatus values can trigger various actions in an e-commerce application. Here are some common examples:
+
+Pending: At this stage, the system might send an order confirmation email to the customer, providing details about the order and next steps.
+
+PaymentReceived: Once payment is confirmed, the system might trigger the process of preparing the order for shipment. This could involve actions like updating inventory, notifying the warehouse, etc.
+
+PaymentFailed: In case of payment failure, the system might send an email to the customer notifying them about the issue and possibly prompting them to try the payment again.
+
+Processing: While the order is being processed, the system might send updates to the customer about the status of their order.
+
+OrderShipped: When the order is shipped, the system could send an email to the customer with tracking information. It might also update the order information with the estimated delivery date.
+
+OrderDelivered: Upon delivery, the system might send a confirmation email to the customer. It could also trigger a process to ask for customer feedback or reviews.
+
+Cancelled: If an order is cancelled, the system might send an email to the customer confirming the cancellation. It might also trigger a refund process if the customer has already been charged.
+
+Refunded: When a refund is issued, the system could send a confirmation email to the customer. It might also update the order information to reflect the refund.
+
+Returned: If an order is returned, the system might trigger a process to handle the return, which could involve inspecting the returned item, restocking it, and issuing a refund.
+
+FailedDelivery: In case of a failed delivery, the system might send a notification to the customer and attempt to reschedule the delivery.
+
+#### Common Email Notifications that an e-commerce application can send based on different OrderStatus values
+
+Based on different OrderStatus values, an e-commerce application can send the following common email notifications to customers:
+
+Pending: An order confirmation email, which includes details about the order and next steps.
+
+PaymentReceived: An email notifying that the payment has been received and the order is being prepared for shipment.
+
+PaymentFailed: An email alerting the customer that the payment has failed, possibly with instructions on how to retry the payment.
+
+Processing: An email update about the status of the order, such as that it's being prepared for shipment.
+
+OrderShipped: An email with the shipping confirmation and tracking information, possibly with an estimated delivery date.
+
+OrderDelivered: An email confirming that the order has been delivered, possibly with a request for feedback or a review.
+
+Cancelled: An email confirming that the order has been cancelled, possibly with details about a refund if the customer has already been charged.
+
+Refunded: An email confirming that a refund has been issued, possibly with details about when and how the refund was processed.
+
+Returned: An email confirming that the order has been returned and a refund is being processed, possibly with details about the return process.
+
+FailedDelivery: An email notifying the customer that delivery failed, possibly with instructions on how to reschedule the delivery.
+
+#### Common ways an e-commerce application can handle returns and refunds
+
+Handling returns and refunds is a crucial part of customer service in e-commerce. Here are some common ways an e-commerce application can handle these processes:
+
+Return Initiation: The customer initiates a return through the application, often by filling out a form that includes the order number, the item(s) to be returned, and the reason for the return.
+
+Return Approval: The system checks the return request against the company's return policy (e.g., return window, condition of the item). If the return is approved, the customer is notified and provided with return instructions.
+
+Return Shipping: The customer ships the item back. Some companies provide a prepaid return shipping label, while others require the customer to pay for return shipping.
+
+Return Inspection: Once the returned item is received, it's inspected to ensure it's in the appropriate condition. This process can be automated or manual, depending on the nature of the goods.
+
+Refund Processing: If the return is accepted, the system triggers a refund to the original payment method. This process can involve communicating with the payment gateway to reverse the charge.
+
+Notification: The customer is notified about the status of the return and refund via email or in-app notifications.
+
+Order Status Update: The order status is updated to Returned or Refunded in the system.
+
+Here's a simplified example of how this could be implemented in code:
+
+```csharp
+public class ReturnService
+{
+    public bool InitiateReturn(Order order, ReturnRequest request)
+    {
+        if (order.CanBeReturned() && request.IsValid())
+        {
+            order.Status = OrderStatus.Returned;
+            SendReturnInstructionsEmail(order);
+            return true;
+        }
+        return false;
+    }
+
+    public void ProcessReturn(Order order)
+    {
+        if (InspectReturn(order))
+        {
+            order.Status = OrderStatus.Refunded;
+            ProcessRefund(order);
+            SendRefundConfirmationEmail(order);
+        }
+    }
+
+    // Other methods not shown...
+}
+```
+
+### Update User and Role to use int as primary key
+
+```csharp
+// Update StoreContext:
+public class StoreContext : IdentityDbContext<User, Role, int>
+
+ builder.Entity<Role>()
+            .HasData(
+                new Role {Id = 1, Name = "Member", NormalizedName = "MEMBER" },
+                new Role {Id = 2, Name = "Admin", NormalizedName = "ADMIN" }
+            );
+
+```
+
+### Checkout Migrations
+
+```powershell
+# Drop database to delete store.db file
+dotnet ef database drop -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
+
+# add migration
+dotnet ef migrations add IdentityAndOrderEntityAdded -o Data/Migrations -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
+
+# review and then if needed, remove this migration in order to adjust entities and their relations.
+dotnet ef migrations remove -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
+
+# apply pending migration
+dotnet ef database update -s server/Services/Restore/Restore.Api
+
+```
 
 ## New
