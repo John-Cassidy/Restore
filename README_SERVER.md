@@ -385,27 +385,44 @@ namespace Restore.Infrastructure
 }
 ```
 
-### Migrations
+### Identity Migrations
 
-``powershell
+```powershell
 
 # add migration
-
 dotnet ef migrations add IdentityAdded -o Data/Migrations -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
 
 # review and then if needed, remove this migration in order to adjust entities and their relations.
-
 dotnet ef migrations remove -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
 
 # apply pending migration
-
 dotnet ef database update -s server/Services/Restore/Restore.Api
+```
 
 ## Checkout
 
 install nuget package in Restore.Core project to allow for ef relationships:
 
 - Microsoft.EntityFrameworkCore.Abstractions
+
+### Create OrderAggregate Entities
+
+- Order
+- OrderItem
+- OrderStatus
+- ProductItemOrdered
+- ShippingAddress
+
+```csharp
+// Update StoreContext: protected override void OnModelCreating(ModelBuilder builder)
+
+ builder.Entity<User>()
+            .HasOne(a => a.Address)
+            .WithOne()
+            .HasForeignKey<UserAddress>(a => a.Id)
+            .OnDelete(DeleteBehavior.Cascade);
+
+```
 
 ### Order Status
 
@@ -563,3 +580,36 @@ public class ReturnService
     // Other methods not shown...
 }
 ```
+
+### Update User and Role to use int as primary key
+
+```csharp
+// Update StoreContext:
+public class StoreContext : IdentityDbContext<User, Role, int>
+
+ builder.Entity<Role>()
+            .HasData(
+                new Role {Id = 1, Name = "Member", NormalizedName = "MEMBER" },
+                new Role {Id = 2, Name = "Admin", NormalizedName = "ADMIN" }
+            );
+
+```
+
+### Checkout Migrations
+
+```powershell
+# Drop database to delete store.db file
+dotnet ef database drop -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
+
+# add migration
+dotnet ef migrations add IdentityAndOrderEntityAdded -o Data/Migrations -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
+
+# review and then if needed, remove this migration in order to adjust entities and their relations.
+dotnet ef migrations remove -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
+
+# apply pending migration
+dotnet ef database update -s server/Services/Restore/Restore.Api
+
+```
+
+## New

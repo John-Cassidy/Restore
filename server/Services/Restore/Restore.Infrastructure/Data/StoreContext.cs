@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Restore.Core.Entities;
 using Restore.Core.Entities.OrderAggregate;
 
 namespace Restore.Infrastructure.Data;
 
-public class StoreContext : IdentityDbContext<User>
+public class StoreContext : IdentityDbContext<User, Role, int>
 {
     public StoreContext(DbContextOptions options) : base(options)
     {
@@ -20,10 +19,17 @@ public class StoreContext : IdentityDbContext<User>
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<IdentityRole>()
-        .HasData(
-            new IdentityRole { Name = "Member", NormalizedName = "MEMBER" },
-            new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" }
-        );
+        // use fluent entity creation to create User
+        modelBuilder.Entity<User>()
+            .HasOne(u => u.Address)
+            .WithOne()
+            .HasForeignKey<UserAddress>(a => a.Id)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Role>()
+            .HasData(
+                new Role { Id = 1, Name = "Member", NormalizedName = "MEMBER" },
+                new Role { Id = 2, Name = "Admin", NormalizedName = "ADMIN" }
+            );
     }
 }
