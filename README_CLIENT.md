@@ -117,3 +117,9 @@ npm
 ```powershell
 npm i react-hook-form
 ```
+
+## Checkout
+
+Create a Material UI checkout page using the following [Material UI Template](https://github.com/mui/material-ui/tree/v5.15.7/docs/data/material/getting-started/templates/checkout)
+
+View the [Demo](https://mui.com/material-ui/getting-started/templates/checkout/)
