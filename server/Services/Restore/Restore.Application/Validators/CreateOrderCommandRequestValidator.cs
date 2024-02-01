@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
-using Restore.Application.Requests;
+using Restore.Application.Commands;
 
 namespace Restore.Application.Validators;
 
-public class CreateOrderCommandRequestValidator : AbstractValidator<CreateOrderCommandRequest>
+public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
 {
-    public CreateOrderCommandRequestValidator()
+    public CreateOrderCommandValidator()
     {
         RuleFor(x => x.ShippingAddress).NotNull();
         RuleFor(x => x.ShippingAddress).SetValidator(new AddressRequestValidator());

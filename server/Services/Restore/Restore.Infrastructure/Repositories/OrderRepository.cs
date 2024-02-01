@@ -25,6 +25,7 @@ public class OrderRepository : IOrderRepository
             .Where(o => o.BuyerId == buyerId)
             .Include(o => o.OrderItems)
             .ThenInclude(i => i.ItemOrdered)
+            .AsNoTracking()
             .ToListAsync();
 
         return Result<IReadOnlyList<Order>>.Success(orders);
@@ -36,6 +37,7 @@ public class OrderRepository : IOrderRepository
             .Where(o => o.Id == orderId && o.BuyerId == buyerId)
             .Include(o => o.OrderItems)
             .ThenInclude(i => i.ItemOrdered)
+            .AsNoTracking()
             .FirstOrDefaultAsync();
 
         if (order == null)

@@ -80,7 +80,7 @@ public static class OrdersModule
                         return Results.Problem(title: "Context is null", statusCode: StatusCodes.Status500InternalServerError);
                     }
 
-                    if (context!.User?.Identity?.IsAuthenticated ?? false)
+                    if ((context!.User?.Identity?.IsAuthenticated ?? false) == false)
                     {
                         return Results.Problem(title: "User is not authenticated", statusCode: StatusCodes.Status401Unauthorized);
                     }
@@ -109,7 +109,12 @@ public static class OrdersModule
                     return Results.BadRequest(ex.Message);
                 }
             })
-            .WithName("CreateOrder");
+            .WithName("CreateOrder")
+            .WithOpenApi()
+            .Produces<string>(statusCode: StatusCodes.Status500InternalServerError)
+            .Produces<OrderDto>(StatusCodes.Status201Created)
+            .Produces<string>(StatusCodes.Status401Unauthorized)
+            .Produces<string>(StatusCodes.Status400BadRequest);
 
         return endpoints;
     }
