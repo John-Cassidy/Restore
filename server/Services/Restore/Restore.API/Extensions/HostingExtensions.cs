@@ -96,6 +96,7 @@ public static class HostingExtensions
         app.AddProductsEndpoints();
         app.AddBasketEndpoints();
         app.AddAccountEndpoints();
+        app.AddOrderEndpoints();
 
         var scope = app.Services.CreateScope();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();

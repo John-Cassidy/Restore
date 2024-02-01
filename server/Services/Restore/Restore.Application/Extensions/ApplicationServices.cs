@@ -13,21 +13,33 @@ public static class ApplicationServices
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        services.AddMediatR(cfg =>
-            cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        try
+        {
+            services.AddMediatR(cfg =>
+                cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
-        var configuration = new RestoreMapperConfiguration();
-        // only during development, validate your mappings; remove it before release
+            var configuration = new RestoreMapperConfiguration();
+            // only during development, validate your mappings; remove it before release
 #if DEBUG
-        configuration.AssertConfigurationIsValid();
+            configuration.AssertConfigurationIsValid();
 #endif
-        // use DI (http://docs.automapper.org/en/latest/Dependency-injection.html) or create the mapper yourself
-        var mapper = configuration.CreateMapper();
-        services.AddSingleton(mapper);
+            // use DI (http://docs.automapper.org/en/latest/Dependency-injection.html) or create the mapper yourself
+            var mapper = configuration.CreateMapper();
+            services.AddSingleton(mapper);
 
-        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehavior<,>));
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+        }
+        catch (AutoMapperConfigurationException ex)
+        {
+            foreach (var error in ex.Errors)
+            {
+                Console.WriteLine(error.ToString());
+            }
+
+            throw;
+        }
 
         return services;
     }

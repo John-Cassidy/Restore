@@ -6,7 +6,7 @@ using Restore.Application.Queries;
 using Restore.Application.Responses;
 using Restore.Core.Results;
 
-namespace Restore.API;
+namespace Restore.API.Endpoints;
 
 public static class BasketModule
 {

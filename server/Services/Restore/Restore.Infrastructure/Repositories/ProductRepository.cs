@@ -47,4 +47,9 @@ public class ProductRepository : IProductRepository
         var types = await _context.Products.Select(p => p.Type).Distinct().ToListAsync();
         return (Brands: brands, Types: types);
     }
+
+    public Task<Product?> ReadAsync(int productId)
+    {
+        return _context.Products.Where(p => p.Id == productId).FirstOrDefaultAsync();
+    }
 }

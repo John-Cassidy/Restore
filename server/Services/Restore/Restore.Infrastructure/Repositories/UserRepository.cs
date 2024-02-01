@@ -56,4 +56,9 @@ public class UserRepository : IUserRepository
 
         return Result<User>.Success(user);
     }
+
+    public async Task<User?> ReadAsync(string username)
+    {
+        return await _userManager.FindByNameAsync(username);
+    }
 }

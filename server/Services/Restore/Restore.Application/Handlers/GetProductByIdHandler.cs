@@ -6,12 +6,12 @@ using Restore.Core.Repositories;
 
 namespace Restore.Application.Handlers;
 
-public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, ProductResponse>
+public class GetProductByIdHandler : IRequestHandler<GetProductByIdQuery, ProductResponse>
 {
     private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
 
-    public GetProductByIdQueryHandler(IProductRepository productRepository, IMapper mapper)
+    public GetProductByIdHandler(IProductRepository productRepository, IMapper mapper)
     {
         _productRepository = productRepository;
         _mapper = mapper;
