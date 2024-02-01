@@ -12,6 +12,7 @@ public class RestoreMapperConfiguration : MapperConfiguration
         cfg.ShouldMapProperty = p => p.GetMethod.IsPublic || p.GetMethod.IsAssembly;
         cfg.AddProfile<ProductMappingProfile>();
         cfg.AddProfile<BasketMappingProfile>();
+        cfg.AddProfile<OrderMappingProfile>();
     })
     { }
 }

@@ -10,4 +10,9 @@ public interface IBasketRepository
     Task<Result<Basket>> RemoveItemFromBasketAsync(string buyerId, int productId, int quantity);
     Task<Result<bool>> DeleteBasketAsync(string buyerId);
     Task<Result<bool>> UpdateBasketAsync(string buyerId, string username);
+
+    Task<Basket?> ReadAsync(string buyerId);
+    Task AddAsync(Basket basket);
+    Task UpdateAsync(Basket basket);
+    Task DeleteAsync(Basket basket);
 }

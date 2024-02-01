@@ -9,4 +9,6 @@ public interface IProductRepository
     Task<PagedList<Product>> GetProductsAsync(ProductParams productParams);
     Task<Product?> GetByIdAsync(int id);
     Task<(List<string> Brands, List<string> Types)> GetProductsFilters();
+
+    Task<Product?> ReadAsync(int productId);
 }
