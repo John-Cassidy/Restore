@@ -4,7 +4,6 @@ import { BasketSummary } from '../basket/BasketSummary';
 import { BasketTable } from '../basket/BasketTable';
 import { IBasketItem } from '../../app/models/basket';
 import { IOrder } from '../../app/models/order';
-import React from 'react';
 
 interface IProps {
   order: IOrder;
