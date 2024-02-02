@@ -162,6 +162,39 @@ public static class AccountModule
             .Produces<string>(StatusCodes.Status401Unauthorized)
             .Produces<string>(StatusCodes.Status400BadRequest);
 
+
+        /*
+        create GetUserAddress endpoint that returns an AddressDto with Microsoft.AspNetCore.Authorization attribute to ensure that the user is authenticated.
+        Use User.Identity to get the username and pass it to the GetUserAddressQuery to get the address for the user.
+        If the user is not authenticated, return a 401 Unauthorized response.
+        */
+        endpoints.MapGet("/api/account/address",
+         [Authorize] async (HttpContext context, IMediator mediator) =>
+            {
+                try
+                {
+                    var username = context.User.Identity?.Name;
+                    if (string.IsNullOrEmpty(username))
+                    {
+                        return Results.Unauthorized();
+                    }
+
+                    var query = new GetUserAddressQuery(username);
+                    var address = await mediator.Send(query);
+
+                    return Results.Ok(address?.MapAddressToDto());
+                }
+                catch (Exception ex)
+                {
+                    return Results.BadRequest(ex.Message);
+                }
+            })
+            .WithName("GetUserAddress")
+            .WithOpenApi()
+            .Produces<AddressDto>(StatusCodes.Status200OK)
+            .Produces<string>(StatusCodes.Status401Unauthorized)
+            .Produces<string>(StatusCodes.Status400BadRequest);
+
         return endpoints;
     }
 }
