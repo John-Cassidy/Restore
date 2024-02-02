@@ -100,6 +100,12 @@ const Catalog = {
   filters: () => requests.get('products/filters'),
 };
 
+const Orders = {
+  list: () => requests.get('orders'),
+  fetch: (id: number) => requests.get(`orders/${id}`),
+  create: (values: any) => requests.post('orders', values),
+};
+
 const TestErrors = {
   get400HttpError: () => requests.get('throwBadHttpRequest'),
   get400Error: () => requests.get('throwBadRequest'),
@@ -114,5 +120,6 @@ export const agent = {
   Account,
   Basket,
   Catalog,
+  Orders,
   TestErrors,
 };

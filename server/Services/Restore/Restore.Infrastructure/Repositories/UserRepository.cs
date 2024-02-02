@@ -1,17 +1,21 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Restore.Core.Entities;
 using Restore.Core.Repositories;
 using Restore.Core.Results;
+using Restore.Infrastructure.Data;
 
 namespace Restore.Infrastructure.Repositories;
 
 public class UserRepository : IUserRepository
 {
     private readonly UserManager<User> _userManager;
+    private readonly StoreContext _context;
 
-    public UserRepository(UserManager<User> userManager)
+    public UserRepository(UserManager<User> userManager, StoreContext context)
     {
         _userManager = userManager;
+        _context = context;
     }
 
     public async Task<Result<User>> GetUserAsync(string username)
@@ -60,5 +64,26 @@ public class UserRepository : IUserRepository
     public async Task<User?> ReadAsync(string username)
     {
         return await _userManager.FindByNameAsync(username);
+    }
+
+    public async Task<User?> ReadUserAddressAsync(string username)
+    {
+        var user = await _context.Users.
+                Include(a => a.Address)
+                .FirstOrDefaultAsync(x => x.UserName == username);
+        return user;
+    }
+
+    public async Task UpdateAsync(User user)
+    {
+        var userToUpdate = await _context.Users.
+                Include(a => a.Address)
+                .FirstOrDefaultAsync(x => x.Id == user.Id);
+
+        if (userToUpdate == null) throw new Exception("User not found");
+        if (userToUpdate.Address == null) throw new Exception("User address not found");
+
+        userToUpdate.Address = user.Address;
+        _context.Users.Update(userToUpdate);
     }
 }
