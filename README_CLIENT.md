@@ -118,6 +118,12 @@ npm
 npm i react-hook-form
 ```
 
+[Schema-based form validation with Yup](https://github.com/jquense/yup)
+
+```powershell
+npm i @hookform/resolvers yup
+```
+
 ## Checkout
 
 Create a Material UI checkout page using the following [Material UI Template](https://github.com/mui/material-ui/tree/v5.15.7/docs/data/material/getting-started/templates/checkout)
