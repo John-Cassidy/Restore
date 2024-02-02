@@ -8,6 +8,7 @@ import {
   Typography,
 } from '@mui/material';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
 
 import { AddressForm } from './AddressForm';
 import { LoadingButton } from '@mui/lab';
@@ -16,7 +17,6 @@ import { Review } from './Review';
 import { agent } from '../../app/api/agent';
 import { clearBasket } from '../basket/basketSlice';
 import { useAppDispatch } from '../../app/store/configureStore';
-import { useState } from 'react';
 import { validationSchema } from './checkoutValidation';
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -47,6 +47,18 @@ export const CheckoutPage = () => {
     mode: 'all',
     resolver: yupResolver(currentValidationSchema),
   });
+
+  useEffect(() => {
+    agent.Account.fetchAddress().then((address) => {
+      if (address) {
+        methods.reset({
+          ...methods.getValues(),
+          ...address,
+          saveAddress: false,
+        });
+      }
+    });
+  }, [methods]);
 
   const handleNext = async (data: FieldValues) => {
     const { nameOnCard, saveAddress, ...shippingAddress } = data;

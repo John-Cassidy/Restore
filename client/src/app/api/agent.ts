@@ -83,7 +83,8 @@ const requests = {
 const Account = {
   login: (values: any) => requests.post('account/login', values),
   register: (values: any) => requests.post('account/register', values),
-  current: () => requests.get('account/current'),
+  current: () => requests.get('account/current'),  
+  fetchAddress: () => requests.get('account/address')
 };
 
 const Basket = {
