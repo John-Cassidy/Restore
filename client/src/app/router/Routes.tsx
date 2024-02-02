@@ -11,6 +11,7 @@ import { ContactPage } from '../../features/contact/ContactPage';
 import { HomePage } from '../../features/home/HomePage';
 import { Login } from '../../features/account/Login';
 import NotFound from '../errors/NotFound';
+import { Orders } from '../../features/orders/Orders';
 import { ProductDetails } from '../../features/catalog/ProductDetails';
 import { Register } from '../../features/account/Register';
 import { RequireAuth } from './RequireAuth';
@@ -24,7 +25,10 @@ export const router = createBrowserRouter([
       {
         // authenticated routes
         element: <RequireAuth />,
-        children: [{ path: '/checkout', element: <CheckoutPage /> }],
+        children: [
+          { path: '/checkout', element: <CheckoutPage /> },
+          { path: '/orders', element: <Orders /> },
+        ],
       },
       {
         path: '',

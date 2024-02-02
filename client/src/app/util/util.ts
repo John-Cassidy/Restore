@@ -5,3 +5,7 @@ export const getCookie = (key: string) => {
 export const currencyFormat = (amount: number) => {
   return '$' + (amount / 100).toFixed(2);
 };
+
+export const formatDate = (date: string) => {
+  return new Date(date).toLocaleDateString();
+};
