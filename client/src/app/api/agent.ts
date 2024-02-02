@@ -83,7 +83,8 @@ const requests = {
 const Account = {
   login: (values: any) => requests.post('account/login', values),
   register: (values: any) => requests.post('account/register', values),
-  current: () => requests.get('account/current'),
+  current: () => requests.get('account/current'),  
+  fetchAddress: () => requests.get('account/address')
 };
 
 const Basket = {
@@ -100,6 +101,12 @@ const Catalog = {
   filters: () => requests.get('products/filters'),
 };
 
+const Orders = {
+  list: () => requests.get('orders'),
+  fetch: (id: number) => requests.get(`orders/${id}`),
+  create: (values: any) => requests.post('orders', values),
+};
+
 const TestErrors = {
   get400HttpError: () => requests.get('throwBadHttpRequest'),
   get400Error: () => requests.get('throwBadRequest'),
@@ -114,5 +121,6 @@ export const agent = {
   Account,
   Basket,
   Catalog,
+  Orders,
   TestErrors,
 };

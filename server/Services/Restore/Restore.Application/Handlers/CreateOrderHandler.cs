@@ -74,14 +74,14 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Result<Ord
 
         if (command.SaveAddress)
         {
-            var user = await _unitOfWork.UserRepository.ReadAsync(command.UserName);
+            var user = await _unitOfWork.UserRepository.ReadUserAddressAsync(command.UserName);
             if (user == null)
             {
                 return Result<OrderResponse>.Failure("User not found");
             }
-
             var address = new UserAddress
             {
+                Id = user.Address?.Id ?? 0,
                 FullName = command.ShippingAddress.FullName,
                 Address1 = command.ShippingAddress.Address1,
                 Address2 = command.ShippingAddress.Address2,
@@ -91,6 +91,8 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Result<Ord
                 Country = command.ShippingAddress.Country
             };
             user.Address = address;
+
+            await _unitOfWork.UserRepository.UpdateAsync(user);
         }
 
         var result = await _unitOfWork.CompleteAsync() > 0;
