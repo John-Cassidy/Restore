@@ -696,6 +696,19 @@ dotnet ef database update -s server/Services/Restore/Restore.Api
 
 ### Payment Service
 
-Create PaymentService
+Create PaymentService - used by api to notify stripe to create a payment intent for a basket
 
-Create 
+Create webook - used by stripe to notify api that client payment succeeded for a particular basket
+
+[Stripe Webhook Documentation](https://stripe.com/docs/webhooks)
+
+#### Webhooks
+
+How to set up your webhook integration
+To start receiving webhook events in your app, create and register a webhook endpoint by following the steps below. You can register and create one endpoint to handle several different event types at once, or set up individual endpoints for specific events.
+
+- Identify which events you want to monitor.
+- Develop a webhook endpoint function to receive event data POST requests.
+- Test your webhook endpoint function locally using the Stripe CLI.
+- Register your endpoint within Stripe using the Webhooks Dashboard or the API.
+- Secure your webhook endpoint.
