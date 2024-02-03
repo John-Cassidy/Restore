@@ -3,20 +3,21 @@ import {
   CardExpiryElement,
   CardNumberElement,
 } from '@stripe/react-stripe-js';
-import {
-  Checkbox,
-  FormControlLabel,
-  Grid,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Grid, TextField, Typography } from '@mui/material';
 
 import { AppTextInput } from '../../app/components/AppTextInput';
+import { StripeElementType } from '@stripe/stripe-js';
 import { StripeInput } from './StripeInput';
 import { useFormContext } from 'react-hook-form';
 
-export const PaymentForm = () => {
+interface IProps {
+  cardState: { elementError: { [key in StripeElementType]?: string } };
+  onCardInputChange: (event: any) => void;
+}
+
+export const PaymentForm = ({ cardState, onCardInputChange }: IProps) => {
   const { control } = useFormContext();
+
   return (
     <>
       <Typography variant='h6' gutterBottom>
@@ -32,7 +33,9 @@ export const PaymentForm = () => {
         </Grid>
         <Grid item xs={12} md={6}>
           <TextField
-            // required
+            onChange={onCardInputChange}
+            error={!!cardState.elementError.cardNumber}
+            helperText={cardState.elementError.cardNumber}
             id='cardNumber'
             label='Card number'
             fullWidth
@@ -49,7 +52,9 @@ export const PaymentForm = () => {
         </Grid>
         <Grid item xs={12} md={6}>
           <TextField
-            // required
+            onChange={onCardInputChange}
+            error={!!cardState.elementError.cardExpiry}
+            helperText={cardState.elementError.cardExpiry}
             id='expDate'
             label='Expiry date'
             fullWidth
@@ -66,10 +71,11 @@ export const PaymentForm = () => {
         </Grid>
         <Grid item xs={12} md={6}>
           <TextField
-            // required
+            onChange={onCardInputChange}
+            error={!!cardState.elementError.cardCvc}
+            helperText={cardState.elementError.cardCvc}
             id='cvv'
             label='CVV'
-            helperText='Last three digits on signature strip'
             fullWidth
             autoComplete='cc-csc'
             variant='outlined'
