@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Restore.Application;
 using Restore.Application.Abstractions.Authentication;
 using Restore.Core.Repositories;
 using Restore.Infrastructure.Authentication;
@@ -29,6 +30,7 @@ public static class InfrastructureServices
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IPaymentService, PaymentService>();
 
         return services;
     }
