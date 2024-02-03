@@ -612,4 +612,103 @@ dotnet ef database update -s server/Services/Restore/Restore.Api
 
 ```
 
-## New
+## Payments
+
+### Overview
+
+Use Stripe to manage payment processing
+Use Webhooks to communicate between Stripe and Restore.API
+
+Payment Card Industry Data Security Standard: (PCI Compliance)
+
+- Set of industry standards
+- Deisgned to protect payment card data
+- Increased protection for customers and reduced risk of data breaches involving personal card data
+
+PCI Compliance refers to the Payment Card Industry Data Security Standard (PCI DSS), a set of security standards designed to ensure that all companies that accept, process, store or transmit credit card information maintain a secure environment. The key principles of PCI Compliance are:
+
+1. Build and Maintain a Secure Network and Systems
+
+- Install and maintain a firewall configuration to protect cardholder data.
+- Do not use vendor-supplied defaults for system passwords and other security parameters.
+
+2. Protect Cardholder Data
+
+- Protect stored cardholder data.
+- Encrypt transmission of cardholder data across open, public networks.
+
+3. Maintain a Vulnerability Management Program
+
+- Protect all systems against malware and regularly update anti-virus software or programs.
+- Develop and maintain secure systems and applications.
+
+4. Implement Strong Access Control Measures
+
+- Restrict access to cardholder data by business need to know.
+- Identify and authenticate access to system components.
+- Restrict physical access to cardholder data.
+
+5. Regularly Monitor and Test Networks
+
+- Track and monitor all access to network resources and cardholder data.
+- Regularly test security systems and processes.
+
+6. Maintain an Information Security Policy
+
+- Maintain a policy that addresses information security for all personnel.
+
+Please note that this is a simplified summary. The actual PCI DSS is a detailed and comprehensive document that should be thoroughly understood and followed by any organization that handles cardholder data.
+
+### Stripe Setup
+
+- Setup Stripe Development Account
+- Add public / secret keys as environment variables to api project
+- Add Nuget Package: Stripe.net
+
+> https://github.com/stripe/stripe-dotnet
+
+#### Migrations
+
+Add Properties to Basket Entity:
+
+- public string PaymentIntentId { get; set; }
+- public string ClientSecret { get; set; }
+
+Add Property to Order Entity:
+
+- public string PaymentIntentId { get; set; }
+
+Add Migration:
+
+```powershell
+# Drop database to delete store.db file
+dotnet ef database drop -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
+
+# add migration
+dotnet ef migrations add PaymentIntentAdded -o Data/Migrations -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
+
+# review and then if needed, remove this migration in order to adjust entities and their relations.
+dotnet ef migrations remove -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
+
+# apply pending migration
+dotnet ef database update -s server/Services/Restore/Restore.Api
+```
+
+### Payment Service
+
+Create PaymentService - used by api to notify stripe to create a payment intent for a basket
+
+Create webook - used by stripe to notify api that client payment succeeded for a particular basket
+
+[Stripe Webhook Documentation](https://stripe.com/docs/webhooks)
+
+#### Webhooks
+
+How to set up your webhook integration
+To start receiving webhook events in your app, create and register a webhook endpoint by following the steps below. You can register and create one endpoint to handle several different event types at once, or set up individual endpoints for specific events.
+
+- Identify which events you want to monitor.
+- Develop a webhook endpoint function to receive event data POST requests.
+- Test your webhook endpoint function locally using the Stripe CLI.
+- Register your endpoint within Stripe using the Webhooks Dashboard or the API.
+- Secure your webhook endpoint.

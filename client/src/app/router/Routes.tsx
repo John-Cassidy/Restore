@@ -6,7 +6,7 @@ import { AboutPage } from '../../features/about/AboutPage';
 import { App } from '../layout/App';
 import { BasketPage } from '../../features/basket/BasketPage';
 import { Catalog } from '../../features/catalog/Catalog';
-import { CheckoutPage } from '../../features/checkout/CheckoutPage';
+import { CheckoutWrapper } from '../../features/checkout/CheckoutWrapper';
 import { ContactPage } from '../../features/contact/ContactPage';
 import { HomePage } from '../../features/home/HomePage';
 import { Login } from '../../features/account/Login';
@@ -26,7 +26,7 @@ export const router = createBrowserRouter([
         // authenticated routes
         element: <RequireAuth />,
         children: [
-          { path: '/checkout', element: <CheckoutPage /> },
+          { path: '/checkout', element: <CheckoutWrapper /> },
           { path: '/orders', element: <Orders /> },
         ],
       },
