@@ -129,3 +129,44 @@ npm i @hookform/resolvers yup
 Create a Material UI checkout page using the following [Material UI Template](https://github.com/mui/material-ui/tree/v5.15.7/docs/data/material/getting-started/templates/checkout)
 
 View the [Demo](https://mui.com/material-ui/getting-started/templates/checkout/)
+
+## Payments
+
+### Stripe Setup on client with React
+
+[Stripe React Documenation](https://stripe.com/docs/stripe-js/react)
+
+React Stripe.js is a thin wrapper around Stripe Elements. It allows you to add Elements to any React app.
+
+```powershell
+npm i --save @stripe/react-stripe-js @stripe/stripe-js
+```
+
+Setup [Elements Provider](https://stripe.com/docs/stripe-js/react#elements-provider) and wrap CheckoutPage with CheckoutWrapper
+
+Create [Element Component](https://stripe.com/docs/stripe-js/react#element-components) StripeInput and use it in PaymentForm for credit card input fields
+
+Copilot provided implementation that is slightly different from project implementation.
+
+```tsx
+import { InputBaseComponentProps } from '@mui/material';
+import React, { forwardRef, useImperativeHandle, useRef } from 'react';
+
+interface Props extends InputBaseComponentProps {}
+
+export const StripeInput = forwardRef<unknown, Props>((props, ref) => {
+  const { component: Component, ...otherProps } = props;
+  const elementRef = useRef<any>();
+
+  useImperativeHandle(ref, () => ({
+    focus: () => elementRef.current.focus,
+  }));
+
+  return (
+    <Component
+      onReady={(element: any) => (elementRef.current = element)}
+      {...otherProps}
+    />
+  );
+});
+```
