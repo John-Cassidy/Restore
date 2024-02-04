@@ -83,8 +83,8 @@ const requests = {
 const Account = {
   login: (values: any) => requests.post('account/login', values),
   register: (values: any) => requests.post('account/register', values),
-  current: () => requests.get('account/current'),  
-  fetchAddress: () => requests.get('account/address')
+  current: () => requests.get('account/current'),
+  fetchAddress: () => requests.get('account/address'),
 };
 
 const Basket = {
@@ -107,6 +107,10 @@ const Orders = {
   create: (values: any) => requests.post('orders', values),
 };
 
+const Payments = {
+  createPaymentIntent: () => requests.post('payments', {}),
+};
+
 const TestErrors = {
   get400HttpError: () => requests.get('throwBadHttpRequest'),
   get400Error: () => requests.get('throwBadRequest'),
@@ -122,5 +126,6 @@ export const agent = {
   Basket,
   Catalog,
   Orders,
+  Payments,
   TestErrors,
 };
