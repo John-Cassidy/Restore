@@ -57,6 +57,12 @@ public class OrderRepository : IOrderRepository
             .FirstOrDefaultAsync();
     }
 
+    public async Task<Order?> ReadOrderByPaymentIntentIdAsync(string paymentIntentId)
+    {
+        return await _context.Orders
+            .FirstOrDefaultAsync(o => o.PaymentIntentId == paymentIntentId);
+    }
+
     public async Task AddAsync(Order order)
     {
         await _context.Orders.AddAsync(order);

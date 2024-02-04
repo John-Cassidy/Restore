@@ -21,15 +21,13 @@ namespace Restore.Infrastructure.Data.Migrations
                 name: "ClientSecret",
                 table: "Baskets",
                 type: "TEXT",
-                nullable: false,
-                defaultValue: "");
+                nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "PaymentIntentId",
                 table: "Baskets",
                 type: "TEXT",
-                nullable: false,
-                defaultValue: "");
+                nullable: true);
         }
 
         /// <inheritdoc />

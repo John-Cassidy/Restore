@@ -66,7 +66,8 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Result<Ord
             BuyerId = command.BuyerId,
             ShippingAddress = ShippingAddress,
             Subtotal = subtotal,
-            DeliveryFee = deliveryFee
+            DeliveryFee = deliveryFee,
+            PaymentIntentId = basket.PaymentIntentId,
         };
 
         await _unitOfWork.OrderRepository.AddAsync(order);
