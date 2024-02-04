@@ -789,3 +789,21 @@ Flags:
 Use "stripe [command] --help" for more information about a command.
 
 ```
+
+## User Secrets
+
+[Documenation](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-8.0&tabs=windows)
+
+run commands inside API project folder:
+
+```powershell
+dotnet user-secrets init
+
+dotnet user-secrets set "StripeSettings:PublishableKey" "xxxxx"
+
+dotnet user-secrets set "StripeSettings:SecretKey" "xxxxx"
+
+dotnet user-secrets set "StripeSettings:WhSecret" "xxxxx"
+
+dotnet user-secrets list
+```
