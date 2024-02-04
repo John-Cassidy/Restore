@@ -704,6 +704,9 @@ Create webook - used by stripe to notify api that client payment succeeded for a
 
 #### Webhooks
 
+[Documentation](https://stripe.com/docs/testing#webhooks)
+[Developer Documentation](https://dashboard.stripe.com/test/webhooks)
+
 How to set up your webhook integration
 To start receiving webhook events in your app, create and register a webhook endpoint by following the steps below. You can register and create one endpoint to handle several different event types at once, or set up individual endpoints for specific events.
 
@@ -712,3 +715,77 @@ To start receiving webhook events in your app, create and register a webhook end
 - Test your webhook endpoint function locally using the Stripe CLI.
 - Register your endpoint within Stripe using the Webhooks Dashboard or the API.
 - Secure your webhook endpoint.
+
+[Download, Install, and Use Stripe CLI to test webhook configuration](https://stripe.com/docs/stripe-cli)
+
+```powershell
+# Version
+.\.developernotes\stripe_1.19.2_windows_x86_64\stripe.exe --version
+stripe version 1.19.2
+
+# Login using browser
+.\.developernotes\stripe_1.19.2_windows_x86_64\stripe.exe login
+
+# Get Webhook signing secret:
+.\.developernotes\stripe_1.19.2_windows_x86_64\stripe.exe listen
+
+# All commands
+.\.developernotes\stripe_1.19.2_windows_x86_64\stripe.exe
+The official command-line tool to interact with Stripe.
+
+Before using the CLI, you'll need to login:
+
+  $ stripe login
+
+If you're working on multiple projects, you can run the login command with the
+--project-name flag:
+
+  $ stripe login --project-name rocket-rides
+
+Usage:
+  stripe [command]
+
+Webhook commands:
+  listen                             Listen for webhook events
+  trigger                            Trigger test webhook events
+
+Stripe commands:
+  logs                               Interact with Stripe API request logs
+
+Resource commands:
+  get                           Quickly retrieve resources from Stripe
+  charges                       Make requests (capture, create, list, etc) on charges
+  customers                     Make requests (create, delete, list, etc) on customers
+  payment_intents               Make requests (cancel, capture, confirm, etc) on payment intents
+  ...                           To see more resource commands, run `stripe resources help`
+
+Other commands:
+  community                          Chat with Stripe engineers and other developers
+  completion                         Generate bash and zsh completion scripts
+  config                             Manually change the config values for the CLI
+  feedback                           Provide us with feedback on the CLI
+  fixtures                           Run fixtures to populate your account with data
+  help                               Help about any command
+  login                              Login to your Stripe account
+  logout                             Logout of your Stripe account
+  open                               Quickly open Stripe pages
+  samples                            Sample integrations built by Stripe
+  serve                              Serve static files locally
+  version                            Get the version of the Stripe CLI
+
+Flags:
+      --api-key string        Your API key to use for the command
+      --color string          turn on/off color output (on, off, auto)
+      --config string         config file (default is
+                              $HOME/.config/stripe/config.toml)
+      --device-name string    device name
+  -h, --help                  help for stripe
+      --log-level string      log level (debug, info, trace, warn, error)
+                              (default "info")
+  -p, --project-name string   the project name to read from for config
+                              (default "default")
+  -v, --version               Get the version of the Stripe CLI
+
+Use "stripe [command] --help" for more information about a command.
+
+```

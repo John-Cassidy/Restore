@@ -8,6 +8,7 @@ public interface IOrderRepository
     Task<Result<IReadOnlyList<Order>>> GetOrdersAsync(string buyerId);
     Task<Result<Order>> GetOrderByIdAsync(string buyerId, int orderId);
 
+    Task<Order?> ReadOrderByPaymentIntentIdAsync(string paymentIntentId);
     Task<Order?> ReadAsync(string buyerId, int orderId);
     Task AddAsync(Order order);
     Task UpdateAsync(Order order);

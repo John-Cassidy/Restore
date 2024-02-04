@@ -53,6 +53,23 @@ public static class PaymentsModule
             .Produces<BasketDto>(StatusCodes.Status200OK)
             .Produces<string>(StatusCodes.Status400BadRequest);
 
+        endpoints.MapPost("/api/payments/webhook", async (HttpContext context, IMediator mediator) =>
+        {
+            var stripeEventJson = await new StreamReader(context.Request.Body).ReadToEndAsync();
+            var stripeSignature = context.Request.Headers["Stripe-Signature"];
+
+            var command = new VerifyPaymentCommand(stripeEventJson, stripeSignature);
+            var result = await mediator.Send(command);
+
+            if (!result.IsSuccess)
+            {
+                return Results.Problem(title: result.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
+            }
+
+            return Results.Ok();
+        })
+        .AllowAnonymous();
+
         return endpoints;
     }
 
