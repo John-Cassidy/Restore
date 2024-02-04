@@ -32,6 +32,7 @@ export const CheckoutPage = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [orderNumber, setOrderNumber] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useAppDispatch();
   const [cardState, setCardState] = useState<{
     elementError: { [key in StripeElementType]?: string };
@@ -98,6 +99,7 @@ export const CheckoutPage = () => {
   }, [methods]);
 
   const submitOrder = async (data: FieldValues) => {
+    setIsSubmitting(true);
     setLoading(true);
     const { nameOnCard, saveAddress, ...shippingAddress } = data;
     if (!basket?.clientSecret || !stripe || !elements) return; // stripe is not ready;
@@ -120,7 +122,7 @@ export const CheckoutPage = () => {
           saveAddress,
           shippingAddress,
         });
-        setOrderNumber(orderNumber);
+        setOrderNumber(orderNumber.id);
         setPaymentSucceeded(true);
         setPaymentMessage('Thank you - we have received your payment');
         setActiveStep(activeStep + 1);
@@ -129,12 +131,13 @@ export const CheckoutPage = () => {
       } else {
         setPaymentMessage(paymentResult.error?.message || 'Payment failed');
         setPaymentSucceeded(false);
-        setLoading(false);
         setActiveStep(activeStep + 1);
       }
     } catch (error) {
       console.log(error);
+    } finally {
       setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -151,6 +154,7 @@ export const CheckoutPage = () => {
   };
 
   const submitDisabled = (): boolean => {
+    if (isSubmitting) return true;
     if (activeStep === steps.length - 1) {
       return (
         !cardComplete.cardNumber ||

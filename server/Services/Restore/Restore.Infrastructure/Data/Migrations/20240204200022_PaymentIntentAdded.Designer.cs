@@ -11,7 +11,7 @@ using Restore.Infrastructure.Data;
 namespace Restore.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20240203125402_PaymentIntentAdded")]
+    [Migration("20240204200022_PaymentIntentAdded")]
     partial class PaymentIntentAdded
     {
         /// <inheritdoc />
@@ -129,11 +129,9 @@ namespace Restore.Infrastructure.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ClientSecret")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PaymentIntentId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
