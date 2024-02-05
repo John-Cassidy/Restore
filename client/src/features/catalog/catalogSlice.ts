@@ -7,7 +7,7 @@ import {
 import { IMetaData } from '../../app/models/pagination';
 import { IProduct } from '../../app/models/product';
 import { IProductParams } from '../../app/models/productParams';
-import { RootState } from '@reduxjs/toolkit/query';
+import { RootState } from '../../app/store/configureStore';
 import { agent } from '../../app/api/agent';
 
 const productsAdapter = createEntityAdapter<IProduct>();

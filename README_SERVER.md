@@ -807,3 +807,95 @@ dotnet user-secrets set "StripeSettings:WhSecret" "xxxxx"
 
 dotnet user-secrets list
 ```
+
+## Publishing
+
+In this section:
+
+- Create a Production BUild of the React App
+- Host the React app on the API (Kestrel) Server
+- Switch Database server to PostGreSQL
+- \*Setup and configure Heroku (no longer free to use)
+
+  - Publish to alternative cloud provider
+
+### Setup Client to run in api folder's sub-folder: wwwroot
+
+Once the client code is built and deployed to /wwwroot/ folder in Restore.API project folder
+
+```csharp
+// Add to Restore.API program.cs or startup file
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+// Before        app.UseCors
+
+// call after all the app.Use and app.Map calls
+// i.e.        app.AddPaymentEndpoints();
+
+app.MapFallback(async context =>
+{
+    context.Response.ContentType = "text/html";
+    await context.Response.WriteAsync(File.ReadAllText(Path.Combine(app.Environment.ContentRootPath, "wwwroot", "index.html")));
+});
+```
+
+### Configure Docker and Docker Compose
+
+- add .dockerignore file to solutin folder
+- Create DockerFile in Restore.API project
+- Create docker-compose.yml and docker-compose.override.yml
+
+```powershell
+NOTE: REBUILD IMAGES TO INCLUDE CODE CHANGES AND START
+docker-compose -f docker-compose.yml -f docker-compose.override.yml up --build
+NOTE: START CONTAINERS FROM EXISTING IMAGES WITHOUT REBUILDING
+docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
+NOTE: STOP RUNNING CONTAINERS AND REMOVE CONTAINERS
+docker-compose -f docker-compose.yml -f docker-compose.override.yml down
+```
+
+### Configure production DB Server using PostreSQL
+
+Setup PostgreSQL database run inside Docker container
+
+```json (appsettings)
+"ConnectionStrings": {
+    "DefaultConnection": "Server=localhost;Port=5432;User Id=appuser;Password=secret;Database=store;"
+```
+
+[Available Datbase Provider(s) Documentation](https://learn.microsoft.com/en-us/ef/core/providers/?tabs=dotnet-core-cli)
+
+- Install nuget package: Npgsql.EntityFrameworkCore.PostgreSQL --version 8.0.0
+- Delete Migrations folder (migrations specific to SqlLite)
+- Delete store.db and any associated file(s)
+- DateTime.Now - change to DateTime.UtcNow in all entity classes that have it
+
+  - i.e.: public DateTime OrderDate { get; set; } = DateTime.UtcNow;
+
+```csharp
+services.AddDbContext<StoreContext>(options =>
+    options.UseNpgsql(connectionString), ServiceLifetime.Scoped);
+```
+
+Create New Migration
+
+```powershell
+# Drop database to delete store.db file
+dotnet ef database drop -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
+
+# add migration
+dotnet ef migrations add PostgresInitial -o Data/Migrations -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
+
+# review and then if needed, remove this migration in order to adjust entities and their relations.
+dotnet ef migrations remove -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
+
+# apply pending migration
+dotnet ef database update -s server/Services/Restore/Restore.Api
+```
+
+Run Restore.API in debug mode from VS Code using PostgreSQL DB running in Docker container:
+
+```powershell
+docker run --name restoredb-dev -e POSTGRES_USER=appuser -e POSTGRES_PASSWORD=secret -p 5432:5432 -d postgres:latest
+```

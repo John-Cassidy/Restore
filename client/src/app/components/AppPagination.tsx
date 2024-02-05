@@ -36,7 +36,7 @@ export const AppPagination = ({ metaData, onPageChange }: IProps) => {
         size='large'
         count={totalPages}
         page={pageNumber}
-        onChange={(e, page) => handlePageChange(page)}
+        onChange={(_, page) => handlePageChange(page)}
       />
     </Box>
   );

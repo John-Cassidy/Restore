@@ -6,17 +6,19 @@ import {
   ThemeProvider,
   createTheme,
 } from '@mui/material';
+import { Outlet, useLocation } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
 
 import { Header } from './Header';
+import { HomePage } from '../../features/home/HomePage';
 import { LoadingComponent } from './LoadingComponent';
-import { Outlet } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { fecthBasketAsync } from '../../features/basket/basketSlice';
 import { fetchCurrentUser } from '../../features/account/accountSlice';
 import { useAppDispatch } from '../store/configureStore';
 
 export const App = () => {
+  const location = useLocation();
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
 
@@ -48,9 +50,6 @@ export const App = () => {
     setDarkMode(!darkMode);
   };
 
-  if (loading)
-    return <LoadingComponent message='Loading basket...'></LoadingComponent>;
-
   return (
     <div>
       <ThemeProvider theme={theme}>
@@ -61,9 +60,15 @@ export const App = () => {
         />
         <CssBaseline />
         <Header darkMode={darkMode} handleThemeChange={handleThemeChange} />
-        <Container>
-          <Outlet />
-        </Container>
+        {loading ? (
+          <LoadingComponent message='Initialising app...'></LoadingComponent>
+        ) : location.pathname === '/' ? (
+          <HomePage />
+        ) : (
+          <Container sx={{ mt: 4 }}>
+            <Outlet />
+          </Container>
+        )}
       </ThemeProvider>
     </div>
   );

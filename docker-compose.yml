@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  restoredb:
+    image: postgres:latest
+
+  restore.api:
+    image: ${DOCKER_REGISTRY-}restoreapi
+    build:
+      context: .
+      dockerfile: server/Services/Restore/Restore.API/Dockerfile
+
+volumes:
+  postgres_data:

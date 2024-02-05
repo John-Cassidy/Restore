@@ -23,7 +23,7 @@ public static class InfrastructureServices
         }
 
         services.AddDbContext<StoreContext>(options =>
-            options.UseSqlite(connectionString), ServiceLifetime.Scoped);
+            options.UseNpgsql(connectionString), ServiceLifetime.Scoped);
 
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IBasketRepository, BasketRepository>();
