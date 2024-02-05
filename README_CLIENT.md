@@ -170,3 +170,22 @@ export const StripeInput = forwardRef<unknown, Props>((props, ref) => {
   );
 });
 ```
+
+## Publishing
+
+In this section:
+
+- Create a Production BUild of the React App
+- Host the React app on the API (Kestrel) Server
+- Switch Database server to PostGreSQL
+- \*Setup and configure Heroku (no longer free to use)
+
+  - Publish to alternative cloud provider
+
+### Homepage
+
+[Add Slider to Homepage - React Slick](https://react-slick.neostack.com/)
+
+```powershell
+npm i react-slick @types/react-slick slick-carousel
+```

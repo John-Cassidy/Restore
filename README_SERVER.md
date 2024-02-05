@@ -807,3 +807,16 @@ dotnet user-secrets set "StripeSettings:WhSecret" "xxxxx"
 
 dotnet user-secrets list
 ```
+
+## Publishing
+
+In this section:
+
+- Create a Production BUild of the React App
+- Host the React app on the API (Kestrel) Server
+- Switch Database server to PostGreSQL
+- \*Setup and configure Heroku (no longer free to use)
+
+  - Publish to alternative cloud provider
+
+### New
