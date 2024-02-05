@@ -80,6 +80,9 @@ public static class HostingExtensions
             app.UseHttpsRedirection();
         }
 
+        app.UseDefaultFiles();
+        app.UseStaticFiles();
+
         app.UseCors(opt =>
         {
             opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(configuration["Cors:ClientAddress"]);
@@ -98,6 +101,12 @@ public static class HostingExtensions
         app.AddAccountEndpoints();
         app.AddOrderEndpoints();
         app.AddPaymentEndpoints();
+
+        app.MapFallback(async context =>
+        {
+            context.Response.ContentType = "text/html";
+            await context.Response.WriteAsync(File.ReadAllText(Path.Combine(app.Environment.ContentRootPath, "wwwroot", "index.html")));
+        });
 
         var scope = app.Services.CreateScope();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();

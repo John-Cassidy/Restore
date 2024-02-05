@@ -196,19 +196,13 @@ npm i react-slick @types/react-slick slick-carousel
 
 Create 2 env files in client folder:
 
-- .env.development
-
-```env
+```.env.development
 VITE_API_URL = http://localhost:5000/api/
 ```
 
-- .env.production
-
-```env
+```.env.production
 VITE_API_URL = /api/
 ```
-
-VITE_API_URL = /api/
 
 update baseURL in agent.ts to use environment variable:
 
@@ -216,3 +210,26 @@ update baseURL in agent.ts to use environment variable:
 // Replace: axios.defaults.baseURL = 'http://localhost:5000/api/';
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 ```
+
+### Setup Client to build and run in api folder's sub-folder: wwwroot
+
+```typescript
+// Add to vite.config.ts
+ build: {
+    outDir: '../API/wwwroot'
+  },
+```
+
+```powershell
+# Run command to build client into wwwroot folder
+npm run build
+../server/Services/Restore/Restore.API/wwwroot/assets/index-JtNoU9YU.js                              712.40 kB │ gzip: 225.86 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 19.59s
+```
+
+ONCE this is done, you see README_SERVER.md for information on how to configure and serve client app from Restore.API

@@ -819,4 +819,23 @@ In this section:
 
   - Publish to alternative cloud provider
 
-### New
+### Setup Client to run in api folder's sub-folder: wwwroot
+
+Once the client code is built and deployed to /wwwroot/ folder in Restore.API project folder
+
+```csharp
+// Add to Restore.API program.cs or startup file
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+// Before        app.UseCors
+
+// call after all the app.Use and app.Map calls
+// i.e.        app.AddPaymentEndpoints();
+
+app.MapFallback(async context =>
+{
+    context.Response.ContentType = "text/html";
+    await context.Response.WriteAsync(File.ReadAllText(Path.Combine(app.Environment.ContentRootPath, "wwwroot", "index.html")));
+});
+```
