@@ -840,11 +840,11 @@ app.MapFallback(async context =>
 });
 ```
 
-### Configure production DB Server using PostreSQL
+### Configure Docker and Docker Compose
 
-[Available Datbase Provider(s) Documentation](https://learn.microsoft.com/en-us/ef/core/providers/?tabs=dotnet-core-cli)
-
-#### Setup PostgreSQL database run inside Docker container
+- add .dockerignore file to solutin folder
+- Create DockerFile in Restore.API project
+- Create docker-compose.yml and docker-compose.override.yml
 
 ```powershell
 NOTE: REBUILD IMAGES TO INCLUDE CODE CHANGES AND START
@@ -855,6 +855,47 @@ NOTE: STOP RUNNING CONTAINERS AND REMOVE CONTAINERS
 docker-compose -f docker-compose.yml -f docker-compose.override.yml down
 ```
 
-#### Nuget Package
+### Configure production DB Server using PostreSQL
 
-install nuget package: dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL --version 8.0.0
+Setup PostgreSQL database run inside Docker container
+
+```json (appsettings)
+"ConnectionStrings": {
+    "DefaultConnection": "Server=localhost;Port=5432;User Id=appuser;Password=secret;Database=store;"
+```
+
+[Available Datbase Provider(s) Documentation](https://learn.microsoft.com/en-us/ef/core/providers/?tabs=dotnet-core-cli)
+
+- Install nuget package: Npgsql.EntityFrameworkCore.PostgreSQL --version 8.0.0
+- Delete Migrations folder (migrations specific to SqlLite)
+- Delete store.db and any associated file(s)
+- DateTime.Now - change to DateTime.UtcNow in all entity classes that have it
+
+  - i.e.: public DateTime OrderDate { get; set; } = DateTime.UtcNow;
+
+```csharp
+services.AddDbContext<StoreContext>(options =>
+    options.UseNpgsql(connectionString), ServiceLifetime.Scoped);
+```
+
+Create New Migration
+
+```powershell
+# Drop database to delete store.db file
+dotnet ef database drop -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
+
+# add migration
+dotnet ef migrations add PostgresInitial -o Data/Migrations -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
+
+# review and then if needed, remove this migration in order to adjust entities and their relations.
+dotnet ef migrations remove -p server/Services/Restore/Restore.Infrastructure -s server/Services/Restore/Restore.Api
+
+# apply pending migration
+dotnet ef database update -s server/Services/Restore/Restore.Api
+```
+
+Run Restore.API in debug mode from VS Code using PostgreSQL DB running in Docker container:
+
+```powershell
+docker run --name restoredb-dev -e POSTGRES_USER=appuser -e POSTGRES_PASSWORD=secret -p 5432:5432 -d postgres:latest
+```
