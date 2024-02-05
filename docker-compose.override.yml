@@ -1,0 +1,33 @@
+version: '3.4'
+
+services:
+  restoredb:
+    container_name: restoredb
+    environment:
+      - POSTGRES_USER=appuser
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=store
+    restart: always
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  restore.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=5000
+      - ASPNETCORE_URLS=http://*:5000
+      - 'ConnectionStrings__DefaultConnection=Data source=store.db'
+      - 'Cors__ClientAddress=http://localhost:3000'
+      - 'Jwt__Issuer=http://localhost:5000'
+      - 'Jwt__Audience=http://localhost:3000'
+      - 'Jwt__SecretKey=VGhpcyBpcyBhIHNhbXBsZSBzZWNyZXQga2V5IC0gcGxlYXNlIGRvIG5vdCB1c2UgaW4gcHJvZHVjdGlvbiBlbnZpcm9ubWVudC4'
+      # - 'ConnectionStrings__DefaultConnection=Server=restoredb;Port=5432;Database=store;User Id=appuser;Password=secret;'
+    # depends_on:
+    #   - restoredb
+    ports:
+      - '5000:5000'
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro

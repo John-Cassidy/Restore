@@ -839,3 +839,22 @@ app.MapFallback(async context =>
     await context.Response.WriteAsync(File.ReadAllText(Path.Combine(app.Environment.ContentRootPath, "wwwroot", "index.html")));
 });
 ```
+
+### Configure production DB Server using PostreSQL
+
+[Available Datbase Provider(s) Documentation](https://learn.microsoft.com/en-us/ef/core/providers/?tabs=dotnet-core-cli)
+
+#### Setup PostgreSQL database run inside Docker container
+
+```powershell
+NOTE: REBUILD IMAGES TO INCLUDE CODE CHANGES AND START
+docker-compose -f docker-compose.yml -f docker-compose.override.yml up --build
+NOTE: START CONTAINERS FROM EXISTING IMAGES WITHOUT REBUILDING
+docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
+NOTE: STOP RUNNING CONTAINERS AND REMOVE CONTAINERS
+docker-compose -f docker-compose.yml -f docker-compose.override.yml down
+```
+
+#### Nuget Package
+
+install nuget package: dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL --version 8.0.0
