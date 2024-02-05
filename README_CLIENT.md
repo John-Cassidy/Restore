@@ -189,3 +189,30 @@ In this section:
 ```powershell
 npm i react-slick @types/react-slick slick-carousel
 ```
+
+### Pass Environment Variables to Client (using Vite)
+
+[Env Variables Documentation (Vite)](https://vitejs.dev/guide/env-and-mode)
+
+Create 2 env files in client folder:
+
+- .env.development
+
+```env
+VITE_API_URL = http://localhost:5000/api/
+```
+
+- .env.production
+
+```env
+VITE_API_URL = /api/
+```
+
+VITE_API_URL = /api/
+
+update baseURL in agent.ts to use environment variable:
+
+```typescript
+// Replace: axios.defaults.baseURL = 'http://localhost:5000/api/';
+axios.defaults.baseURL = import.meta.env.VITE_API_URL;
+```
