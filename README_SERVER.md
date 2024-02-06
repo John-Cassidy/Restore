@@ -986,3 +986,32 @@ builder.Services.AddDbContext<StoreContext>(opt =>
 ## GitHub Action - Build Push Docker Image
 
 [GitHub Action to Build Push Docker Image to DockerHub](https://github.com/docker/build-push-action)
+
+## Docker Build Notes (Scout Vulnerability Scanner)
+
+```powershell
+# BUILD from sln folder
+docker build -t restore-api -f ./server/Services/Restore/Restore.API/Dockerfile .
+
+# View a summary of image vulnerabilities and recommendations
+docker scout quickview restore-api:latest
+   i New version 1.4.1 available (installed version is 1.2.0) at https://github.com/docker/scout-cli
+    v SBOM of image already cached, 486 packages indexed
+
+  Target               │  restore-api:latest  │    0C     0H     0M    24L
+    digest             │  fe6ff7df6cbd        │
+  Base image           │  debian:12-slim      │    0C     0H     0M    22L
+  Refreshed base image │  debian:12-slim      │    0C     0H     0M    19L
+                       │                      │                         -3
+  Updated base image   │  debian:stable-slim  │    0C     0H     0M    19L
+                       │                      │                         -3
+
+# View vulnerabilities
+docker scout cves restore-api:latest
+
+# View base image update recommendations
+docker scout recommendations restore-api:latest
+
+# Include policy results in your quickview by supplying an organization
+docker scout quickview restore-api:latest --org <organization>
+```
