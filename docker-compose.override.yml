@@ -18,7 +18,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=5000
       - ASPNETCORE_URLS=http://*:5000
-      - 'ConnectionStrings__DefaultConnection=Data source=store.db'
+      - 'ConnectionStrings__DefaultConnection=Server=restoredb;Port=5432;User Id=appuser;Password=secret;Database=store;'
       - 'Cors__ClientAddress=http://localhost:3000'
       - 'Jwt__Issuer=http://localhost:5000'
       - 'Jwt__Audience=http://localhost:3000'

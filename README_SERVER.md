@@ -808,16 +808,16 @@ dotnet user-secrets set "StripeSettings:WhSecret" "xxxxx"
 dotnet user-secrets list
 ```
 
-## Publishing
+## Publishing - Create Production Build
 
 In this section:
 
-- Create a Production BUild of the React App
+- Create a Production Build of the React App
 - Host the React app on the API (Kestrel) Server
 - Switch Database server to PostGreSQL
 - \*Setup and configure Heroku (no longer free to use)
 
-  - Publish to alternative cloud provider
+  - Publish to alternative cloud provider (Fly.io)
 
 ### Setup Client to run in api folder's sub-folder: wwwroot
 
@@ -849,11 +849,20 @@ app.MapFallback(async context =>
 ```powershell
 NOTE: REBUILD IMAGES TO INCLUDE CODE CHANGES AND START
 docker-compose -f docker-compose.yml -f docker-compose.override.yml up --build
+
+OR REBUILD IMAGES USING NOCACHE OPTION:
+docker-compose -f docker-compose.yml -f docker-compose.override.yml build --no-cache
+docker-compose -f docker-compose.yml -f docker-compose.override.yml up
+
 NOTE: START CONTAINERS FROM EXISTING IMAGES WITHOUT REBUILDING
 docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
 NOTE: STOP RUNNING CONTAINERS AND REMOVE CONTAINERS
 docker-compose -f docker-compose.yml -f docker-compose.override.yml down
 ```
+
+[Running API in Docker Container (Local Development)](http://localhost:5000/swagger/index.html)
+
+[Runnning Client from API Container (Local Development)](http://localhost:5000/)
 
 ### Configure production DB Server using PostreSQL
 
@@ -899,3 +908,13 @@ Run Restore.API in debug mode from VS Code using PostgreSQL DB running in Docker
 ```powershell
 docker run --name restoredb-dev -e POSTGRES_USER=appuser -e POSTGRES_PASSWORD=secret -p 5432:5432 -d postgres:latest
 ```
+
+## Publishing - Deployment
+
+Publish to alternative cloud provider: [Fly.io](https://fly.io/)
+
+[Pricing](https://fly.io/docs/about/pricing/)
+
+[Docs](https://fly.io/docs/)
+
+[Deploy via Dockerfile](https://fly.io/docs/languages-and-frameworks/dockerfile/)

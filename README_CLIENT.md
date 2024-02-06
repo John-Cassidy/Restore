@@ -171,7 +171,7 @@ export const StripeInput = forwardRef<unknown, Props>((props, ref) => {
 });
 ```
 
-## Publishing
+## Publishing - Create Production Build
 
 In this section:
 
@@ -233,3 +233,5 @@ npm run build
 ```
 
 ONCE this is done, you see README_SERVER.md for information on how to configure and serve client app from Restore.API
+
+## Publishing - Deployment
