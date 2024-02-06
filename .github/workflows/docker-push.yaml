@@ -9,7 +9,7 @@ on:
       - '**.csproj'
 
 env:
-  DOTNET_VERSION: '8.0.x' # The .NET SDK version to use
+  DOTNET_VERSION: '8.0.x'
 
 jobs:
   docker:
@@ -17,6 +17,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install and build client
+        run: |
+          cd client
+          npm ci
+          npm run build
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
