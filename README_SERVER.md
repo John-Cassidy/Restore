@@ -918,3 +918,67 @@ Publish to alternative cloud provider: [Fly.io](https://fly.io/)
 [Docs](https://fly.io/docs/)
 
 [Deploy via Dockerfile](https://fly.io/docs/languages-and-frameworks/dockerfile/)
+
+- Sign up for Fly.io
+- Install fly cli (use cli to setup secrets)
+
+Setup fly.toml file
+
+```env
+# fly.toml app configuration file generated for restore on 2023-10-07T09:36:21+07:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "restore"
+primary_region = "sin"
+
+[build]
+  image = "[yourflyiousername]/restore-2024:latest"
+
+[env]
+  ASPNETCORE_URLS="http://+:8080"
+  StripeSettings__PublishableKey="pk_test_51NyAuoEC6xY0kJuUzLTr6XXlHULBlNJb9f9MJfrsyceFm008XH8KvzATWlPK11181jMgqlYOm4Q7Sd5yHnuJpl5l00Ghzq3JiO"
+  Cloudinary__CloudName="dj3wmuy3l"
+  Cloudinary__ApiKey="895484589483755"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+```
+
+FLy.io PostgreSQL Connection
+
+```csharp
+string connString;
+if (builder.Environment.IsDevelopment())
+    connString = builder.Configuration.GetConnectionString("DefaultConnection");
+else
+{
+    // Use connection string provided at runtime by FlyIO.
+    var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+    // Parse connection URL to connection string for Npgsql
+    connUrl = connUrl.Replace("postgres://", string.Empty);
+    var pgUserPass = connUrl.Split("@")[0];
+    var pgHostPortDb = connUrl.Split("@")[1];
+    var pgHostPort = pgHostPortDb.Split("/")[0];
+    var pgDb = pgHostPortDb.Split("/")[1];
+    var pgUser = pgUserPass.Split(":")[0];
+    var pgPass = pgUserPass.Split(":")[1];
+    var pgHost = pgHostPort.Split(":")[0];
+    var pgPort = pgHostPort.Split(":")[1];
+    var updatedHost = pgHost.Replace(“flycast”, “internal”);
+
+    connString = $"Server={updatedHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};";
+}
+builder.Services.AddDbContext<StoreContext>(opt =>
+{
+    opt.UseNpgsql(connString);
+});
+
+```
