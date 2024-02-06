@@ -33,4 +33,4 @@ jobs:
           context: '.'
           file: './server/Services/Restore/Restore.API/Dockerfile'
           push: true
-          tags: jpcassidy/restore:latest
+          tags: jpcassidy/restoreapi:latest

@@ -847,16 +847,16 @@ app.MapFallback(async context =>
 - Create docker-compose.yml and docker-compose.override.yml
 
 ```powershell
-NOTE: REBUILD IMAGES TO INCLUDE CODE CHANGES AND START
+# NOTE: REBUILD IMAGES TO INCLUDE CODE CHANGES AND START
 docker-compose -f docker-compose.yml -f docker-compose.override.yml up --build
 
-OR REBUILD IMAGES USING NOCACHE OPTION:
+# OR REBUILD IMAGES USING NOCACHE OPTION:
 docker-compose -f docker-compose.yml -f docker-compose.override.yml build --no-cache
 docker-compose -f docker-compose.yml -f docker-compose.override.yml up
 
-NOTE: START CONTAINERS FROM EXISTING IMAGES WITHOUT REBUILDING
+# NOTE: START CONTAINERS FROM EXISTING IMAGES WITHOUT REBUILDING
 docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
-NOTE: STOP RUNNING CONTAINERS AND REMOVE CONTAINERS
+# NOTE: STOP RUNNING CONTAINERS AND REMOVE CONTAINERS
 docker-compose -f docker-compose.yml -f docker-compose.override.yml down
 ```
 
@@ -991,7 +991,7 @@ builder.Services.AddDbContext<StoreContext>(opt =>
 
 ```powershell
 # BUILD from sln folder
-docker build -t restore-api -f ./server/Services/Restore/Restore.API/Dockerfile .
+docker build -t restoreapi:dev -f ./server/Services/Restore/Restore.API/Dockerfile .
 
 # View a summary of image vulnerabilities and recommendations
 docker scout quickview restore-api:latest
