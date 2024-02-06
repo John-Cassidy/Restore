@@ -982,3 +982,7 @@ builder.Services.AddDbContext<StoreContext>(opt =>
 });
 
 ```
+
+## GitHub Action - Build Push Docker Image
+
+[GitHub Action to Build Push Docker Image to DockerHub](https://github.com/docker/build-push-action)
