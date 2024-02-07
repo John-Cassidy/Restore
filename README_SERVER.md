@@ -808,16 +808,16 @@ dotnet user-secrets set "StripeSettings:WhSecret" "xxxxx"
 dotnet user-secrets list
 ```
 
-## Publishing
+## Publishing - Create Production Build
 
 In this section:
 
-- Create a Production BUild of the React App
+- Create a Production Build of the React App
 - Host the React app on the API (Kestrel) Server
 - Switch Database server to PostGreSQL
 - \*Setup and configure Heroku (no longer free to use)
 
-  - Publish to alternative cloud provider
+  - Publish to alternative cloud provider (Fly.io)
 
 ### Setup Client to run in api folder's sub-folder: wwwroot
 
@@ -847,13 +847,22 @@ app.MapFallback(async context =>
 - Create docker-compose.yml and docker-compose.override.yml
 
 ```powershell
-NOTE: REBUILD IMAGES TO INCLUDE CODE CHANGES AND START
+# NOTE: REBUILD IMAGES TO INCLUDE CODE CHANGES AND START
 docker-compose -f docker-compose.yml -f docker-compose.override.yml up --build
-NOTE: START CONTAINERS FROM EXISTING IMAGES WITHOUT REBUILDING
+
+# OR REBUILD IMAGES USING NOCACHE OPTION:
+docker-compose -f docker-compose.yml -f docker-compose.override.yml build --no-cache
+docker-compose -f docker-compose.yml -f docker-compose.override.yml up
+
+# NOTE: START CONTAINERS FROM EXISTING IMAGES WITHOUT REBUILDING
 docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
-NOTE: STOP RUNNING CONTAINERS AND REMOVE CONTAINERS
+# NOTE: STOP RUNNING CONTAINERS AND REMOVE CONTAINERS
 docker-compose -f docker-compose.yml -f docker-compose.override.yml down
 ```
+
+[Running API in Docker Container (Local Development)](http://localhost:5000/swagger/index.html)
+
+[Runnning Client from API Container (Local Development)](http://localhost:5000/)
 
 ### Configure production DB Server using PostreSQL
 
@@ -898,4 +907,111 @@ Run Restore.API in debug mode from VS Code using PostgreSQL DB running in Docker
 
 ```powershell
 docker run --name restoredb-dev -e POSTGRES_USER=appuser -e POSTGRES_PASSWORD=secret -p 5432:5432 -d postgres:latest
+```
+
+## Publishing - Deployment
+
+Publish to alternative cloud provider: [Fly.io](https://fly.io/)
+
+[Pricing](https://fly.io/docs/about/pricing/)
+
+[Docs](https://fly.io/docs/)
+
+[Deploy via Dockerfile](https://fly.io/docs/languages-and-frameworks/dockerfile/)
+
+- Sign up for Fly.io
+- Install fly cli (use cli to setup secrets)
+
+Setup fly.toml file
+
+```env
+# fly.toml app configuration file generated for restore on 2023-10-07T09:36:21+07:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "restore"
+primary_region = "sin"
+
+[build]
+  image = "[yourflyiousername]/restore-2024:latest"
+
+[env]
+  ASPNETCORE_URLS="http://+:8080"
+  StripeSettings__PublishableKey="pk_test_51NyAuoEC6xY0kJuUzLTr6XXlHULBlNJb9f9MJfrsyceFm008XH8KvzATWlPK11181jMgqlYOm4Q7Sd5yHnuJpl5l00Ghzq3JiO"
+  Cloudinary__CloudName="dj3wmuy3l"
+  Cloudinary__ApiKey="895484589483755"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+```
+
+FLy.io PostgreSQL Connection
+
+```csharp
+string connString;
+if (builder.Environment.IsDevelopment())
+    connString = builder.Configuration.GetConnectionString("DefaultConnection");
+else
+{
+    // Use connection string provided at runtime by FlyIO.
+    var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+    // Parse connection URL to connection string for Npgsql
+    connUrl = connUrl.Replace("postgres://", string.Empty);
+    var pgUserPass = connUrl.Split("@")[0];
+    var pgHostPortDb = connUrl.Split("@")[1];
+    var pgHostPort = pgHostPortDb.Split("/")[0];
+    var pgDb = pgHostPortDb.Split("/")[1];
+    var pgUser = pgUserPass.Split(":")[0];
+    var pgPass = pgUserPass.Split(":")[1];
+    var pgHost = pgHostPort.Split(":")[0];
+    var pgPort = pgHostPort.Split(":")[1];
+    var updatedHost = pgHost.Replace(“flycast”, “internal”);
+
+    connString = $"Server={updatedHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};";
+}
+builder.Services.AddDbContext<StoreContext>(opt =>
+{
+    opt.UseNpgsql(connString);
+});
+
+```
+
+## GitHub Action - Build Push Docker Image
+
+[GitHub Action to Build Push Docker Image to DockerHub](https://github.com/docker/build-push-action)
+
+## Docker Build Notes (Scout Vulnerability Scanner)
+
+```powershell
+# BUILD from sln folder
+docker build -t restoreapi:dev -f ./server/Services/Restore/Restore.API/Dockerfile .
+
+# View a summary of image vulnerabilities and recommendations
+docker scout quickview restore-api:latest
+   i New version 1.4.1 available (installed version is 1.2.0) at https://github.com/docker/scout-cli
+    v SBOM of image already cached, 486 packages indexed
+
+  Target               │  restore-api:latest  │    0C     0H     0M    24L
+    digest             │  fe6ff7df6cbd        │
+  Base image           │  debian:12-slim      │    0C     0H     0M    22L
+  Refreshed base image │  debian:12-slim      │    0C     0H     0M    19L
+                       │                      │                         -3
+  Updated base image   │  debian:stable-slim  │    0C     0H     0M    19L
+                       │                      │                         -3
+
+# View vulnerabilities
+docker scout cves restore-api:latest
+
+# View base image update recommendations
+docker scout recommendations restore-api:latest
+
+# Include policy results in your quickview by supplying an organization
+docker scout quickview restore-api:latest --org <organization>
 ```
