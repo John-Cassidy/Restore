@@ -1,0 +1,65 @@
+# API Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restore-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restore-api
+  template:
+    metadata:
+      labels:
+        app: restore-api
+    spec:
+      containers:
+        - name: restore-api
+          image: jpcassidy/restoreapi
+          ports:
+            - containerPort: 5000
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+            - name: ASPNETCORE_HTTP_PORTS
+              value: '5000'
+            - name: ASPNETCORE_URLS
+              value: 'http://*:5000'
+            - name: Cors__ClientAddress
+              value: 'http://localhost:3000'
+            - name: Jwt__Issuer
+              value: 'http://localhost:5000'
+            - name: Jwt__Audience
+              value: 'http://localhost:3000'
+            - name: Jwt__SecretKey
+              value: 'VGhpcyBpcyBhIHNhbXBsZSBzZWNyZXQga2V5IC0gcGxlYXNlIGRvIG5vdCB1c2UgaW4gcHJvZHVjdGlvbiBlbnZpcm9ubWVudC4'
+            - name: ConnectionStrings__DefaultConnection
+              value: 'Server=restoredb-service;Port=5432;Database=store;User Id=appuser;Password=secret;'
+            - name: StripeSettings__PublishableKey
+              value: 'xxxx'
+            - name: StripeSettings__SecretKey
+              value: 'xxxx'
+            - name: StripeSettings__WhSecret
+              value: 'xxxx'
+          resources:
+            limits:
+              cpu: '1'
+              memory: '512Mi'
+            requests:
+              cpu: '0.5'
+              memory: '256Mi'
+---
+# API Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: restore-api-service
+spec:
+  type: NodePort
+  selector:
+    app: restore-api
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+      nodePort: 30050

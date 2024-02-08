@@ -1,0 +1,64 @@
+# Postgres Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restoredb-deployment
+  labels:
+    app: restoredb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restoredb
+  template:
+    metadata:
+      labels:
+        app: restoredb
+    spec:
+      containers:
+        - name: restoredb
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: store
+            - name: POSTGRES_USER
+              value: appuser
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-secret
+                  key: postgresql-password
+            - name: POSTGRES_DB
+              value: store
+          resources:
+            limits:
+              cpu: '1'
+              memory: '1Gi'
+            requests:
+              cpu: '100m'
+              memory: '256Mi'
+      volumes:
+        - name: postgres-data
+          emptyDir: {}
+      #     volumeMounts:
+      #       - mountPath: /var/lib/postgresql/data
+      #         name: postgres-data
+
+      # volumes:
+      #   - name: postgres-data
+      #     persistentVolumeClaim:
+      #       claimName: postgres-pvc
+---
+# Postgres Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: restoredb-service
+spec:
+  selector:
+    app: restoredb
+  ports:
+    - port: 5432
+      targetPort: 5432
