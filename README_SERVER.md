@@ -1015,3 +1015,104 @@ docker scout recommendations restore-api:latest
 # Include policy results in your quickview by supplying an organization
 docker scout quickview restore-api:latest --org <organization>
 ```
+
+## Kubernetes
+
+### Copilot to Convert convert docker-compose.yaml to kubernetes.yaml
+
+Create files:
+
+PostgreSQL DB
+
+- restore-db.yaml
+- postgresql-secret.yaml
+- posgressql-configmap.yaml
+
+Restore API
+
+- restore-api.yaml
+
+### Kubernetes Secretes
+
+```powershell
+$Text = 'secret'
+# base64 encode
+$EncodedText = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($Text))
+# base64 decode
+$DecodedText = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($EncodedText))
+# output
+Write-Host $EncodedText
+Write-Host $DecodedText
+```
+
+### Kubernetes Dashboard
+
+Start the Kubernetes proxy:
+
+```powershell
+kubectl proxy
+```
+
+Access the Dashboard by opening the following URL in your web browser:
+
+```text
+http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+```
+
+Setup Login User w/token
+
+Create a user to log into Kubernetes Dashboard > https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
+
+Instructions for creating a sample user
+https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md
+
+```powershell
+# create dashboard-adminuser.yaml
+kubectl apply -f dashboard-adminuser.yaml
+serviceaccount/admin-user created
+
+# create dashboard-cluster-admin-role.yaml
+kubectl apply -f dashboard-cluster-admin-role.yaml
+clusterrolebinding.rbac.authorization.k8s.io/admin-user created
+```
+
+Get the Bearer Token
+
+```powershell
+kubectl -n kubernetes-dashboard create token admin-user
+```
+
+### Kubernetes Commands
+
+```powershell
+### DEPLOYMENT ###
+# create postgresql secret
+kubectl apply -f .\kubernetes\restore-db\postgresql-secret.yaml
+# create restoredb deployment
+kubectl apply -f .\kubernetes\restore-db\restoredb-deployment.yaml
+# create restore-api deployment
+kubectl apply -f .\kubernetes\restore-api\restore-api-deployment.yaml
+
+### DELETE ###
+# delete restore-api deployment
+kubectl delete deployment restore-api-deployment
+# delete restoredb deployment
+kubectl delete deployment restoredb-deployment
+# delete restore-api service
+kubectl delete service restore-api-service
+# delete restoredb service
+kubectl delete service restoredb-service
+# delete postgresql secret
+kubectl delete secret postgresql-secret
+```
+
+### kubectl Commands
+
+```powershell
+kubectl describe deployment restoredb-deployment
+kubectl get pods
+kubectl describe pod restoredb-deployment-6dc7df5896-4f6gn
+kubectl logs restoredb-deployment-6dc7df5896-4f6gn
+```
+
+## CRUD
