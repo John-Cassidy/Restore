@@ -1086,16 +1086,22 @@ kubectl -n kubernetes-dashboard create token admin-user
 
 ```powershell
 ### DEPLOYMENT ###
+# create postgresql pv and postresql pvc
+kubectl apply -f .\kubernetes\restore-db\postgresql-pv.yaml
 # create postgresql secret
 kubectl apply -f .\kubernetes\restore-db\postgresql-secret.yaml
 # create restoredb deployment
 kubectl apply -f .\kubernetes\restore-db\restoredb-deployment.yaml
+# create postgresql config map
+kubectl apply -f .\kubernetes\restore-db\postgresql-configmap.yaml
 # create restore-api deployment
 kubectl apply -f .\kubernetes\restore-api\restore-api-deployment.yaml
 
 ### DELETE ###
 # delete restore-api deployment
 kubectl delete deployment restore-api-deployment
+# delete postgresql-config
+kubectl delete configmap postgresql-config
 # delete restoredb deployment
 kubectl delete deployment restoredb-deployment
 # delete restore-api service
@@ -1104,6 +1110,10 @@ kubectl delete service restore-api-service
 kubectl delete service restoredb-service
 # delete postgresql secret
 kubectl delete secret postgresql-secret
+# postresql pvc
+kubectl delete pvc postgres-pvc
+# delete postgresql pv
+kubectl delete pv postgres-pv
 ```
 
 ### kubectl Commands
@@ -1113,6 +1123,10 @@ kubectl describe deployment restoredb-deployment
 kubectl get pods
 kubectl describe pod restoredb-deployment-6dc7df5896-4f6gn
 kubectl logs restoredb-deployment-6dc7df5896-4f6gn
+
+kubectl get svc
+kubectl get pv
+kubectl get pvc
 ```
 
 ## CRUD

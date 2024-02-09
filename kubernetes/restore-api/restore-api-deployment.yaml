@@ -34,7 +34,13 @@ spec:
             - name: Jwt__SecretKey
               value: 'VGhpcyBpcyBhIHNhbXBsZSBzZWNyZXQga2V5IC0gcGxlYXNlIGRvIG5vdCB1c2UgaW4gcHJvZHVjdGlvbiBlbnZpcm9ubWVudC4'
             - name: ConnectionStrings__DefaultConnection
-              value: 'Server=restoredb-service;Port=5432;Database=store;User Id=appuser;Password=secret;'
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-secret
+                  key: db-connection-secret
+                # configMapKeyRef:
+                #   name: postgresql-config
+                #   key: db-connection
             - name: StripeSettings__PublishableKey
               value: 'xxxx'
             - name: StripeSettings__SecretKey
