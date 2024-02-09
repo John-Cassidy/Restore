@@ -1129,4 +1129,9 @@ kubectl get pv
 kubectl get pvc
 ```
 
-## CRUD
+## CRUD Operations / User Role Based Security
+
+- Products CRUD Operations
+- Image Upload
+- Reusable Form Inputs
+- User Role Based Security

@@ -1,16 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Restore.API.Endpoints;
-using Restore.Application.Handlers;
 using Restore.Application.Extensions;
 using Restore.Infrastructure.Data;
 using Restore.Infrastructure.Extensions;
 using Restore.API.Handlers;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Restore.Core.Exceptions;
-using System.Runtime.Serialization;
-using Restore.Core;
-using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Restore.Core.Entities;
 using Microsoft.AspNetCore.Identity;

@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Restore.Application;
 using Restore.Application.Abstractions.Authentication;
 using Restore.Application.Services;
 using Restore.Core.Repositories;

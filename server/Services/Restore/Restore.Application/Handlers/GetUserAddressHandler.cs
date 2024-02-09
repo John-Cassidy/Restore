@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using MediatR;
-using Restore.Application.Abstractions.Authentication;
+﻿using MediatR;
 using Restore.Application.Queries;
 using Restore.Application.Responses;
 using Restore.Core.Repositories;

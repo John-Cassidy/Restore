@@ -1,13 +1,8 @@
 ﻿using MediatR;
 using Restore.Application.Queries;
-using Restore.Core.Entities;
 using Restore.Core.Pagination;
-using Restore.Core.Repositories;
-using Microsoft.AspNetCore.Http;
 using Restore.Application.Responses;
-using FluentValidation.Results;
 using FluentValidation;
-using System.Text.Json;
 using Restore.API.Handlers;
 using Restore.API.Extensions;
 
