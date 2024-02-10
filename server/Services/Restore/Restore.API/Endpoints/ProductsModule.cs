@@ -97,7 +97,6 @@ public static class ProductsModule
             [Authorize(Roles = "Admin")] async (HttpContext context,
             IMediator mediator,
             IValidationExceptionHandler validationExceptionHandler,
-            CreateProductDto createProductDto,
             Func<IFormFile, IFormFileService> formFileServiceFactory) =>
             {
                 try
@@ -111,10 +110,29 @@ public static class ProductsModule
                     {
                         return Results.Problem(title: "User is not authenticated", statusCode: StatusCodes.Status401Unauthorized);
                     }
-                    if (createProductDto.File is null || createProductDto.File?.Length == 0 || string.IsNullOrWhiteSpace(createProductDto.File?.FileName))
+
+                    var form = await context.Request.ReadFormAsync();
+                    if (form is null)
+                    {
+                        return Results.Problem(title: "Form is null", statusCode: StatusCodes.Status400BadRequest);
+                    }
+                    var file = form.Files.GetFile("File");
+
+                    if (file is null || file.Length == 0 || string.IsNullOrWhiteSpace(file.FileName))
                     {
                         return Results.Problem(title: "File is required", statusCode: StatusCodes.Status400BadRequest);
                     }
+
+                    var createProductDto = new CreateProductDto
+                    {
+                        Name = form["Name"],
+                        Description = form["Description"],
+                        Price = long.Parse(form["Price"]),
+                        Type = form["Type"],
+                        Brand = form["Brand"],
+                        QuantityInStock = int.Parse(form["QuantityInStock"]),
+                        File = file
+                    };
 
                     IFormFileService? formFileService = formFileServiceFactory(createProductDto.File);
 
