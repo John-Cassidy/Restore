@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Restore.Core.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Antiforgery;
 
 namespace Restore.API.Extensions;
 
@@ -16,6 +17,19 @@ public static class HostingExtensions
     public static void ConfigureServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddLogging();
+
+        // builder.Services.AddAntiforgery();
+        // builder.Services.AddAntiforgery(options =>
+        // {
+        //     // Set Cookie properties using CookieBuilder properties†.
+        //     options.FormFieldName = "AntiforgeryFieldname";
+        //     options.HeaderName = "X-CSRF-TOKEN-HEADERNAME";
+        //     options.SuppressXFrameOptionsHeader = false;
+        // });
+
+        // Just setting the name of XSRF token
+        builder.Services.AddAntiforgery(options => options.HeaderName = "X-XSRF-TOKEN");
+
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(c =>
         {
@@ -95,6 +109,14 @@ public static class HostingExtensions
         app.AddOrderEndpoints();
         app.AddPaymentEndpoints();
 
+        // Get token
+        app.MapGet("antiforgery/token", (IAntiforgery forgeryService, HttpContext context) =>
+        {
+            var tokens = forgeryService.GetAndStoreTokens(context);
+            var xsrfToken = tokens.RequestToken!;
+            return TypedResults.Content(xsrfToken, "text/plain");
+        });
+
         app.MapFallback(async context =>
         {
             context.Response.ContentType = "text/html";
@@ -108,7 +130,6 @@ public static class HostingExtensions
 
         try
         {
-
             await context.Database.MigrateAsync();
             await context.Database.EnsureCreatedAsync();
             await DbInitializer.InitializeAsync(context, userManager);

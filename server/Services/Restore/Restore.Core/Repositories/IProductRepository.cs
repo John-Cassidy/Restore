@@ -11,4 +11,6 @@ public interface IProductRepository
     Task<(List<string> Brands, List<string> Types)> GetProductsFilters();
 
     Task<Product?> ReadAsync(int productId);
+    Task AddAsync(Product product);
+    Task UpdateAsync(Product product);
 }

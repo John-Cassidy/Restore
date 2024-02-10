@@ -5,6 +5,10 @@ using Restore.Application.Responses;
 using FluentValidation;
 using Restore.API.Handlers;
 using Restore.API.Extensions;
+using Restore.Application.Requests;
+using Restore.Application.Commands;
+using Restore.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Restore.API.Endpoints;
 
@@ -69,7 +73,6 @@ public static class ProductsModule
         // var brands = await _context.Products.Select(p => p.Brand).Distinct().ToListAsync();
         // var types = await _context.Products.Select(p => p.Type).Distinct().ToListAsync();
         // return Ok(new { brands, types });
-
         endpoints.MapGet("/api/products/filters",
             async (IMediator mediator) =>
             {
@@ -89,6 +92,63 @@ public static class ProductsModule
             .Produces<ProductsFiltersResponse>(StatusCodes.Status200OK)
             .Produces<string>(StatusCodes.Status400BadRequest);
 
+        // create post endpoint that accepts a product and returns the created product
+        endpoints.MapPost("/api/products",
+            [Authorize(Roles = "Admin")] async (HttpContext context,
+            IMediator mediator,
+            IValidationExceptionHandler validationExceptionHandler,
+            CreateProductDto createProductDto,
+            Func<IFormFile, IFormFileService> formFileServiceFactory) =>
+            {
+                try
+                {
+                    if (context == null)
+                    {
+                        return Results.Problem(title: "Context is null", statusCode: StatusCodes.Status500InternalServerError);
+                    }
+
+                    if ((context!.User?.Identity?.IsAuthenticated ?? false) == false)
+                    {
+                        return Results.Problem(title: "User is not authenticated", statusCode: StatusCodes.Status401Unauthorized);
+                    }
+                    if (createProductDto.File is null || createProductDto.File?.Length == 0 || string.IsNullOrWhiteSpace(createProductDto.File?.FileName))
+                    {
+                        return Results.Problem(title: "File is required", statusCode: StatusCodes.Status400BadRequest);
+                    }
+
+                    IFormFileService? formFileService = formFileServiceFactory(createProductDto.File);
+
+                    var command = new CreateProductCommand(
+                        createProductDto.Name,
+                        createProductDto.Description,
+                        createProductDto.Price,
+                        createProductDto.Type,
+                        createProductDto.Brand,
+                        createProductDto.QuantityInStock,
+                        file: formFileService
+                    );
+
+                    var result = await mediator.Send(command);
+                    if (!result.IsSuccess || result.Value == null)
+                    {
+                        return Results.Problem(title: result.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
+                    }
+                    return Results.CreatedAtRoute("GetProduct", new { result.Value.Id }, result.Value);
+                }
+                catch (ValidationException ex)
+                {
+                    var problemDetails = validationExceptionHandler.Handle(ex);
+                    return Results.Problem(title: problemDetails.Title, statusCode: problemDetails.Status, detail: problemDetails.Detail);
+                }
+                catch (Exception ex)
+                {
+                    return Results.Problem(title: ex.Message, statusCode: StatusCodes.Status400BadRequest);
+                }
+            })
+            .WithName("CreateProduct")
+            .WithOpenApi()
+            .Produces<ProductResponse>(StatusCodes.Status201Created)
+            .Produces<string>(StatusCodes.Status400BadRequest);
 
         return endpoints;
     }

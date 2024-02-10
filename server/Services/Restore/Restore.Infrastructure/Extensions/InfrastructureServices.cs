@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Restore.Application.Abstractions.Authentication;
@@ -32,6 +33,12 @@ public static class InfrastructureServices
 
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IPaymentService, PaymentService>();
+        services.AddScoped<IImageService, ImageService>();
+        // create a factory method to create IFormFileService by using a delegate. This delegate can be registered in the dependency injection container and then injected into the endpoint.
+        services.AddScoped<Func<IFormFile, IFormFileService>>(serviceProvider => formFile =>
+        {
+            return new FormFileService(formFile);
+        });
 
         return services;
     }
