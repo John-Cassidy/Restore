@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Restore.Application.Handlers;
 using FluentValidation;
 using MediatR;
 using Restore.Application.Behavior;

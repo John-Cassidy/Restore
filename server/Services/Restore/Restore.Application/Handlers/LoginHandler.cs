@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using Restore.Application.Abstractions.Authentication;
 using Restore.Application.Commands;
 using Restore.Application.Responses;

@@ -2,7 +2,6 @@
 using MediatR;
 using Restore.Application.Queries;
 using Restore.Application.Responses;
-using Restore.Core.Entities.OrderAggregate;
 using Restore.Core.Repositories;
 using Restore.Core.Results;
 

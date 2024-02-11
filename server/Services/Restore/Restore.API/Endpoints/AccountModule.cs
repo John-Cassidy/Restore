@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-using FluentValidation;
-using FluentValidation.Results;
+﻿using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Restore.API.DTOs;
@@ -9,7 +7,6 @@ using Restore.API.Handlers;
 using Restore.Application.Commands;
 using Restore.Application.Queries;
 using Restore.Application.Responses;
-using Restore.Core.Entities;
 using Restore.Core.Results;
 
 namespace Restore.API.Endpoints;

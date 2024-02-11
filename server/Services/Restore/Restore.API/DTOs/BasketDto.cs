@@ -1,7 +1,4 @@
-﻿using Restore.Application.Responses;
-using System.Collections.Generic; // Add missing import statement
-
-namespace Restore.API.DTOs;
+﻿namespace Restore.API.DTOs;
 
 public record BasketDto(int Id, string BuyerId, List<BasketItemDto> Items, string? PaymentIntentId = null, string? ClientSecret = null);
 

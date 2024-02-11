@@ -1129,4 +1129,25 @@ kubectl get pv
 kubectl get pvc
 ```
 
-## CRUD
+## CRUD Operations / User Role Based Security
+
+- Products CRUD Operations
+- Image Upload
+- Reusable Form Inputs
+- User Role Based Security
+
+### Form File Upload
+
+[Document Concerning CSRF](https://learn.microsoft.com/en-us/aspnet/core/security/anti-request-forgery?view=aspnetcore-8.0#antiforgery-with-minimal-apis)
+
+[File Upload](https://www.google.com/search?q=.net+8+form+upload+file&rlz=1C1CHBF_enUS901US901&oq=.net+8+form+upload+file&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCTEwMzk1ajBqN6gCALACAA&sourceid=chrome&ie=UTF-8)
+
+[Minimal API File Upload Example - GitHub Repo](https://github.com/akhanalcs/fileupload-minimal-api)
+
+[Stackoverflow outlining out to use code in example](https://stackoverflow.com/questions/77189996/upload-files-to-a-minimal-api-endpoint-in-net-8)
+
+[docs](https://learn.microsoft.com/en-us/aspnet/core/release-notes/aspnetcore-7.0?source=recommendations&view=aspnetcore-7.0#file-uploads-using-iformfile-and-iformfilecollection)
+
+[Antiforgery token .net 8](https://learn.microsoft.com/en-us/aspnet/core/security/anti-request-forgery?view=aspnetcore-8.0&preserve-view=true#antimin7)
+
+[Antiforgery token .net 7](https://learn.microsoft.com/en-us/aspnet/core/security/anti-request-forgery?view=aspnetcore-7.0&preserve-view=true#antimin7)

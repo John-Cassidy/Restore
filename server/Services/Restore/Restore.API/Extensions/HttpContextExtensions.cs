@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace Restore.API;
+﻿namespace Restore.API;
 
 public static class HttpContextExtensions
 {

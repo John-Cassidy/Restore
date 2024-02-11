@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Restore.API.DTOs;
 using Restore.API.Extensions;
 using Restore.Application.Commands;
-using Restore.Application.Queries;
 
 namespace Restore.API.Endpoints;
 
