@@ -33,7 +33,7 @@ public class ImageService : IImageService
         return Result<string>.Success(dbPath);
     }
 
-    public async Task<Result<string>> UpdateImageAsync(IFormFileService formFileService)
+    public async Task<Result<string>> UpdateImageAsync(IFormFileService formFileService, string pictureUrl)
     {
         var file = formFileService;
         if (file.FileName == null && file.FileName?.Length == 0) return Result<string>.Failure("File is required");
@@ -49,7 +49,10 @@ public class ImageService : IImageService
         var fullPath = Path.Combine(pathToSave, fileName);
         var dbPath = Path.Combine("/images/products/", fileName);
 
-        if (File.Exists(fullPath)) File.Delete(fullPath);
+        var oldFullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", pictureUrl.TrimStart('/'));
+        var areFileNamesEqual = fullPath == oldFullPath;
+        if (File.Exists(fullPath) && areFileNamesEqual) File.Delete(fullPath);
+        else if (File.Exists(fullPath) && !areFileNamesEqual) return Result<string>.Failure("File already exists");
 
         // use file.OpenReadStream() to get the file stream and then save it to the server using the fullPath
         using (var stream = new FileStream(fullPath, FileMode.Create))

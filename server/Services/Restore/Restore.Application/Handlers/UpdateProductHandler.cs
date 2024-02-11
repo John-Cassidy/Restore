@@ -28,7 +28,7 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, Result
 
         if (request.File != null)
         {
-            var fileName = await _imageService.UpdateImageAsync(request.File);
+            var fileName = await _imageService.UpdateImageAsync(request.File, product.PictureUrl);
             if (!fileName.IsSuccess)
             {
                 return Result<ProductResponse>.Failure(fileName.ErrorMessage);
