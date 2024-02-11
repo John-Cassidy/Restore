@@ -50,7 +50,7 @@ public class ImageService : IImageService
         var dbPath = Path.Combine("/images/products/", fileName);
 
         var oldFullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", pictureUrl.TrimStart('/'));
-        var areFileNamesEqual = fullPath == oldFullPath;
+        var areFileNamesEqual = fileName == pictureUrl.TrimStart('/').Split('/').Last();
         if (File.Exists(fullPath) && areFileNamesEqual) File.Delete(fullPath);
         else if (File.Exists(fullPath) && !areFileNamesEqual) return Result<string>.Failure("File already exists");
 
