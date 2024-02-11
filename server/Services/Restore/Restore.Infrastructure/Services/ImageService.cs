@@ -19,7 +19,7 @@ public class ImageService : IImageService
 
         var fileName = file.FileName!;
         var fullPath = Path.Combine(pathToSave, fileName);
-        var dbPath = Path.Combine(folderName, fileName);
+        var dbPath = Path.Combine("/images/products/", fileName);
 
         if (File.Exists(fullPath)) return Result<string>.Failure("File already exists");
 

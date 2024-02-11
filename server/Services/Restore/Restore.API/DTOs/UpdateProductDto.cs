@@ -1,10 +1,8 @@
-﻿using MediatR;
-using Restore.Application.Responses;
+﻿namespace Restore.API.DTOs;
 
-namespace Restore.API.DTOs;
-
-public class CreateProductDto
+public class UpdateProductDto
 {
+    public int Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
     public long Price { get; set; }

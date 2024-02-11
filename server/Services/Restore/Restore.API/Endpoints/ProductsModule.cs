@@ -5,10 +5,10 @@ using Restore.Application.Responses;
 using FluentValidation;
 using Restore.API.Handlers;
 using Restore.API.Extensions;
-using Restore.Application.Requests;
 using Restore.Application.Commands;
 using Restore.Application.Services;
 using Microsoft.AspNetCore.Authorization;
+using Restore.API.DTOs;
 
 namespace Restore.API.Endpoints;
 
@@ -166,6 +166,83 @@ public static class ProductsModule
             .WithName("CreateProduct")
             .WithOpenApi()
             .Produces<ProductResponse>(StatusCodes.Status201Created)
+            .Produces<string>(StatusCodes.Status400BadRequest);
+
+        // create put endpoint that accepts a product and returns the updated product
+        endpoints.MapPut("/api/products",
+            [Authorize(Roles = "Admin")] async (HttpContext context,
+            IMediator mediator,
+            IValidationExceptionHandler validationExceptionHandler,
+            Func<IFormFile, IFormFileService> formFileServiceFactory) =>
+            {
+                try
+                {
+                    if (context == null)
+                    {
+                        return Results.Problem(title: "Context is null", statusCode: StatusCodes.Status500InternalServerError);
+                    }
+
+                    if ((context!.User?.Identity?.IsAuthenticated ?? false) == false)
+                    {
+                        return Results.Problem(title: "User is not authenticated", statusCode: StatusCodes.Status401Unauthorized);
+                    }
+
+                    var form = await context.Request.ReadFormAsync();
+                    if (form is null)
+                    {
+                        return Results.Problem(title: "Form is null", statusCode: StatusCodes.Status400BadRequest);
+                    }
+
+                    var file = form.Files.GetFile("File");
+                    IFormFileService? formFileService = null;
+                    if (file is not null && file.Length > 0 && !string.IsNullOrWhiteSpace(file.FileName))
+                    {
+                        formFileService = formFileServiceFactory(file);
+                    }
+
+                    var updateProductDto = new UpdateProductDto
+                    {
+                        Id = int.Parse(form["Id"]),
+                        Name = form["Name"],
+                        Description = form["Description"],
+                        Price = long.Parse(form["Price"]),
+                        Type = form["Type"],
+                        Brand = form["Brand"],
+                        QuantityInStock = int.Parse(form["QuantityInStock"]),
+                        File = file
+                    };
+
+                    var command = new UpdateProductCommand(
+                        updateProductDto.Id,
+                        updateProductDto.Name,
+                        updateProductDto.Description,
+                        updateProductDto.Price,
+                        updateProductDto.Type,
+                        updateProductDto.Brand,
+                        updateProductDto.QuantityInStock,
+                        file: formFileService
+                    );
+
+                    var result = await mediator.Send(command);
+                    if (!result.IsSuccess || result.Value == null)
+                    {
+                        return Results.Problem(title: result.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
+                    }
+                    return Results.Ok(result.Value);
+                }
+                catch (ValidationException ex)
+                {
+                    var problemDetails = validationExceptionHandler.Handle(ex);
+                    return Results.Problem(title: problemDetails.Title, statusCode: problemDetails.Status, detail: problemDetails.Detail);
+                }
+                catch (Exception ex)
+                {
+                    return Results.Problem(title: ex.Message, statusCode: StatusCodes.Status400BadRequest);
+                }
+            })
+            .WithName("UpdateProduct")
+            .WithOpenApi()
+            .Produces<ProductResponse>(StatusCodes.Status200OK)
             .Produces<string>(StatusCodes.Status400BadRequest);
 
         return endpoints;
