@@ -73,4 +73,10 @@ public class ProductRepository : IProductRepository
         _mapper.Map(product, productToUpdate);
         _context.Products.Update(productToUpdate);
     }
+
+    public Task DeleteAsync(Product product)
+    {
+        _context.Products.Remove(product);
+        return Task.CompletedTask;
+    }
 }

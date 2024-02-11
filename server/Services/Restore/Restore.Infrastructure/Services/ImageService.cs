@@ -32,4 +32,44 @@ public class ImageService : IImageService
 
         return Result<string>.Success(dbPath);
     }
+
+    public async Task<Result<string>> UpdateImageAsync(IFormFileService formFileService)
+    {
+        var file = formFileService;
+        if (file.FileName == null && file.FileName?.Length == 0) return Result<string>.Failure("File is required");
+
+        var folderName = Path.Combine("images", "products");
+
+        var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", folderName);
+
+        // check if folder exists
+        if (!Directory.Exists(pathToSave)) Directory.CreateDirectory(pathToSave);
+
+        var fileName = file.FileName!;
+        var fullPath = Path.Combine(pathToSave, fileName);
+        var dbPath = Path.Combine("/images/products/", fileName);
+
+        if (File.Exists(fullPath)) File.Delete(fullPath);
+
+        // use file.OpenReadStream() to get the file stream and then save it to the server using the fullPath
+        using (var stream = new FileStream(fullPath, FileMode.Create))
+        {
+            await file.OpenReadStream().CopyToAsync(stream);
+        }
+
+        return Result<string>.Success(dbPath);
+    }
+
+    public async Task<Result<bool>> DeleteImageAsync(string imagePath)
+    {
+        var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", imagePath.TrimStart('/'));
+
+        if (File.Exists(fullPath))
+        {
+            await Task.Run(() => File.Delete(fullPath));
+        }
+        return Result<bool>.Success(true);
+    }
+
+
 }

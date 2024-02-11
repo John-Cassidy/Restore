@@ -9,6 +9,7 @@ using Restore.Application.Commands;
 using Restore.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Restore.API.DTOs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Restore.API.Endpoints;
 
@@ -243,6 +244,30 @@ public static class ProductsModule
             .WithName("UpdateProduct")
             .WithOpenApi()
             .Produces<ProductResponse>(StatusCodes.Status200OK)
+            .Produces<string>(StatusCodes.Status400BadRequest);
+
+        // create delete endpoint that accepts an id and returns the deleted product
+        endpoints.MapDelete("/api/products/{id}",
+            [Authorize(Roles = "Admin")] async (IMediator mediator, int id) =>
+            {
+                try
+                {
+                    var command = new DeleteProductCommand(id);
+                    var result = await mediator.Send(command);
+                    if (!result.IsSuccess || result.Value == null)
+                    {
+                        return Results.Problem(title: result.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
+                    }
+                    return Results.Ok(result.Value);
+                }
+                catch (Exception ex)
+                {
+                    return Results.Problem(title: ex.Message, statusCode: StatusCodes.Status400BadRequest);
+                }
+            })
+            .WithName("DeleteProduct")
+            .WithOpenApi()
+            .Produces<NoContentResult>(StatusCodes.Status204NoContent)
             .Produces<string>(StatusCodes.Status400BadRequest);
 
         return endpoints;
