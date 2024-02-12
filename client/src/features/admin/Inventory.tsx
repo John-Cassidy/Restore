@@ -11,12 +11,14 @@ import {
   Typography,
 } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
+import { removeProduct, setPageNumber } from '../catalog/catalogSlice';
 
 import { AppPagination } from '../../app/components/AppPagination';
 import { IProduct } from '../../app/models/product';
+import { LoadingButton } from '@mui/lab';
 import { ProductForm } from './ProductForm';
+import { agent } from '../../app/api/agent';
 import { currencyFormat } from '../../app/util/util';
-import { setPageNumber } from '../catalog/catalogSlice';
 import { useAppDispatch } from '../../app/store/configureStore';
 import { useProducts } from '../../app/hooks/useProducts';
 import { useState } from 'react';
@@ -28,10 +30,21 @@ export const Inventory = () => {
   const [selectedProduct, setSelectedProduct] = useState<IProduct | undefined>(
     undefined
   );
+  const [loading, setLoading] = useState(false);
+  const [target, setTarget] = useState(0);
 
   const handleSelectProduct = (product: IProduct) => {
     setSelectedProduct(product);
     setEditMode(true);
+  };
+
+  const handleDeleteProduct = (id: number) => {
+    setLoading(true);
+    setTarget(id);
+    agent.Admin.deleteProduct(id)
+      .then(() => dispatch(removeProduct(id)))
+      .catch((error) => console.log(error))
+      .finally(() => setLoading(false));
   };
 
   const cancelEdit = () => {
@@ -100,7 +113,12 @@ export const Inventory = () => {
                     startIcon={<Edit />}
                     onClick={() => handleSelectProduct(product)}
                   />
-                  <Button startIcon={<Delete />} color='error' />
+                  <LoadingButton
+                    loading={loading && target === product.id}
+                    startIcon={<Delete />}
+                    color='error'
+                    onClick={() => handleDeleteProduct(product.id)}
+                  />
                 </TableCell>
               </TableRow>
             ))}
