@@ -7,6 +7,8 @@ import { AppTextInput } from '../../app/components/AppTextInput';
 import { IProduct } from '../../app/models/product';
 import { useEffect } from 'react';
 import { useProducts } from '../../app/hooks/useProducts';
+import { validationSchema } from './productValidation';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 interface IProps {
   product?: IProduct;
@@ -14,7 +16,16 @@ interface IProps {
 }
 
 export const ProductForm = ({ product, cancelEdit }: IProps) => {
-  const { control, reset, handleSubmit, watch } = useForm();
+  const {
+    control,
+    reset,
+    handleSubmit,
+    watch,
+    formState: { isDirty, isSubmitting },
+  } = useForm({
+    mode: 'all',
+    resolver: yupResolver<any>(validationSchema),
+  });
   const { brands, types } = useProducts();
   const watchFile = watch('file', null);
 

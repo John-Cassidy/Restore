@@ -19,11 +19,9 @@ export const AppSelectList = (props: IProps) => {
       <InputLabel>{props.label}</InputLabel>
       <Select value={field.value} label={props.label} onChange={field.onChange}>
         {props.items.map((item, index) => (
-          <option key={item} value={item}>
-            <MenuItem value={item} key={index}>
-              {item}
-            </MenuItem>
-          </option>
+          <MenuItem value={item} key={index}>
+            {item}
+          </MenuItem>
         ))}
       </Select>
       <FormHelperText>{fieldState.error?.message}</FormHelperText>
