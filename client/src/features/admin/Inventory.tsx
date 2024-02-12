@@ -13,21 +13,47 @@ import {
 import { Delete, Edit } from '@mui/icons-material';
 
 import { AppPagination } from '../../app/components/AppPagination';
+import { IProduct } from '../../app/models/product';
+import { ProductForm } from './ProductForm';
 import { currencyFormat } from '../../app/util/util';
 import { setPageNumber } from '../catalog/catalogSlice';
 import { useAppDispatch } from '../../app/store/configureStore';
 import { useProducts } from '../../app/hooks/useProducts';
+import { useState } from 'react';
 
 export const Inventory = () => {
   const { products, metaData } = useProducts();
   const dispatch = useAppDispatch();
+  const [editMode, setEditMode] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<IProduct | undefined>(
+    undefined
+  );
+
+  const handleSelectProduct = (product: IProduct) => {
+    setSelectedProduct(product);
+    setEditMode(true);
+  };
+
+  const cancelEdit = () => {
+    if (selectedProduct) setSelectedProduct(undefined);
+    setEditMode(false);
+  };
+
+  if (editMode)
+    return <ProductForm cancelEdit={cancelEdit} product={selectedProduct} />;
+
   return (
     <>
       <Box display='flex' justifyContent='space-between'>
         <Typography sx={{ p: 2 }} variant='h4'>
           Inventory
         </Typography>
-        <Button sx={{ m: 2 }} size='large' variant='contained'>
+        <Button
+          onClick={() => setEditMode(true)}
+          sx={{ m: 2 }}
+          size='large'
+          variant='contained'
+        >
           Create
         </Button>
       </Box>
@@ -70,7 +96,10 @@ export const Inventory = () => {
                 <TableCell align='center'>{product.brand}</TableCell>
                 <TableCell align='center'>{product.quantityInStock}</TableCell>
                 <TableCell align='right'>
-                  <Button startIcon={<Edit />} />
+                  <Button
+                    startIcon={<Edit />}
+                    onClick={() => handleSelectProduct(product)}
+                  />
                   <Button startIcon={<Delete />} color='error' />
                 </TableCell>
               </TableRow>
