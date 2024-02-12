@@ -1,9 +1,11 @@
 import { Box, Button, Grid, Paper, Typography } from '@mui/material';
 
+import { AppSelectList } from '../../app/components/AppSelectList';
 import { AppTextInput } from '../../app/components/AppTextInput';
 import { IProduct } from '../../app/models/product';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useProducts } from '../../app/hooks/useProducts';
 
 interface IProps {
   product?: IProduct;
@@ -12,6 +14,7 @@ interface IProps {
 
 export const ProductForm = ({ product, cancelEdit }: IProps) => {
   const { control, reset } = useForm();
+  const { brands, types } = useProducts();
 
   useEffect(() => {
     if (product) {
@@ -29,10 +32,20 @@ export const ProductForm = ({ product, cancelEdit }: IProps) => {
           <AppTextInput control={control} name='name' label='Product name' />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <AppTextInput control={control} name='brand' label='Brand' />
+          <AppSelectList
+            items={brands}
+            control={control}
+            name='brand'
+            label='Brand'
+          />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <AppTextInput control={control} name='type' label='Type' />
+          <AppSelectList
+            items={types}
+            control={control}
+            name='type'
+            label='Type'
+          />
         </Grid>
         <Grid item xs={12} sm={6}>
           <AppTextInput control={control} name='price' label='Price' />
