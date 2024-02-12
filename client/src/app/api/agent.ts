@@ -58,6 +58,9 @@ axios.interceptors.response.use(
       case 401:
         toast.error(data.title);
         break;
+      case 403:
+        toast.error('You are not authorized to do this');
+        break;
       case 404:
         toast.error(data.title);
         break;

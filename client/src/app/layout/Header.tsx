@@ -82,7 +82,7 @@ export const Header = ({ handleThemeChange, darkMode }: IProps) => {
                 {title.toUpperCase()}
               </ListItem>
             ))}
-            {user && (
+            {user && user.roles?.includes('Admin') && (
               <ListItem
                 component={NavLink}
                 to={'/inventory'}

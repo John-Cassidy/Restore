@@ -30,7 +30,11 @@ export const router = createBrowserRouter([
           { path: '/orders', element: <Orders /> },
         ],
       },
-      { path: '/inventory', element: <Inventory /> },
+      {
+        // admin routes
+        element: <RequireAuth roles={['Admin']} />,
+        children: [{ path: '/inventory', element: <Inventory /> }],
+      },
       {
         path: 'catalog',
         element: <Catalog />,
