@@ -235,3 +235,13 @@ npm run build
 ONCE this is done, you see README_SERVER.md for information on how to configure and serve client app from Restore.API
 
 ## Publishing - Deployment
+
+## Drop Zone component
+
+There are a few options to choose from but you'll need to confirm they work with installed versions of Material UI and React Hook Form.
+
+Per the course instructions, we're installing react-dropzone:
+
+```powershell
+npm i react-dropzone
+```
