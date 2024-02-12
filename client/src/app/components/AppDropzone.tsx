@@ -1,8 +1,8 @@
 import { FormControl, FormHelperText, Typography } from '@mui/material';
-import React, { useCallback } from 'react';
 import { UseControllerProps, useController } from 'react-hook-form';
 
 import { UploadFile } from '@mui/icons-material';
+import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 
 interface IProps extends UseControllerProps {}

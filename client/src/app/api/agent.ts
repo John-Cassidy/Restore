@@ -78,6 +78,18 @@ const requests = {
   post: (url: string, body: object) => axios.post(url, body).then(responseBody),
   put: (url: string, body: object) => axios.put(url, body).then(responseBody),
   delete: (url: string) => axios.delete(url).then(responseBody),
+  postForm: (url: string, data: FormData) =>
+    axios
+      .post(url, data, {
+        headers: { 'Content-type': 'multipart/form-data' },
+      })
+      .then(responseBody),
+  putForm: (url: string, data: FormData) =>
+    axios
+      .put(url, data, {
+        headers: { 'Content-type': 'multipart/form-data' },
+      })
+      .then(responseBody),
 };
 
 const Account = {
@@ -85,6 +97,14 @@ const Account = {
   register: (values: any) => requests.post('account/register', values),
   current: () => requests.get('account/current'),
   fetchAddress: () => requests.get('account/address'),
+};
+
+const Admin = {
+  createProduct: (product: any) =>
+    requests.postForm('products', createFormData(product)),
+  updateProduct: (product: any) =>
+    requests.putForm('products', createFormData(product)),
+  deleteProduct: (id: number) => requests.delete(`products/${id}`),
 };
 
 const Basket = {
@@ -121,8 +141,17 @@ const TestErrors = {
   getProductNotFound: () => requests.get('products/0'),
 };
 
+const createFormData = (item: any) => {
+  const formData = new FormData();
+  for (const key in item) {
+    formData.append(key, item[key]);
+  }
+  return formData;
+};
+
 export const agent = {
   Account,
+  Admin,
   Basket,
   Catalog,
   Orders,
