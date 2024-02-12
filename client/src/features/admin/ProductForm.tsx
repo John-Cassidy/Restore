@@ -48,10 +48,16 @@ export const ProductForm = ({ product, cancelEdit }: IProps) => {
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <AppTextInput control={control} name='price' label='Price' />
+          <AppTextInput
+            type='number'
+            control={control}
+            name='price'
+            label='Price'
+          />
         </Grid>
         <Grid item xs={12} sm={6}>
           <AppTextInput
+            type='number'
             control={control}
             name='quantityInStock'
             label='Quantity in Stock'
@@ -59,6 +65,8 @@ export const ProductForm = ({ product, cancelEdit }: IProps) => {
         </Grid>
         <Grid item xs={12}>
           <AppTextInput
+            multiline={true}
+            rows={4}
             control={control}
             name='description'
             label='Description'
