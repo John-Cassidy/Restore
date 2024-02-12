@@ -8,6 +8,7 @@ import { BasketPage } from '../../features/basket/BasketPage';
 import { Catalog } from '../../features/catalog/Catalog';
 import { CheckoutWrapper } from '../../features/checkout/CheckoutWrapper';
 import { ContactPage } from '../../features/contact/ContactPage';
+import { Inventory } from '../../features/admin/Inventory';
 import { Login } from '../../features/account/Login';
 import NotFound from '../errors/NotFound';
 import { Orders } from '../../features/orders/Orders';
@@ -29,6 +30,7 @@ export const router = createBrowserRouter([
           { path: '/orders', element: <Orders /> },
         ],
       },
+      { path: '/inventory', element: <Inventory /> },
       {
         path: 'catalog',
         element: <Catalog />,

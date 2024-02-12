@@ -12,9 +12,15 @@ import {
 } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 
+import { AppPagination } from '../../app/components/AppPagination';
 import { currencyFormat } from '../../app/util/util';
+import { setPageNumber } from '../catalog/catalogSlice';
+import { useAppDispatch } from '../../app/store/configureStore';
+import { useProducts } from '../../app/hooks/useProducts';
 
 export const Inventory = () => {
+  const { products, metaData } = useProducts();
+  const dispatch = useAppDispatch();
   return (
     <>
       <Box display='flex' justifyContent='space-between'>
@@ -72,6 +78,14 @@ export const Inventory = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      {metaData && (
+        <Box sx={{ pt: 2 }}>
+          <AppPagination
+            metaData={metaData}
+            onPageChange={(page: number) => dispatch(setPageNumber(page))}
+          />
+        </Box>
+      )}
     </>
   );
 };
