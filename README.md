@@ -11,6 +11,12 @@ e-commerce store with .Net, React &amp; Redux
 
 ## Dev Container(s)
 
+Configured devcontainer.json to create container to run both:
+
+- .NET 8 WebApi solution - port 5000
+- React 18 client application - port 3000
+- PostgreSQL DB - [standard postgresql port]
+
 [Devcontainer Setup with PostgreSQL DB](https://github.com/devcontainers/templates/tree/main/src/dotnet-postgres)
 
 [PostgreSQL Image](https://hub.docker.com/_/postgres)
