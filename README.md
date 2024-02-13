@@ -13,6 +13,8 @@ e-commerce store with .Net, React &amp; Redux
 
 [Devcontainer Setup with PostgreSQL DB](https://github.com/devcontainers/templates/tree/main/src/dotnet-postgres)
 
+[PostgreSQL Image](https://hub.docker.com/_/postgres)
+
 [Create Devcontainer](https://code.visualstudio.com/docs/devcontainers/create-dev-container)
 
 [Developing Inside Container](https://code.visualstudio.com/docs/devcontainers/containers)
