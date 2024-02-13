@@ -21,7 +21,7 @@
       "version": "20"
     }
   },
-  "forwardPorts": [5000, 5432],
+  "forwardPorts": [3000, 5000, 5432],
   "portsAttributes": {
     "5000": {
       "label": "App",
@@ -35,7 +35,8 @@
         "GitHub.vscode-github-actions",
         "ms-dotnettools.vscode-dotnet-runtime",
         "ms-dotnettools.csdevkit",
-        "ms-dotnetools.csharp",
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.vscodeintellicode-csharp",
         "github.copilot"
       ],
       "settings": {
