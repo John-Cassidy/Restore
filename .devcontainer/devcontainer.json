@@ -43,7 +43,7 @@
       }
     }
   },
-  "postCreateCommand": "dotnet restore && git config --global core.autocrlf input",
+  "postCreateCommand": "dotnet restore && git config --global core.autocrlf input && git config --global user.email 'jpcassidy@outlook.com' && git config --global user.name 'John Cassidy'",
   "hostRequirements": {
     "memory": "8gb",
     "cpus": 4
