@@ -36,7 +36,10 @@
       }
     }
   },
-  "postCreateCommand": "dotnet restore",
+  "postCreateCommand": [
+    "dotnet restore",
+    "git config --global core.autocrlf input"
+  ],
   "hostRequirements": {
     "memory": "8gb",
     "cpus": 4
