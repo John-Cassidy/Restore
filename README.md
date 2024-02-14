@@ -30,3 +30,39 @@ Configured devcontainer.json to create container to run both:
 [Getting Started with .NET 8 DevContainer](https://betterprogramming.pub/getting-started-with-net-8-seamless-setup-with-devcontainers-13851ee20f4e)
 
 [Example Setup](https://dev.to/this-is-learning/set-up-github-codespaces-for-a-net-8-application-5999)
+
+### Securely Manage Secrets in Devcontainer using Environment Variables
+
+To securely manage secrets in your devcontainer using environment variables, you can use a .env file. This file should not be checked into source control, and it should be used to store your secrets. Here's how you can do it:
+
+1. Create a .env file in your local workspace (the same directory as your devcontainer.json and docker-compose.yml files). This file should contain your secrets in the form of environment variables:
+
+```powershell
+SECRET_KEY=your_secret_key
+ANOTHER_SECRET=another_secret
+```
+
+In your docker-compose.yml file, you can use the env_file directive to load the environment variables from the .env file:
+
+```yml
+services:
+  app:
+    env_file:
+      - .env
+```
+
+In your devcontainer.json file, you can reference these environment variables in the remoteEnv section:
+
+```json
+{
+  "remoteEnv": {
+    "ASPNETCORE_ENVIRONMENT": "Development",
+    "DOTNET_USE_POLLING_FILE_WATCHER": "true",
+    "TARGET": "net8.0",
+    "SECRET_KEY": "${localEnv:SECRET_KEY}",
+    "ANOTHER_SECRET": "${localEnv:ANOTHER_SECRET}"
+  }
+}
+```
+
+This way, your secrets are loaded into the environment of the devcontainer, but they are not checked into source control. Make sure to add .env to your .gitignore file to prevent it from being accidentally committed.
