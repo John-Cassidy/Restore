@@ -28,10 +28,8 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgresql-secret
+                  name: restoredb-secrets
                   key: postgresql-password
-            - name: POSTGRES_DB
-              value: store
           resources:
             limits:
               cpu: '1'
@@ -53,8 +51,32 @@ kind: Service
 metadata:
   name: restoredb-service
 spec:
+  type: ClusterIP
   selector:
     app: restoredb
   ports:
     - port: 5432
       targetPort: 5432
+---
+# Postgres Storage Class
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: azure-disk
+provisioner: kubernetes.io/azure-disk
+parameters:
+  storageaccounttype: Standard_LRS
+  kind: Managed
+---
+# Postgres Persistent Volume Claim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 8Gi
+  storageClassName: azure-disk
