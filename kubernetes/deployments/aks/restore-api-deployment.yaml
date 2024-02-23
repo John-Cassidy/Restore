@@ -1,0 +1,79 @@
+# API Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restore-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restore-api
+  template:
+    metadata:
+      labels:
+        app: restore-api
+    spec:
+      containers:
+        - name: restore-api
+          image: jpcassidy/restoreapi
+          ports:
+            - containerPort: 5000
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+            - name: ASPNETCORE_HTTP_PORTS
+              value: '5000'
+            - name: ASPNETCORE_URLS
+              value: 'http://*:5000'
+            - name: Cors__ClientAddress
+              value: 'http://localhost:3000'
+            - name: Jwt__Issuer
+              value: 'http://localhost:5000'
+            - name: Jwt__Audience
+              value: 'http://localhost:3000'
+            - name: Jwt__SecretKey
+              valueFrom:
+                secretKeyRef:
+                  name: restore-api-secrets
+                  key: jwt-secret-key
+            - name: ConnectionStrings__DefaultConnection
+              valueFrom:
+                secretKeyRef:
+                  name: restore-api-secrets
+                  key: postgresql-connection
+            - name: StripeSettings__PublishableKey
+              valueFrom:
+                secretKeyRef:
+                  name: restore-api-secrets
+                  key: stripe-publishable-key
+            - name: StripeSettings__SecretKey
+              valueFrom:
+                secretKeyRef:
+                  name: restore-api-secrets
+                  key: stripe-secret-key
+            - name: StripeSettings__WhSecret
+              valueFrom:
+                secretKeyRef:
+                  name: restore-api-secrets
+                  key: stripe-wh-secret-key
+          resources:
+            limits:
+              cpu: '1'
+              memory: '512Mi'
+            requests:
+              cpu: '0.5'
+              memory: '256Mi'
+---
+# API Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: restore-api-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: restore-api
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000

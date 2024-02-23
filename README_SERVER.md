@@ -1032,7 +1032,7 @@ Restore API
 
 - restore-api.yaml
 
-### Kubernetes Secretes
+### Kubernetes Secrets Base64 Encode/Decode
 
 ```powershell
 $Text = 'secret'
@@ -1067,6 +1067,9 @@ Instructions for creating a sample user
 https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md
 
 ```powershell
+# if dashboard not installed, then install it:
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+
 # create dashboard-adminuser.yaml
 kubectl apply -f dashboard-adminuser.yaml
 serviceaccount/admin-user created
@@ -1082,38 +1085,31 @@ Get the Bearer Token
 kubectl -n kubernetes-dashboard create token admin-user
 ```
 
-### Kubernetes Commands
+### Kubernetes Create / Delete Deployments
 
 ```powershell
 ### DEPLOYMENT ###
-# create postgresql pv and postresql pvc
-kubectl apply -f .\kubernetes\restore-db\postgresql-pv.yaml
-# create postgresql secret
-kubectl apply -f .\kubernetes\restore-db\postgresql-secret.yaml
+
+## (PREREQUISITE): Add Secrets using Kubernetes built-in encryption
+# To create secrets using kubectl command, you need to provide the secret data as plain text, not base64 encoded.
+# Kubernetes will automatically base64 encode the data when the secret is created. Here are the commands to create the secrets:
+
 # create restoredb deployment
-kubectl apply -f .\kubernetes\restore-db\restoredb-deployment.yaml
-# create postgresql config map
-kubectl apply -f .\kubernetes\restore-db\postgresql-configmap.yaml
+kubectl apply -f .\kubernetes\deployments\local\restoredb-deployment.yaml
 # create restore-api deployment
-kubectl apply -f .\kubernetes\restore-api\restore-api-deployment.yaml
+kubectl apply -f .\kubernetes\deployments\local\restore-api-deployment.yaml
 
 ### DELETE ###
 # delete restore-api deployment
-kubectl delete deployment restore-api-deployment
-# delete postgresql-config
-kubectl delete configmap postgresql-config
+kubectl delete -f .\kubernetes\deployments\local\restore-api-deployment.yaml
 # delete restoredb deployment
-kubectl delete deployment restoredb-deployment
-# delete restore-api service
-kubectl delete service restore-api-service
-# delete restoredb service
-kubectl delete service restoredb-service
-# delete postgresql secret
-kubectl delete secret postgresql-secret
-# postresql pvc
-kubectl delete pvc postgres-pvc
-# delete postgresql pv
-kubectl delete pv postgres-pv
+kubectl delete -f .\kubernetes\deployments\local\restoredb-deployment.yaml
+# delete secret ...
+  # delete the `restore-api-secrets`
+  # If the secret is in a different namespace, you need to specify it using -n or --namespace
+  kubectl delete secret restore-api-secrets
+  # delete the postgressql-secrets
+  kubectl delete secret restoredb-secrets
 ```
 
 ### kubectl Commands
