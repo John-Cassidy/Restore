@@ -1071,11 +1071,11 @@ https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/cre
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
 
 # create dashboard-adminuser.yaml
-kubectl apply -f dashboard-adminuser.yaml
+kubectl apply -f .\kubernetes\dashboard\dashboard-adminuser.yaml
 serviceaccount/admin-user created
 
 # create dashboard-cluster-admin-role.yaml
-kubectl apply -f dashboard-cluster-admin-role.yaml
+kubectl apply -f .\kubernetes\dashboard\dashboard-cluster-admin-role.yaml
 clusterrolebinding.rbac.authorization.k8s.io/admin-user created
 ```
 
