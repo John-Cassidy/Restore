@@ -1047,6 +1047,21 @@ Write-Host $DecodedText
 
 ### Kubernetes Dashboard
 
+```powershell
+# if dashboard not installed, then install it using helm:
+
+# This step adds the Kubernetes Dashboard repository to Helm, which allows you to pull the necessary charts for installation. Run the following command in your terminal:
+helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
+
+# After adding the repository, you can proceed to deploy the Kubernetes Dashboard using Helm. Run the following command:
+helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard --create-namespace --namespace kubernetes-dashboard
+
+# Accessing Dashboard
+kubectl -n kubernetes-dashboard port-forward svc/kubernetes-dashboard-kong-proxy 8443:443
+
+# Now access Dashboard at: https://localhost:8443
+```
+
 Start the Kubernetes proxy:
 
 ```powershell
