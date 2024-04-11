@@ -65,18 +65,21 @@ metadata:
   labels:
     type: local
 spec:
+  storageClassName: restoredb-storage
   capacity:
     storage: 10Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
     path: '/mnt/data'
+    type: DirectoryOrCreate
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: postgres-pvc
 spec:
+  storageClassName: restoredb-storage
   accessModes:
     - ReadWriteOnce
   resources:
