@@ -118,7 +118,6 @@ dotnet ef migrations remove -p server/Services/Restore/Restore.Infrastructure -s
 
 - GitHub Actions workflow: `.github/workflows/build-and-test.yaml`
 - Docker image build: `.github/workflows/docker-push.yaml`
-- Kubernetes configs: `/kubernetes/deployments` (local and AKS)
 
 ## Key Files to Reference
 
