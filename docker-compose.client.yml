@@ -1,0 +1,19 @@
+version: '3.4'
+
+services:
+  restore.client:
+    image: ${DOCKER_REGISTRY-}restore-client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:5000/api/
+    container_name: restore-client
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - VITE_API_URL=http://localhost:5000/api/
+    restart: unless-stopped
+    depends_on:
+      - restore.api

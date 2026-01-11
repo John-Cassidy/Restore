@@ -8,6 +8,11 @@ export default defineConfig({
   },
   server: {
     port: 3000,
+    host: true, // Enable to listen on all addresses (needed for Docker)
+    strictPort: true,
+    watch: {
+      usePolling: true, // Enable polling for Docker volumes
+    },
   },
   plugins: [react()],
 });
