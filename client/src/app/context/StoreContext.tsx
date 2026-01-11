@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { PropsWithChildren, createContext, useContext, useState } from 'react';
 
 import { IBasket } from '../models/basket';
@@ -12,7 +13,6 @@ export const StoreContext = createContext<StoreContextValue | undefined>(
   undefined
 );
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const useStoreContext = () => {
   const context = useContext(StoreContext);
   if (context === undefined) {
