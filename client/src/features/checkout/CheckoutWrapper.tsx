@@ -8,9 +8,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { setBasket } from '../basket/basketSlice';
 import { useAppDispatch } from '../../app/store/configureStore';
 
-const stripePromise = loadStripe(
-  'pk_test_51OfiQ1BurVzaOgd8q783rhJSLbnA9wXJ9njvxFgW26zkkO31Cal6BC9IiX92e1j2iSvgJBs9Y4fzGzmFPo8qZQ9W00LkGQFB36'
-);
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 export const CheckoutWrapper = () => {
   const dispatch = useAppDispatch();

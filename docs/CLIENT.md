@@ -179,7 +179,6 @@ In this section:
 - Host the React app on the API (Kestrel) Server
 - Switch Database server to PostGreSQL
 - \*Setup and configure Heroku (no longer free to use)
-
   - Publish to alternative cloud provider
 
 ### Homepage
@@ -194,15 +193,37 @@ npm i react-slick @types/react-slick slick-carousel
 
 [Env Variables Documentation (Vite)](https://vitejs.dev/guide/env-and-mode)
 
-Create 2 env files in client folder:
+#### Initial Setup
 
-```.env.development
-VITE_API_URL = http://localhost:5000/api/
-```
+1. **Copy the example file** (first time only):
 
-```.env.production
-VITE_API_URL = /api/
-```
+   ```bash
+   cd client
+   cp .env.example .env.development
+   cp .env.example .env.production
+   ```
+
+2. **Get your Stripe keys**:
+   - Login to Stripe Dashboard: https://dashboard.stripe.com/login
+   - Navigate to API keys: https://dashboard.stripe.com/test/apikeys
+   - Copy your **Publishable key** (starts with `pk_test_...`)
+
+3. **Update .env.development**:
+
+   ```bash
+   VITE_API_URL = http://localhost:5000/api/
+   VITE_STRIPE_PUBLISHABLE_KEY = pk_test_YOUR_ACTUAL_KEY_HERE
+   ```
+
+4. **Update .env.production**:
+   ```bash
+   VITE_API_URL = /api/
+   VITE_STRIPE_PUBLISHABLE_KEY = pk_test_YOUR_ACTUAL_KEY_HERE
+   ```
+
+**⚠️ Important:** The `.env` files are tracked by git but contain placeholders. Add your actual keys locally - they won't be committed because you'll only modify them locally.
+
+#### Usage in Code
 
 update baseURL in agent.ts to use environment variable:
 

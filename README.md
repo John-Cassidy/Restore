@@ -7,10 +7,21 @@ e-commerce store with .Net, React &amp; Redux
 
 ## Documentation
 
-- [Docker Compose Guide](README_DOCKER.md) - Running the application with Docker
-- [Server Documentation](README_SERVER.md) - Backend API details
-- [Client Documentation](README_CLIENT.md) - React frontend details
-- [MCP Servers](README_MCP.md) - Model Context Protocol server configuration
+### Application Guides
+
+- [Client Documentation](docs/CLIENT.md) - React frontend setup and development
+- [Server Documentation](docs/SERVER.md) - .NET backend API details
+- [Docker Compose Guide](docs/DOCKER.md) - Running the application with Docker
+
+### Development Tools
+
+- [MCP Servers](docs/MCP.md) - Model Context Protocol server configuration
+
+### Stripe Integration
+
+- [Stripe Configuration](docs/STRIPE.md) - Stripe setup and configuration guide
+- [User Secrets Management](docs/UserSecrets.md) - Managing sensitive configuration
+- [Stripe Test Summary](docs/STRIPE_TEST_SUMMARY.md) - E2E payment testing results
 
 ## GitHub Action Badges
 
