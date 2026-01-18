@@ -403,3 +403,12 @@ FodyWeavers.xsd
 *.db
 *.db-shm
 *.db-wal
+
+# Local test credentials (DO NOT COMMIT)
+*.local.md
+
+# Playwright MCP outputs and screenshots (may contain secrets)
+.playwright-mcp/
+*.png
+*.jpg
+*.jpeg
