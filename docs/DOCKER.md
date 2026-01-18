@@ -189,6 +189,19 @@ Configured in `.env.development` and `.env.production`:
   - Development: `http://localhost:5000/api/`
   - Production: `/api/` (relative)
 
+- `VITE_STRIPE_PUBLISHABLE_KEY` - Stripe publishable key (client-side)
+  - Format: `pk_test_...` for sandbox/test mode
+  - Format: `pk_live_...` for production
+  - **Required for payment checkout to work**
+
+⚠️ **Docker Build Limitation**: The current Docker configuration does not pass `VITE_STRIPE_PUBLISHABLE_KEY` as a build argument. This means:
+
+- **Local development** (without Docker): Works with `.env.development` file
+- **Docker builds**: Client image will be built without Stripe key, payment checkout will fail
+- **Future enhancement needed**: Update `client/Dockerfile` and `docker-compose.client.yml` to accept `VITE_STRIPE_PUBLISHABLE_KEY` as a build argument
+
+For Stripe configuration details, see [STRIPE.md](STRIPE.md).
+
 ## Troubleshooting
 
 ### Port Already in Use

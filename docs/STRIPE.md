@@ -134,6 +134,12 @@ VITE_STRIPE_PUBLISHABLE_KEY = pk_test_YOUR_PUBLISHABLE_KEY
 - Add `.env.local` to `.gitignore` for local overrides
 - Use different keys for production (live mode keys: `pk_live_`, `sk_live_`)
 
+**Docker Builds**:
+
+⚠️ **Note**: When building the client with Docker, the `VITE_STRIPE_PUBLISHABLE_KEY` environment variable must be provided as a build argument. The current Docker configuration does not include this yet.
+
+For local development without Docker, the `.env.development` file is sufficient. For Docker builds and CI/CD pipelines, see [DOCKER.md](DOCKER.md) for configuration requirements.
+
 ## Webhook Configuration
 
 ### Local Development with Stripe CLI
