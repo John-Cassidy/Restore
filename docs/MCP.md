@@ -42,7 +42,6 @@ MCP (Model Context Protocol) servers extend GitHub Copilot's capabilities by pro
 2. **Enter search keywords** when prompted (e.g., "python", "docker", "testing")
 
 3. **Review the results table** showing:
-
    - ✅ Already installed in your repository
    - ❌ Available to install
    - File type (instruction, agent, prompt, skill)
@@ -132,6 +131,7 @@ If you prefer not to use Docker:
    ```
 
 2. Update `.vscode/mcp.json`:
+
    ```json
    {
      "mcpServers": {
@@ -148,6 +148,26 @@ If you prefer not to use Docker:
    }
    ```
 
+   ```json
+   {
+     "$schema": "https://github.com/modelcontextprotocol/specification/blob/main/schema/schema.json",
+     "mcpServers": {
+       "awesome-copilot": {
+         "type": "stdio",
+         "command": "docker",
+         "args": [
+           "run",
+           "-i",
+           "--rm",
+           "ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest"
+         ]
+       }
+     }
+   }
+   ```
+
+````
+
 **Benefits**: Faster startup, no Docker dependency
 **Drawbacks**: Manual updates required
 
@@ -160,7 +180,7 @@ For remote/shared access:
    ```powershell
    cd mcp-dotnet-samples/awesome-copilot
    dotnet run --project ./src/McpSamples.AwesomeCopilot.HybridApp -- --http
-   ```
+````
 
 2. Update `.vscode/mcp.json`:
    ```json
