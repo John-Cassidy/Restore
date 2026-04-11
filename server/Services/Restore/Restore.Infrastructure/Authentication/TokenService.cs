@@ -1,27 +1,24 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Restore.Application.Abstractions.Authentication;
 using Restore.Core.Entities;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace Restore.Infrastructure.Authentication;
 
-public class TokenService : ITokenService
-{
+public class TokenService : ITokenService {
     private readonly JwtOptions _options;
     private readonly UserManager<User> _userManager;
 
-    public TokenService(UserManager<User> userManager, IOptions<JwtOptions> options)
-    {
+    public TokenService(UserManager<User> userManager, IOptions<JwtOptions> options) {
         _options = options.Value;
         _userManager = userManager;
     }
 
-    public async Task<string> GenerateToken(User user)
-    {
+    public async Task<string> GenerateToken(User user) {
         var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
@@ -30,8 +27,7 @@ public class TokenService : ITokenService
         };
 
         var roles = await _userManager.GetRolesAsync(user);
-        foreach (var role in roles)
-        {
+        foreach (var role in roles) {
             claims.Add(new Claim(ClaimTypes.Role, role));
         }
 

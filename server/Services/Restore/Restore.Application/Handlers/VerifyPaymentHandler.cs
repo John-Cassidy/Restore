@@ -1,26 +1,23 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Configuration;
 using Restore.Application.Commands;
+using Restore.Core.Entities.OrderAggregate;
 using Restore.Core.Repositories;
 using Restore.Core.Results;
-using Microsoft.Extensions.Configuration;
 using Stripe;
-using Restore.Core.Entities.OrderAggregate;
 
 namespace Restore.Application.Handlers;
 
-public class VerifyPaymentHandler : IRequestHandler<VerifyPaymentCommand, Result<Unit>>
-{
+public class VerifyPaymentHandler : IRequestHandler<VerifyPaymentCommand, Result<Unit>> {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IConfiguration _config;
 
-    public VerifyPaymentHandler(IUnitOfWork unitOfWork, IConfiguration config)
-    {
+    public VerifyPaymentHandler(IUnitOfWork unitOfWork, IConfiguration config) {
         _unitOfWork = unitOfWork;
         _config = config;
     }
 
-    public async Task<Result<Unit>> Handle(VerifyPaymentCommand request, CancellationToken cancellationToken)
-    {
+    public async Task<Result<Unit>> Handle(VerifyPaymentCommand request, CancellationToken cancellationToken) {
         var stripeEvent = EventUtility.ConstructEvent(
                 request.StripeEvent,
                 request.StripeSignature,
@@ -31,14 +28,14 @@ public class VerifyPaymentHandler : IRequestHandler<VerifyPaymentCommand, Result
 
         var order = await _unitOfWork.OrderRepository.ReadOrderByPaymentIntentIdAsync(charge.PaymentIntentId);
 
-        if (order is not null && charge.Status == "succeeded") order.OrderStatus = OrderStatus.PaymentReceived;
+        if (order is not null && charge.Status == "succeeded")
+            order.OrderStatus = OrderStatus.PaymentReceived;
 
         await _unitOfWork.OrderRepository.UpdateAsync(order);
 
         var result = await _unitOfWork.CompleteAsync() > 0;
 
-        if (result == false)
-        {
+        if (result == false) {
             return Result<Unit>.Failure("Problem verifying payment");
         }
 

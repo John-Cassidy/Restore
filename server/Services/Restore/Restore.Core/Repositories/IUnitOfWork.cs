@@ -1,7 +1,6 @@
 ﻿namespace Restore.Core.Repositories;
 
-public interface IUnitOfWork : IDisposable
-{
+public interface IUnitOfWork : IDisposable {
     IBasketRepository BasketRepository { get; }
     IOrderRepository OrderRepository { get; }
     IProductRepository ProductRepository { get; }

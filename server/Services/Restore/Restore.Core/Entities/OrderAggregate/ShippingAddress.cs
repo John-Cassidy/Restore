@@ -3,7 +3,6 @@
 namespace Restore.Core.Entities.OrderAggregate;
 
 [Owned]
-public class ShippingAddress : Address
-{
+public class ShippingAddress : Address {
 
 }

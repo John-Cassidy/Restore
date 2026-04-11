@@ -1,7 +1,6 @@
 ﻿namespace Restore.Application.Responses;
 
-public class OrderResponse
-{
+public class OrderResponse {
     public int Id { get; set; }
     public string BuyerId { get; set; }
     public AddressResponse ShippingAddress { get; set; }

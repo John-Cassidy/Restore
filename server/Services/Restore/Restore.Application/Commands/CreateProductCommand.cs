@@ -5,8 +5,7 @@ using Restore.Core.Results;
 
 namespace Restore.Application.Commands;
 
-public class CreateProductCommand : IRequest<Result<ProductResponse>>
-{
+public class CreateProductCommand : IRequest<Result<ProductResponse>> {
     public string Name { get; set; }
     public string Description { get; set; }
     public long Price { get; set; }
@@ -16,8 +15,7 @@ public class CreateProductCommand : IRequest<Result<ProductResponse>>
     public IFormFileService File { get; set; }
 
 
-    public CreateProductCommand(string name, string description, long price, string type, string brand, int quantityInStock, IFormFileService file)
-    {
+    public CreateProductCommand(string name, string description, long price, string type, string brand, int quantityInStock, IFormFileService file) {
         Name = name;
         Description = description;
         Price = price;

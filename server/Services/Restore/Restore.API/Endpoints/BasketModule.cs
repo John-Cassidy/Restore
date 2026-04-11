@@ -8,31 +8,24 @@ using Restore.Core.Results;
 
 namespace Restore.API.Endpoints;
 
-public static class BasketModule
-{
+public static class BasketModule {
     // endpoints: 
     // 1. GetBasket
     // 2. AddItemToBasket
     // 3. RemoveItemFromBasket
 
-    public static IEndpointRouteBuilder AddBasketEndpoints(this IEndpointRouteBuilder endpoints)
-    {
+    public static IEndpointRouteBuilder AddBasketEndpoints(this IEndpointRouteBuilder endpoints) {
         endpoints.MapGet("/api/basket",
-            async (HttpContext context, IMediator mediator) =>
-            {
-                try
-                {
+            async (HttpContext context, IMediator mediator) => {
+                try {
                     var buyerId = context.GetBuyerId();
                     var query = new GetBasketQuery(buyerId);
                     Result<BasketResponse>? result = await mediator.Send(query);
-                    if (!result.IsSuccess)
-                    {
+                    if (!result.IsSuccess) {
                         return Results.Problem(title: $"Basket with id {buyerId} not found", statusCode: StatusCodes.Status404NotFound);
                     }
                     return Results.Ok(result.Value.MapBasketToDto());
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     return Results.BadRequest(ex.Message);
                 }
             })
@@ -42,24 +35,19 @@ public static class BasketModule
             .Produces<string>(StatusCodes.Status400BadRequest);
 
         endpoints.MapPost("/api/basket",
-        async (HttpContext context, IMediator mediator, int productId, int quantity) =>
-        {
-            try
-            {
+        async (HttpContext context, IMediator mediator, int productId, int quantity) => {
+            try {
                 var buyerId = context.GetBuyerId();
                 var command = new AddItemToBasketCommand(buyerId, productId, quantity);
                 var result = await mediator.Send(command);
 
-                if (!result.IsSuccess)
-                {
+                if (!result.IsSuccess) {
                     return Results.Problem(title: result.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
                 }
 
                 // return createdAtEndpoint with basket GetBasket
                 return Results.CreatedAtRoute("GetBasket", new { }, result.Value.MapBasketToDto());
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 return Results.BadRequest(ex.Message);
             }
         })
@@ -68,28 +56,22 @@ public static class BasketModule
         .Produces<BasketDto>(StatusCodes.Status201Created)
         .Produces<string>(StatusCodes.Status400BadRequest);
 
-        endpoints.MapDelete("/api/basket", async (HttpContext context, IMediator mediator, int productId, int quantity) =>
-        {
-            try
-            {
+        endpoints.MapDelete("/api/basket", async (HttpContext context, IMediator mediator, int productId, int quantity) => {
+            try {
                 var buyerId = context.GetBuyerId();
-                if (buyerId == null)
-                {
+                if (buyerId == null) {
                     return Results.Problem(title: "No Basket Found", statusCode: StatusCodes.Status404NotFound);
                 }
 
                 var command = new RemoveItemFromBasketCommand(buyerId, productId, quantity);
                 var result = await mediator.Send(command);
 
-                if (!result.IsSuccess)
-                {
+                if (!result.IsSuccess) {
                     return Results.Problem(title: result.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
                 }
 
                 return Results.Ok();
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 return Results.BadRequest(ex.Message);
             }
         })

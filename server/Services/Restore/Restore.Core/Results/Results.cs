@@ -1,7 +1,6 @@
 namespace Restore.Core.Results;
 
-public class Result<T>
-{
+public class Result<T> {
     public T Value { get; set; }
     public bool IsSuccess { get; set; }
     public string ErrorMessage { get; set; }

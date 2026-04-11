@@ -2,7 +2,6 @@
 
 namespace Restore.Application.Abstractions.Authentication;
 
-public interface ITokenService
-{
+public interface ITokenService {
     Task<string> GenerateToken(User user);
 }

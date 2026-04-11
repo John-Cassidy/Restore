@@ -12,13 +12,10 @@ using Restore.Infrastructure.Services;
 
 namespace Restore.Infrastructure.Extensions;
 
-public static class InfrastructureServices
-{
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
-    {
+public static class InfrastructureServices {
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration) {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
-        if (connectionString == null)
-        {
+        if (connectionString == null) {
             throw new InvalidOperationException("Database connection string is not configured.");
         }
 
@@ -35,8 +32,7 @@ public static class InfrastructureServices
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<IImageService, ImageService>();
         // create a factory method to create IFormFileService by using a delegate. This delegate can be registered in the dependency injection container and then injected into the endpoint.
-        services.AddScoped<Func<IFormFile, IFormFileService>>(serviceProvider => formFile =>
-        {
+        services.AddScoped<Func<IFormFile, IFormFileService>>(serviceProvider => formFile => {
             return new FormFileService(formFile);
         });
 

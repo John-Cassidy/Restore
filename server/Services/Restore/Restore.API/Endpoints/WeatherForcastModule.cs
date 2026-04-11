@@ -1,17 +1,14 @@
 ﻿namespace Restore.API.Endpoints;
 
-public static class WeatherForcastModule
-{
-    public static IEndpointRouteBuilder AddWeatherForecastEndpoints(this IEndpointRouteBuilder endpoints)
-    {
+public static class WeatherForcastModule {
+    public static IEndpointRouteBuilder AddWeatherForecastEndpoints(this IEndpointRouteBuilder endpoints) {
         var summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot",
             "Sweltering", "Scorching"
         };
 
-        endpoints.MapGet("/weatherforecast", () =>
-        {
+        endpoints.MapGet("/weatherforecast", () => {
             var forecast = Enumerable.Range(1, 5).Select(index =>
                     new WeatherForecast
                     (
@@ -28,8 +25,7 @@ public static class WeatherForcastModule
         return endpoints;
     }
 
-    record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-    {
+    record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary) {
         public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
     }
 }

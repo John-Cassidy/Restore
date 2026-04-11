@@ -6,10 +6,8 @@ using Restore.Core.Pagination;
 
 namespace Restore.Application.Mappers;
 
-public static class MappingExtensions
-{
-    public static ProductResponse ToProductResponse(this Product product) => new()
-    {
+public static class MappingExtensions {
+    public static ProductResponse ToProductResponse(this Product product) => new() {
         Id = product.Id,
         Name = product.Name,
         Description = product.Description,
@@ -27,15 +25,13 @@ public static class MappingExtensions
         pagedList.MetaData.PageSize
     );
 
-    public static BasketItemResponse ToBasketItemResponse(this BasketItem item) => new()
-    {
+    public static BasketItemResponse ToBasketItemResponse(this BasketItem item) => new() {
         Id = item.Id,
         Quantity = item.Quantity,
         Product = item.Product.ToProductResponse()
     };
 
-    public static BasketResponse ToBasketResponse(this Basket basket) => new()
-    {
+    public static BasketResponse ToBasketResponse(this Basket basket) => new() {
         Id = basket.Id,
         BuyerId = basket.BuyerId,
         Items = basket.Items.Select(i => i.ToBasketItemResponse()).ToList(),
@@ -43,23 +39,20 @@ public static class MappingExtensions
         ClientSecret = basket.ClientSecret
     };
 
-    public static ProductItemOrderedResponse ToProductItemOrderedResponse(this ProductItemOrdered item) => new()
-    {
+    public static ProductItemOrderedResponse ToProductItemOrderedResponse(this ProductItemOrdered item) => new() {
         ProductId = item.ProductId,
         Name = item.Name,
         PictureUrl = item.PictureUrl
     };
 
-    public static OrderItemResponse ToOrderItemResponse(this OrderItem item) => new()
-    {
+    public static OrderItemResponse ToOrderItemResponse(this OrderItem item) => new() {
         Id = item.Id,
         ItemOrdered = item.ItemOrdered.ToProductItemOrderedResponse(),
         Price = item.Price,
         Quantity = item.Quantity
     };
 
-    public static AddressResponse ToAddressResponse(this ShippingAddress address) => new()
-    {
+    public static AddressResponse ToAddressResponse(this ShippingAddress address) => new() {
         FullName = address.FullName,
         Address1 = address.Address1,
         Address2 = address.Address2,
@@ -72,8 +65,7 @@ public static class MappingExtensions
     public static OrderStatusResponse ToOrderStatusResponse(this OrderStatus status) =>
         (OrderStatusResponse)(int)status;
 
-    public static OrderResponse ToOrderResponse(this Order order) => new()
-    {
+    public static OrderResponse ToOrderResponse(this Order order) => new() {
         Id = order.Id,
         BuyerId = order.BuyerId,
         ShippingAddress = order.ShippingAddress.ToAddressResponse(),
@@ -85,8 +77,7 @@ public static class MappingExtensions
         Total = order.GetTotal()
     };
 
-    public static ShippingAddress ToShippingAddress(this AddressRequest address) => new()
-    {
+    public static ShippingAddress ToShippingAddress(this AddressRequest address) => new() {
         FullName = address.FullName,
         Address1 = address.Address1,
         Address2 = address.Address2,
@@ -96,8 +87,7 @@ public static class MappingExtensions
         Country = address.Country
     };
 
-    public static void UpdateFrom(this Product target, Product source)
-    {
+    public static void UpdateFrom(this Product target, Product source) {
         target.Name = source.Name;
         target.Description = source.Description;
         target.Price = source.Price;
@@ -107,15 +97,13 @@ public static class MappingExtensions
         target.QuantityInStock = source.QuantityInStock;
     }
 
-    public static void UpdateFrom(this Basket target, Basket source)
-    {
+    public static void UpdateFrom(this Basket target, Basket source) {
         target.BuyerId = source.BuyerId;
         target.PaymentIntentId = source.PaymentIntentId;
         target.ClientSecret = source.ClientSecret;
     }
 
-    public static void UpdateFrom(this Order target, Order source)
-    {
+    public static void UpdateFrom(this Order target, Order source) {
         target.BuyerId = source.BuyerId;
         target.ShippingAddress = source.ShippingAddress;
         target.OrderDate = source.OrderDate;

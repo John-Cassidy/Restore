@@ -4,11 +4,9 @@ using Restore.Core.Pagination;
 
 namespace Restore.Application.Queries;
 
-public class GetProductsQuery : IRequest<PagedList<ProductResponse>>
-{
+public class GetProductsQuery : IRequest<PagedList<ProductResponse>> {
     public ProductParams ProductParams { get; set; }
-    public GetProductsQuery(ProductParams productParams)
-    {
+    public GetProductsQuery(ProductParams productParams) {
         ProductParams = productParams;
     }
 }

@@ -1,17 +1,14 @@
-﻿using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Restore.Core.Entities;
 using Restore.Infrastructure.Data;
+using System.Text;
 
 namespace Restore.API.Extensions;
 
-public static class IdentityExtensions
-{
-    public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.AddIdentityCore<User>(opt =>
-        {
+public static class IdentityExtensions {
+    public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration configuration) {
+        services.AddIdentityCore<User>(opt => {
             opt.User.RequireUniqueEmail = true;
         })
         .AddRoles<Role>()
@@ -22,10 +19,8 @@ public static class IdentityExtensions
         // services.ConfigureOptions<JwtBearerOptionsConfiguration>();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer(opt =>
-        {
-            opt.TokenValidationParameters = new TokenValidationParameters
-            {
+        .AddJwtBearer(opt => {
+            opt.TokenValidationParameters = new TokenValidationParameters {
                 ValidateIssuer = false,
                 ValidateAudience = false,
                 ValidateLifetime = true,

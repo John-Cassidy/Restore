@@ -5,7 +5,7 @@ public class PaginationParams {
     private int _pageSize = 6;
     private const int maxPageSize = 50;
 
-    public int? PageNumber { 
+    public int? PageNumber {
         get => _pageNumber;
         set => _pageNumber = value.HasValue && value > 0 ? value.Value : _pageNumber;
     }

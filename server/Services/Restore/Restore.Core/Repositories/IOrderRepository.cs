@@ -3,8 +3,7 @@ using Restore.Core.Results;
 
 namespace Restore.Core.Repositories;
 
-public interface IOrderRepository
-{
+public interface IOrderRepository {
     Task<Result<IReadOnlyList<Order>>> GetOrdersAsync(string buyerId);
     Task<Result<Order>> GetOrderByIdAsync(string buyerId, int orderId);
 

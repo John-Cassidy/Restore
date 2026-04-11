@@ -4,14 +4,10 @@ using Restore.Core.Entities;
 namespace Restore.Infrastructure.Data;
 
 
-public static class DbInitializer
-{
-    public static async Task InitializeAsync(StoreContext context, UserManager<User> userManager)
-    {
-        if (!userManager.Users.Any())
-        {
-            var user = new User
-            {
+public static class DbInitializer {
+    public static async Task InitializeAsync(StoreContext context, UserManager<User> userManager) {
+        if (!userManager.Users.Any()) {
+            var user = new User {
                 UserName = "bob",
                 Email = "bob@test.com"
             };
@@ -19,8 +15,7 @@ public static class DbInitializer
             await userManager.CreateAsync(user, "Admin_1234");
             await userManager.AddToRoleAsync(user, "Member");
 
-            var admin = new User
-            {
+            var admin = new User {
                 UserName = "admin",
                 Email = "admin@test.com"
             };
@@ -29,7 +24,8 @@ public static class DbInitializer
             await userManager.AddToRolesAsync(admin, new[] { "Admin", "Member" });
         }
 
-        if (context.Products.Any()) return;
+        if (context.Products.Any())
+            return;
 
         var products = new List<Product>
             {

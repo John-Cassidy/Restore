@@ -1,15 +1,11 @@
 ﻿namespace Restore.Core.Pagination;
 
-public class PagedList<T> where T : class
-{
-    public PagedList()
-    {
+public class PagedList<T> where T : class {
+    public PagedList() {
     }
 
-    public PagedList(IReadOnlyList<T> items, int count, int pageNumber, int pageSize)
-    {
-        MetaData = new MetaData
-        {
+    public PagedList(IReadOnlyList<T> items, int count, int pageNumber, int pageSize) {
+        MetaData = new MetaData {
             TotalCount = count,
             PageSize = pageSize,
             CurrentPage = pageNumber,

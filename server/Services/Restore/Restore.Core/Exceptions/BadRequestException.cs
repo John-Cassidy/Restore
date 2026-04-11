@@ -1,18 +1,14 @@
 ﻿namespace Restore.Core.Exceptions;
 
-public class BadRequestException : Exception
-{
-    public BadRequestException()
-    {
+public class BadRequestException : Exception {
+    public BadRequestException() {
     }
 
     public BadRequestException(string message)
-        : base(message)
-    {
+        : base(message) {
     }
 
     public BadRequestException(string message, Exception inner)
-        : base(message, inner)
-    {
+        : base(message, inner) {
     }
 }
