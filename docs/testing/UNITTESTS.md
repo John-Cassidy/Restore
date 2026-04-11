@@ -53,7 +53,8 @@ Run from the repository root after collecting coverage:
 reportgenerator `
   -reports:"**/TestResults/**/coverage.cobertura.xml" `
   -targetdir:"coveragereport" `
-  -reporttypes:Html
+  -reporttypes:Html `
+  -filefilters:"-**/obj/**"
 ```
 
 The glob pattern `**/TestResults/**/coverage.cobertura.xml` picks up every Cobertura file produced anywhere under the repo in a single pass and merges them into one report.

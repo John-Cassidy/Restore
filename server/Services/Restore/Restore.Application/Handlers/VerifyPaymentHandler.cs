@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using Microsoft.Extensions.Configuration;
 using Restore.Application.Commands;
+using Restore.Application.Services;
 using Restore.Core.Entities.OrderAggregate;
 using Restore.Core.Repositories;
 using Restore.Core.Results;
@@ -10,18 +10,17 @@ namespace Restore.Application.Handlers;
 
 public class VerifyPaymentHandler : IRequestHandler<VerifyPaymentCommand, Result<Unit>> {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IConfiguration _config;
+    private readonly IStripeEventParser _stripeEventParser;
 
-    public VerifyPaymentHandler(IUnitOfWork unitOfWork, IConfiguration config) {
+    public VerifyPaymentHandler(IUnitOfWork unitOfWork, IStripeEventParser stripeEventParser) {
         _unitOfWork = unitOfWork;
-        _config = config;
+        _stripeEventParser = stripeEventParser;
     }
 
     public async Task<Result<Unit>> Handle(VerifyPaymentCommand request, CancellationToken cancellationToken) {
-        var stripeEvent = EventUtility.ConstructEvent(
+        var stripeEvent = _stripeEventParser.ParseEvent(
                 request.StripeEvent,
-                request.StripeSignature,
-                _config["StripeSettings:WhSecret"]
+                request.StripeSignature
             );
 
         var charge = (Charge)stripeEvent.Data.Object;
