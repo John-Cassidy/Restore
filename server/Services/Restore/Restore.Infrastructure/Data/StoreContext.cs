@@ -2,18 +2,23 @@
 using Microsoft.EntityFrameworkCore;
 using Restore.Core.Entities;
 using Restore.Core.Entities.OrderAggregate;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Restore.Infrastructure.Data;
 
-public class StoreContext : IdentityDbContext<User, Role, int> {
-    public StoreContext(DbContextOptions options) : base(options) {
+[ExcludeFromCodeCoverage]
+public class StoreContext : IdentityDbContext<User, Role, int>
+{
+    public StoreContext(DbContextOptions options) : base(options)
+    {
     }
 
     public DbSet<Product> Products { get; set; }
     public DbSet<Basket> Baskets { get; set; }
     public DbSet<Order> Orders { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder) {
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
         base.OnModelCreating(modelBuilder);
 
         // use fluent entity creation to create User
