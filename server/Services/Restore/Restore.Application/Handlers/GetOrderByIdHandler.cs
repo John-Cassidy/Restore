@@ -1,5 +1,5 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
+using Restore.Application.Mappers;
 using Restore.Application.Queries;
 using Restore.Application.Responses;
 using Restore.Core.Repositories;
@@ -10,12 +10,10 @@ namespace Restore.Application.Handlers;
 public class GetOrderByIdHandler : IRequestHandler<GetOrderByIdQuery, Result<OrderResponse>>
 {
     private readonly IOrderRepository _orderRepository;
-    private readonly IMapper _mapper;
 
-    public GetOrderByIdHandler(IOrderRepository orderRepository, IMapper mapper)
+    public GetOrderByIdHandler(IOrderRepository orderRepository)
     {
         _orderRepository = orderRepository;
-        _mapper = mapper;
     }
 
     public async Task<Result<OrderResponse>> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
@@ -25,7 +23,6 @@ public class GetOrderByIdHandler : IRequestHandler<GetOrderByIdQuery, Result<Ord
         {
             return Result<OrderResponse>.Failure("Order not found");
         }
-        var orderResponse = _mapper.Map<OrderResponse>(order.Value);
-        return Result<OrderResponse>.Success(orderResponse);
+        return Result<OrderResponse>.Success(order.Value.ToOrderResponse());
     }
 }

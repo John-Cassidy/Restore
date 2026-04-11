@@ -1,5 +1,5 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Restore.Application.Mappers;
 using Restore.Core.Entities.OrderAggregate;
 using Restore.Core.Repositories;
 using Restore.Core.Results;
@@ -10,12 +10,10 @@ namespace Restore.Infrastructure.Repositories;
 public class OrderRepository : IOrderRepository
 {
     private readonly StoreContext _context;
-    private readonly IMapper _mapper;
 
-    public OrderRepository(StoreContext context, IMapper mapper)
+    public OrderRepository(StoreContext context)
     {
         _context = context;
-        _mapper = mapper;
     }
 
     public async Task<Result<IReadOnlyList<Order>>> GetOrdersAsync(string buyerId)
@@ -76,7 +74,7 @@ public class OrderRepository : IOrderRepository
             throw new Exception("Order not found");
         }
 
-        _mapper.Map(order, orderToUpdate);
+        orderToUpdate.UpdateFrom(order);
         _context.Orders.Update(orderToUpdate);
     }
 }

@@ -1,6 +1,6 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using Restore.Application.Commands;
+using Restore.Application.Mappers;
 using Restore.Application.Responses;
 using Restore.Application.Services;
 using Restore.Core.Repositories;
@@ -12,13 +12,11 @@ public class CreateOrUpdatePaymentIntentHandler : IRequestHandler<CreateOrUpdate
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPaymentService _paymentService;
-    private readonly IMapper _mapper;
 
-    public CreateOrUpdatePaymentIntentHandler(IUnitOfWork unitOfWork, IPaymentService paymentService, IMapper mapper)
+    public CreateOrUpdatePaymentIntentHandler(IUnitOfWork unitOfWork, IPaymentService paymentService)
     {
         _unitOfWork = unitOfWork;
         _paymentService = paymentService;
-        _mapper = mapper;
     }
 
     public async Task<Result<BasketResponse>> Handle(CreateOrUpdatePaymentIntentCommand request, CancellationToken cancellationToken)
@@ -43,6 +41,6 @@ public class CreateOrUpdatePaymentIntentHandler : IRequestHandler<CreateOrUpdate
 
         if (!result) return Result<BasketResponse>.Failure("Problem updating basket with intent", 400); // StatusCodes.Status400BadRequest,
 
-        return Result<BasketResponse>.Success(_mapper.Map<BasketResponse>(basket));
+        return Result<BasketResponse>.Success(basket.ToBasketResponse());
     }
 }

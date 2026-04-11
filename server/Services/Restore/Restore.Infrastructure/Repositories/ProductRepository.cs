@@ -1,6 +1,6 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Restore.Application.Extensions;
+using Restore.Application.Mappers;
 using Restore.Core.Entities;
 using Restore.Core.Pagination;
 using Restore.Core.Repositories;
@@ -11,12 +11,10 @@ namespace Restore.Infrastructure.Repositories;
 public class ProductRepository : IProductRepository
 {
     private readonly StoreContext _context;
-    private readonly IMapper _mapper;
 
-    public ProductRepository(StoreContext context, IMapper mapper)
+    public ProductRepository(StoreContext context)
     {
         _context = context;
-        _mapper = mapper;
     }
 
     public async Task<IReadOnlyList<Product>> GetProductsAsync()
@@ -70,7 +68,7 @@ public class ProductRepository : IProductRepository
             throw new Exception("Product not found");
         }
 
-        _mapper.Map(product, productToUpdate);
+        productToUpdate.UpdateFrom(product);
         _context.Products.Update(productToUpdate);
     }
 
