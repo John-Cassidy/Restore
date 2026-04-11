@@ -1,0 +1,404 @@
+{
+  "info": {
+    "_postman_id": "a4f6e2d0-b8c1-4e3f-9d2a-1234567890ab",
+    "name": "Restore API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000", "type": "string" },
+    { "key": "token", "value": "", "type": "string" },
+    { "key": "adminToken", "value": "", "type": "string" },
+    { "key": "productId", "value": "1", "type": "string" },
+    { "key": "basketProductId", "value": "2", "type": "string" },
+    { "key": "orderId", "value": "1", "type": "string" },
+    { "key": "newProductId", "value": "", "type": "string" }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const baseUrl = pm.environment.get('baseUrl') || pm.collectionVariables.get('baseUrl') || 'http://localhost:5000';",
+          "pm.variables.set('baseUrl', baseUrl);",
+          "const token = pm.environment.get('token') || pm.collectionVariables.get('token') || '';",
+          "pm.variables.set('token', token);",
+          "const adminToken = pm.environment.get('adminToken') || pm.collectionVariables.get('adminToken') || '';",
+          "pm.variables.set('adminToken', adminToken);"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login as Bob (Member)",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+            "pm.test('Has token', () => { const j = pm.response.json(); pm.expect(j.token).to.be.a('string').and.not.empty; pm.collectionVariables.set('token', j.token); pm.environment.set('token', j.token); });",
+            "pm.test('Has email', () => pm.expect(pm.response.json().email).to.equal('bob@test.com'));"
+          ]}}],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"username\":\"bob\",\"password\":\"Admin_1234\"}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{baseUrl}}/api/account/login", "host": ["{{baseUrl}}"], "path": ["api","account","login"] }
+          }
+        },
+        {
+          "name": "Login as Admin",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+            "pm.test('Has token', () => { const j = pm.response.json(); pm.expect(j.token).to.be.a('string').and.not.empty; pm.collectionVariables.set('adminToken', j.token); pm.environment.set('adminToken', j.token); });",
+            "pm.test('Has email', () => pm.expect(pm.response.json().email).to.equal('admin@test.com'));"
+          ]}}],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"username\":\"admin\",\"password\":\"Admin_1234\"}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{baseUrl}}/api/account/login", "host": ["{{baseUrl}}"], "path": ["api","account","login"] }
+          }
+        },
+        {
+          "name": "Register New User",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 201 Created', () => pm.response.to.have.status(201));"] }}],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"username\":\"testuser\",\"email\":\"testuser@test.com\",\"password\":\"Admin_1234\"}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{baseUrl}}/api/account/register", "host": ["{{baseUrl}}"], "path": ["api","account","register"] }
+          }
+        },
+        {
+          "name": "Get Current User",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+            "pm.test('Has email and token', () => { const j = pm.response.json(); pm.expect(j).to.have.property('email'); pm.expect(j).to.have.property('token'); });"
+          ]}}],
+          "request": {
+            "method": "GET", "header": [],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/account/current", "host": ["{{baseUrl}}"], "path": ["api","account","current"] }
+          }
+        },
+        {
+          "name": "Get User Address",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 200 OK', () => pm.response.to.have.status(200));"] }}],
+          "request": {
+            "method": "GET", "header": [],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/account/address", "host": ["{{baseUrl}}"], "path": ["api","account","address"] }
+          }
+        },
+        {
+          "name": "Login - Invalid Credentials (400)",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 400', () => pm.response.to.have.status(400));"] }}],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"username\":\"bob\",\"password\":\"WrongPassword!\"}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{baseUrl}}/api/account/login", "host": ["{{baseUrl}}"], "path": ["api","account","login"] }
+          }
+        },
+        {
+          "name": "Get Current User - Unauthorized (401)",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 401', () => pm.response.to.have.status(401));"] }}],
+          "request": {
+            "method": "GET", "header": [],
+            "url": { "raw": "{{baseUrl}}/api/account/current", "host": ["{{baseUrl}}"], "path": ["api","account","current"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Get All Products",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+            "pm.test('Has data and metaData', () => { const j = pm.response.json(); pm.expect(j.data).to.be.an('array'); pm.expect(j.metaData).to.have.property('totalCount'); });"
+          ]}}],
+          "request": {
+            "method": "GET", "header": [],
+            "url": { "raw": "{{baseUrl}}/api/products", "host": ["{{baseUrl}}"], "path": ["api","products"] }
+          }
+        },
+        {
+          "name": "Get Products - Page 1, Size 5",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+            "pm.test('Page size correct', () => { const j = pm.response.json(); pm.expect(j.data.length).to.be.at.most(5); pm.expect(j.metaData.pageSize).to.equal(5); });"
+          ]}}],
+          "request": {
+            "method": "GET", "header": [],
+            "url": { "raw": "{{baseUrl}}/api/products?PageNumber=1&PageSize=5", "host": ["{{baseUrl}}"], "path": ["api","products"], "query": [{"key":"PageNumber","value":"1"},{"key":"PageSize","value":"5"}] }
+          }
+        },
+        {
+          "name": "Get Products - Search by Term",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 200 OK', () => pm.response.to.have.status(200));"] }}],
+          "request": {
+            "method": "GET", "header": [],
+            "url": { "raw": "{{baseUrl}}/api/products?SearchTerm=board&PageSize=6", "host": ["{{baseUrl}}"], "path": ["api","products"], "query": [{"key":"SearchTerm","value":"board"},{"key":"PageSize","value":"6"}] }
+          }
+        },
+        {
+          "name": "Get Products - Sorted by Price Descending",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 200 OK', () => pm.response.to.have.status(200));"] }}],
+          "request": {
+            "method": "GET", "header": [],
+            "url": { "raw": "{{baseUrl}}/api/products?OrderBy=priceDesc&PageSize=6", "host": ["{{baseUrl}}"], "path": ["api","products"], "query": [{"key":"OrderBy","value":"priceDesc"},{"key":"PageSize","value":"6"}] }
+          }
+        },
+        {
+          "name": "Get Product Filters (Brands & Types)",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+            "pm.test('Has brands and types', () => { const j = pm.response.json(); pm.expect(j.brands).to.be.an('array').with.length.greaterThan(0); pm.expect(j.types).to.be.an('array').with.length.greaterThan(0); });"
+          ]}}],
+          "request": {
+            "method": "GET", "header": [],
+            "url": { "raw": "{{baseUrl}}/api/products/filters", "host": ["{{baseUrl}}"], "path": ["api","products","filters"] }
+          }
+        },
+        {
+          "name": "Get Single Product (id=1)",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+            "pm.test('Has required fields', () => { const j = pm.response.json(); ['id','name','price','brand','type','quantityInStock'].forEach(f => pm.expect(j).to.have.property(f)); });"
+          ]}}],
+          "request": {
+            "method": "GET", "header": [],
+            "url": { "raw": "{{baseUrl}}/api/products/{{productId}}", "host": ["{{baseUrl}}"], "path": ["api","products","{{productId}}"] }
+          }
+        },
+        {
+          "name": "Get Single Product - Not Found (404)",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 404', () => pm.response.to.have.status(404));"] }}],
+          "request": {
+            "method": "GET", "header": [],
+            "url": { "raw": "{{baseUrl}}/api/products/999999", "host": ["{{baseUrl}}"], "path": ["api","products","999999"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Basket",
+      "item": [
+        {
+          "name": "Get Basket",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+            "pm.test('Has items array', () => pm.expect(pm.response.json()).to.have.property('items'));"
+          ]}}],
+          "request": {
+            "method": "GET", "header": [],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/basket", "host": ["{{baseUrl}}"], "path": ["api","basket"] }
+          }
+        },
+        {
+          "name": "Add Item to Basket (product 1, qty 2)",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 201 Created', () => pm.response.to.have.status(201));"] }}],
+          "request": {
+            "method": "POST", "header": [],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/basket?productId=1&quantity=2", "host": ["{{baseUrl}}"], "path": ["api","basket"], "query": [{"key":"productId","value":"1"},{"key":"quantity","value":"2"}] }
+          }
+        },
+        {
+          "name": "Add Item to Basket (product 2, qty 1)",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 201 Created', () => pm.response.to.have.status(201));"] }}],
+          "request": {
+            "method": "POST", "header": [],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/basket?productId={{basketProductId}}&quantity=1", "host": ["{{baseUrl}}"], "path": ["api","basket"], "query": [{"key":"productId","value":"{{basketProductId}}"},{"key":"quantity","value":"1"}] }
+          }
+        },
+        {
+          "name": "Remove Item from Basket (product 1, qty 1)",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 200 OK', () => pm.response.to.have.status(200));"] }}],
+          "request": {
+            "method": "DELETE", "header": [],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/basket?productId=1&quantity=1", "host": ["{{baseUrl}}"], "path": ["api","basket"], "query": [{"key":"productId","value":"1"},{"key":"quantity","value":"1"}] }
+          }
+        },
+        {
+          "name": "Remove Item - Not in Basket (404)",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 404', () => pm.response.to.have.status(404));"] }}],
+          "request": {
+            "method": "DELETE", "header": [],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/basket?productId=999&quantity=1", "host": ["{{baseUrl}}"], "path": ["api","basket"], "query": [{"key":"productId","value":"999"},{"key":"quantity","value":"1"}] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Get All Orders",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+            "pm.test('Is array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+          ]}}],
+          "request": {
+            "method": "GET", "header": [],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/orders", "host": ["{{baseUrl}}"], "path": ["api","orders"] }
+          }
+        },
+        {
+          "name": "Create Order",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('Status 201 Created', () => pm.response.to.have.status(201));",
+            "pm.test('Has id', () => { const j = pm.response.json(); pm.expect(j).to.have.property('id'); pm.collectionVariables.set('orderId', j.id); pm.environment.set('orderId', j.id); });"
+          ]}}],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "body": { "mode": "raw", "raw": "{\"saveAddress\":true,\"shippingAddress\":{\"fullName\":\"Bob Smith\",\"address1\":\"123 Main Street\",\"address2\":\"\",\"city\":\"Boston\",\"state\":\"MA\",\"zip\":\"02101\",\"country\":\"USA\"}}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{baseUrl}}/api/orders", "host": ["{{baseUrl}}"], "path": ["api","orders"] }
+          }
+        },
+        {
+          "name": "Get Order by ID",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+            "pm.test('Has structure', () => { const j = pm.response.json(); ['id','buyerId','shippingAddress','orderItems','subtotal','total'].forEach(f => pm.expect(j).to.have.property(f)); });"
+          ]}}],
+          "request": {
+            "method": "GET", "header": [],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}", "host": ["{{baseUrl}}"], "path": ["api","orders","{{orderId}}"] }
+          }
+        },
+        {
+          "name": "Get Orders - Unauthorized (401)",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 401', () => pm.response.to.have.status(401));"] }}],
+          "request": {
+            "method": "GET", "header": [],
+            "url": { "raw": "{{baseUrl}}/api/orders", "host": ["{{baseUrl}}"], "path": ["api","orders"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Create or Update Payment Intent",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+            "pm.test('Has clientSecret', () => { const j = pm.response.json(); pm.expect(j.clientSecret).to.be.a('string').and.not.empty; });"
+          ]}}],
+          "request": {
+            "method": "POST", "header": [],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/payments", "host": ["{{baseUrl}}"], "path": ["api","payments"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Create Product (Admin)",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('Status 201 Created', () => pm.response.to.have.status(201));",
+            "pm.test('Has id', () => { const j = pm.response.json(); pm.expect(j).to.have.property('id'); pm.collectionVariables.set('newProductId', j.id); pm.environment.set('newProductId', j.id); });"
+          ]}}],
+          "request": {
+            "method": "POST", "header": [],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] },
+            "body": { "mode": "formdata", "formdata": [
+              {"key":"Name","value":"Test Product","type":"text"},
+              {"key":"Description","value":"Created by API test suite","type":"text"},
+              {"key":"Price","value":"19900","type":"text"},
+              {"key":"Type","value":"Boards","type":"text"},
+              {"key":"Brand","value":"NetCode","type":"text"},
+              {"key":"QuantityInStock","value":"10","type":"text"}
+            ]},
+            "url": { "raw": "{{baseUrl}}/api/products", "host": ["{{baseUrl}}"], "path": ["api","products"] }
+          }
+        },
+        {
+          "name": "Update Product (Admin)",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 200 OK', () => pm.response.to.have.status(200));"] }}],
+          "request": {
+            "method": "PUT", "header": [],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] },
+            "body": { "mode": "formdata", "formdata": [
+              {"key":"Id","value":"{{newProductId}}","type":"text"},
+              {"key":"Name","value":"Test Product (Updated)","type":"text"},
+              {"key":"Description","value":"Updated by API test","type":"text"},
+              {"key":"Price","value":"24900","type":"text"},
+              {"key":"Type","value":"Boards","type":"text"},
+              {"key":"Brand","value":"NetCode","type":"text"},
+              {"key":"QuantityInStock","value":"15","type":"text"}
+            ]},
+            "url": { "raw": "{{baseUrl}}/api/products", "host": ["{{baseUrl}}"], "path": ["api","products"] }
+          }
+        },
+        {
+          "name": "Delete Product (Admin)",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 204 No Content', () => pm.response.to.have.status(204));"] }}],
+          "request": {
+            "method": "DELETE", "header": [],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/products/{{newProductId}}", "host": ["{{baseUrl}}"], "path": ["api","products","{{newProductId}}"] }
+          }
+        },
+        {
+          "name": "Create Product - Member Forbidden (403)",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 401 or 403', () => pm.expect(pm.response.code).to.be.oneOf([401,403]));"] }}],
+          "request": {
+            "method": "POST", "header": [],
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "body": { "mode": "formdata", "formdata": [{"key":"Name","value":"Should Fail","type":"text"},{"key":"Price","value":"100","type":"text"}] },
+            "url": { "raw": "{{baseUrl}}/api/products", "host": ["{{baseUrl}}"], "path": ["api","products"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "System",
+      "item": [
+        {
+          "name": "Get Weather Forecast",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+            "pm.test('Is array with forecasts', () => { const j = pm.response.json(); pm.expect(j).to.be.an('array').with.length.greaterThan(0); pm.expect(j[0]).to.have.property('temperatureC'); });"
+          ]}}],
+          "request": {
+            "method": "GET", "header": [],
+            "url": { "raw": "{{baseUrl}}/weatherforecast", "host": ["{{baseUrl}}"], "path": ["weatherforecast"] }
+          }
+        },
+        {
+          "name": "Get Antiforgery Token",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 200 OK', () => pm.response.to.have.status(200));"] }}],
+          "request": {
+            "method": "GET", "header": [],
+            "url": { "raw": "{{baseUrl}}/antiforgery/token", "host": ["{{baseUrl}}"], "path": ["antiforgery","token"] }
+          }
+        },
+        {
+          "name": "Trigger Validation Error",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 200 OK', () => pm.response.to.have.status(200));"] }}],
+          "request": {
+            "method": "GET", "header": [],
+            "url": { "raw": "{{baseUrl}}/api/validation-error", "host": ["{{baseUrl}}"], "path": ["api","validation-error"] }
+          }
+        }
+      ]
+    }
+  ]
+}

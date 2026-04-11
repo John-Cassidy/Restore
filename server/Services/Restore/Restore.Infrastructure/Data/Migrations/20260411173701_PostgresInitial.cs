@@ -299,8 +299,8 @@ namespace Restore.Infrastructure.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { 1, null, "Member", "MEMBER" },
-                    { 2, null, "Admin", "ADMIN" }
+                    { 1, "a18be9c0-aa65-4af8-bd17-00bd9344e575", "Member", "MEMBER" },
+                    { 2, "c7d013f0-0c8e-4cc9-b9a9-6e89a4b6a4a5", "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(

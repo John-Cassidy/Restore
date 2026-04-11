@@ -1,0 +1,57 @@
+{
+  "id": "restore-local-env-001",
+  "name": "Restore Local",
+  "values": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "text",
+      "enabled": true
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "text",
+      "enabled": true,
+      "description": "Member JWT token - auto-set by 'Login as Bob' request"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "text",
+      "enabled": true,
+      "description": "Admin JWT token - auto-set by 'Login as Admin' request"
+    },
+    {
+      "key": "productId",
+      "value": "1",
+      "type": "text",
+      "enabled": true,
+      "description": "Product ID used in single-product and basket tests"
+    },
+    {
+      "key": "basketProductId",
+      "value": "2",
+      "type": "text",
+      "enabled": true,
+      "description": "Second product ID for basket add/remove tests"
+    },
+    {
+      "key": "orderId",
+      "value": "1",
+      "type": "text",
+      "enabled": true,
+      "description": "Order ID - updated by 'Create Order' test script"
+    },
+    {
+      "key": "newProductId",
+      "value": "",
+      "type": "text",
+      "enabled": true,
+      "description": "Auto-set after 'Admin - Create Product'"
+    }
+  ],
+  "_postman_variable_scope": "environment",
+  "_postman_exported_at": "2026-04-11T00:00:00.000Z",
+  "_postman_exported_using": "Postman/10.0.0"
+}
