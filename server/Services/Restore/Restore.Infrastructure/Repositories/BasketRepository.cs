@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Restore.Core.Entities;
 using Restore.Core.Repositories;
 using Restore.Core.Results;
@@ -10,12 +9,10 @@ namespace Restore.Infrastructure.Repositories;
 public class BasketRepository : IBasketRepository
 {
     private readonly StoreContext _context;
-    private readonly IMapper _mapper;
 
-    public BasketRepository(StoreContext context, IMapper mapper)
+    public BasketRepository(StoreContext context)
     {
         _context = context;
-        _mapper = mapper;
     }
 
     public async Task<Result<Basket>> GetBasketAsync(string buyerId)
@@ -121,7 +118,9 @@ public class BasketRepository : IBasketRepository
             throw new Exception("Basket not found");
         }
 
-        _mapper.Map(basket, basketToUpdate);
+        basketToUpdate.BuyerId = basket.BuyerId;
+        basketToUpdate.PaymentIntentId = basket.PaymentIntentId;
+        basketToUpdate.ClientSecret = basket.ClientSecret;
         _context.Baskets.Update(basketToUpdate);
     }
 

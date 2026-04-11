@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using Restore.Application.Commands;
 using Restore.Application.Responses;
 using Restore.Core.Repositories;
@@ -10,12 +9,10 @@ namespace Restore.Application.Handlers;
 public class RemoveItemFromBasketHandler : IRequestHandler<RemoveItemFromBasketCommand, Result<bool>>
 {
     private readonly IBasketRepository _basketRepository;
-    private readonly IMapper _mapper;
 
-    public RemoveItemFromBasketHandler(IBasketRepository basketRepository, IMapper mapper)
+    public RemoveItemFromBasketHandler(IBasketRepository basketRepository)
     {
         _basketRepository = basketRepository;
-        _mapper = mapper;
     }
 
     public async Task<Result<bool>> Handle(RemoveItemFromBasketCommand request, CancellationToken cancellationToken)
@@ -26,8 +23,6 @@ public class RemoveItemFromBasketHandler : IRequestHandler<RemoveItemFromBasketC
         {
             return Result<bool>.Failure(result.ErrorMessage);
         }
-
-        var basketResponse = _mapper.Map<BasketResponse>(result.Value);
 
         return Result<bool>.Success(true);
     }

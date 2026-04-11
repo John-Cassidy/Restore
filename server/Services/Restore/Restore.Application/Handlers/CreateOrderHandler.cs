@@ -1,6 +1,6 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using Restore.Application.Commands;
+using Restore.Application.Mappers;
 using Restore.Application.Responses;
 using Restore.Core.Entities;
 using Restore.Core.Entities.OrderAggregate;
@@ -12,12 +12,10 @@ namespace Restore.Application.Handlers;
 public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Result<OrderResponse>>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
 
-    public CreateOrderHandler(IUnitOfWork unitOfWork, IMapper mapper)
+    public CreateOrderHandler(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
-        _mapper = mapper;
     }
 
 
@@ -58,13 +56,13 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Result<Ord
         var subtotal = items.Sum(item => item.Price * item.Quantity);
         var deliveryFee = subtotal > 10000 ? 0 : 500;
 
-        var ShippingAddress = _mapper.Map<ShippingAddress>(command.ShippingAddress);
+        var shippingAddress = command.ShippingAddress.ToShippingAddress();
 
         var order = new Order
         {
             OrderItems = items,
             BuyerId = command.BuyerId,
-            ShippingAddress = ShippingAddress,
+            ShippingAddress = shippingAddress,
             Subtotal = subtotal,
             DeliveryFee = deliveryFee,
             PaymentIntentId = basket.PaymentIntentId,
@@ -103,6 +101,6 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Result<Ord
             return Result<OrderResponse>.Failure("Problem saving changes");
         }
 
-        return Result<OrderResponse>.Success(_mapper.Map<OrderResponse>(order));
+        return Result<OrderResponse>.Success(order.ToOrderResponse());
     }
 }
