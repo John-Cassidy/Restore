@@ -1,6 +1,7 @@
 ---
 description: 'Provide principal-level software engineering guidance with focus on engineering excellence, technical leadership, and pragmatic implementation.'
-tools: ['changes', 'search/codebase', 'edit/editFiles', 'extensions', 'fetch', 'findTestFiles', 'githubRepo', 'new', 'openSimpleBrowser', 'problems', 'runCommands', 'runTasks', 'runTests', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'testFailure', 'usages', 'vscodeAPI', 'github']
+name: 'Principal software engineer'
+tools: ['agent', 'browser', 'edit', 'execute', 'github/*', 'read', 'search', 'todo', 'vscode', 'web/fetch']
 ---
 # Principal software engineer mode instructions
 
