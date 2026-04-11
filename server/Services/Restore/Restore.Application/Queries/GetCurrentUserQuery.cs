@@ -4,12 +4,10 @@ using Restore.Core.Results;
 
 namespace Restore.Application.Queries;
 
-public class GetCurrentUserQuery : IRequest<Result<UserResponse>>
-{
+public class GetCurrentUserQuery : IRequest<Result<UserResponse>> {
     public string Username { get; }
 
-    public GetCurrentUserQuery(string username)
-    {
+    public GetCurrentUserQuery(string username) {
         Username = username;
     }
 }

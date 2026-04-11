@@ -4,8 +4,7 @@ namespace Restore.Core.Entities;
 
 // add ef name BasketItems
 [Table("BasketItems")]
-public class BasketItem
-{
+public class BasketItem {
     public int Id { get; set; }
     public int Quantity { get; set; }
     public int ProductId { get; set; }

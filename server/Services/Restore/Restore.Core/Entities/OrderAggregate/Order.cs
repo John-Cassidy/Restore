@@ -2,8 +2,7 @@
 
 namespace Restore.Core.Entities.OrderAggregate;
 
-public class Order
-{
+public class Order {
     public int Id { get; set; }
     public string BuyerId { get; set; }
 
@@ -16,8 +15,7 @@ public class Order
     public OrderStatus OrderStatus { get; set; } = OrderStatus.Pending;
     public string PaymentIntentId { get; set; }
 
-    public long GetTotal()
-    {
+    public long GetTotal() {
         return Subtotal + DeliveryFee;
     }
 }

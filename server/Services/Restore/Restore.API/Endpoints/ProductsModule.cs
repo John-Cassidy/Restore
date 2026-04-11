@@ -1,35 +1,29 @@
-﻿using MediatR;
-using Restore.Application.Queries;
-using Restore.Core.Pagination;
-using Restore.Application.Responses;
-using FluentValidation;
-using Restore.API.Handlers;
-using Restore.API.Extensions;
-using Restore.Application.Commands;
-using Restore.Application.Services;
+﻿using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Restore.API.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using Restore.API.DTOs;
+using Restore.API.Extensions;
+using Restore.API.Handlers;
+using Restore.Application.Commands;
+using Restore.Application.Queries;
+using Restore.Application.Responses;
+using Restore.Application.Services;
+using Restore.Core.Pagination;
 
 namespace Restore.API.Endpoints;
 
-public static class ProductsModule
-{
-    public static IEndpointRouteBuilder AddProductsEndpoints(this IEndpointRouteBuilder endpoints)
-    {
+public static class ProductsModule {
+    public static IEndpointRouteBuilder AddProductsEndpoints(this IEndpointRouteBuilder endpoints) {
         endpoints.MapGet("/api/products",
-            async (HttpContext context, IMediator mediator, [AsParameters] ProductParams productParams) =>
-            {
-                try
-                {
+            async (HttpContext context, IMediator mediator, [AsParameters] ProductParams productParams) => {
+                try {
                     var query = new GetProductsQuery(productParams);
                     var result = await mediator.Send(query);
                     context.Response.AddPaginationHeader(result.MetaData);
                     result.MetaData = null; // passing metadata in header
                     return Results.Ok(result);
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     return Results.BadRequest(ex.Message);
                 }
             })
@@ -39,27 +33,20 @@ public static class ProductsModule
             .Produces<string>(StatusCodes.Status400BadRequest);
 
         endpoints.MapGet("/api/products/{id}",
-                async (HttpContext context, IMediator mediator, IValidationExceptionHandler validationExceptionHandler, int id) =>
-                {
-                    try
-                    {
+                async (HttpContext context, IMediator mediator, IValidationExceptionHandler validationExceptionHandler, int id) => {
+                    try {
                         var query = new GetProductByIdQuery(id);
                         var result = await mediator.Send(query);
-                        if (result == null)
-                        {
+                        if (result == null) {
                             return Results.Problem(title: $"Product with id {id} not found", statusCode: StatusCodes.Status404NotFound);
                             // return Results.NotFound();
                         }
 
                         return Results.Ok(result);
-                    }
-                    catch (ValidationException ex)
-                    {
+                    } catch (ValidationException ex) {
                         var problemDetails = validationExceptionHandler.Handle(ex);
                         return Results.Problem(title: problemDetails.Title, statusCode: problemDetails.Status, detail: problemDetails.Detail);
-                    }
-                    catch (Exception ex)
-                    {
+                    } catch (Exception ex) {
                         return Results.Problem(title: ex.Message, statusCode: StatusCodes.Status400BadRequest);
                         // return Results.BadRequest(ex.Message);
                     }
@@ -75,16 +62,12 @@ public static class ProductsModule
         // var types = await _context.Products.Select(p => p.Type).Distinct().ToListAsync();
         // return Ok(new { brands, types });
         endpoints.MapGet("/api/products/filters",
-            async (IMediator mediator) =>
-            {
-                try
-                {
+            async (IMediator mediator) => {
+                try {
                     var query = new GetProductsFiltersQuery();
                     var result = await mediator.Send(query);
                     return Results.Ok(result);
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     return Results.BadRequest(ex.Message);
                 }
             })
@@ -98,34 +81,27 @@ public static class ProductsModule
             [Authorize(Roles = "Admin")] async (HttpContext context,
             IMediator mediator,
             IValidationExceptionHandler validationExceptionHandler,
-            Func<IFormFile, IFormFileService> formFileServiceFactory) =>
-            {
-                try
-                {
-                    if (context == null)
-                    {
+            Func<IFormFile, IFormFileService> formFileServiceFactory) => {
+                try {
+                    if (context == null) {
                         return Results.Problem(title: "Context is null", statusCode: StatusCodes.Status500InternalServerError);
                     }
 
-                    if ((context!.User?.Identity?.IsAuthenticated ?? false) == false)
-                    {
+                    if ((context!.User?.Identity?.IsAuthenticated ?? false) == false) {
                         return Results.Problem(title: "User is not authenticated", statusCode: StatusCodes.Status401Unauthorized);
                     }
 
                     var form = await context.Request.ReadFormAsync();
-                    if (form is null)
-                    {
+                    if (form is null) {
                         return Results.Problem(title: "Form is null", statusCode: StatusCodes.Status400BadRequest);
                     }
                     var file = form.Files.GetFile("File");
 
-                    if (file is null || file.Length == 0 || string.IsNullOrWhiteSpace(file.FileName))
-                    {
+                    if (file is null || file.Length == 0 || string.IsNullOrWhiteSpace(file.FileName)) {
                         return Results.Problem(title: "File is required", statusCode: StatusCodes.Status400BadRequest);
                     }
 
-                    var createProductDto = new CreateProductDto
-                    {
+                    var createProductDto = new CreateProductDto {
                         Name = form["Name"],
                         Description = form["Description"],
                         Price = long.Parse(form["Price"]),
@@ -148,19 +124,14 @@ public static class ProductsModule
                     );
 
                     var result = await mediator.Send(command);
-                    if (!result.IsSuccess || result.Value == null)
-                    {
+                    if (!result.IsSuccess || result.Value == null) {
                         return Results.Problem(title: result.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
                     }
                     return Results.CreatedAtRoute("GetProduct", new { result.Value.Id }, result.Value);
-                }
-                catch (ValidationException ex)
-                {
+                } catch (ValidationException ex) {
                     var problemDetails = validationExceptionHandler.Handle(ex);
                     return Results.Problem(title: problemDetails.Title, statusCode: problemDetails.Status, detail: problemDetails.Detail);
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     return Results.Problem(title: ex.Message, statusCode: StatusCodes.Status400BadRequest);
                 }
             })
@@ -174,35 +145,28 @@ public static class ProductsModule
             [Authorize(Roles = "Admin")] async (HttpContext context,
             IMediator mediator,
             IValidationExceptionHandler validationExceptionHandler,
-            Func<IFormFile, IFormFileService> formFileServiceFactory) =>
-            {
-                try
-                {
-                    if (context == null)
-                    {
+            Func<IFormFile, IFormFileService> formFileServiceFactory) => {
+                try {
+                    if (context == null) {
                         return Results.Problem(title: "Context is null", statusCode: StatusCodes.Status500InternalServerError);
                     }
 
-                    if ((context!.User?.Identity?.IsAuthenticated ?? false) == false)
-                    {
+                    if ((context!.User?.Identity?.IsAuthenticated ?? false) == false) {
                         return Results.Problem(title: "User is not authenticated", statusCode: StatusCodes.Status401Unauthorized);
                     }
 
                     var form = await context.Request.ReadFormAsync();
-                    if (form is null)
-                    {
+                    if (form is null) {
                         return Results.Problem(title: "Form is null", statusCode: StatusCodes.Status400BadRequest);
                     }
 
                     var file = form.Files.GetFile("File");
                     IFormFileService? formFileService = null;
-                    if (file is not null && file.Length > 0 && !string.IsNullOrWhiteSpace(file.FileName))
-                    {
+                    if (file is not null && file.Length > 0 && !string.IsNullOrWhiteSpace(file.FileName)) {
                         formFileService = formFileServiceFactory(file);
                     }
 
-                    var updateProductDto = new UpdateProductDto
-                    {
+                    var updateProductDto = new UpdateProductDto {
                         Id = int.Parse(form["Id"]),
                         Name = form["Name"],
                         Description = form["Description"],
@@ -225,19 +189,14 @@ public static class ProductsModule
                     );
 
                     var result = await mediator.Send(command);
-                    if (!result.IsSuccess || result.Value == null)
-                    {
+                    if (!result.IsSuccess || result.Value == null) {
                         return Results.Problem(title: result.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
                     }
                     return Results.Ok(result.Value);
-                }
-                catch (ValidationException ex)
-                {
+                } catch (ValidationException ex) {
                     var problemDetails = validationExceptionHandler.Handle(ex);
                     return Results.Problem(title: problemDetails.Title, statusCode: problemDetails.Status, detail: problemDetails.Detail);
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     return Results.Problem(title: ex.Message, statusCode: StatusCodes.Status400BadRequest);
                 }
             })
@@ -248,20 +207,15 @@ public static class ProductsModule
 
         // create delete endpoint that accepts an id and returns the deleted product
         endpoints.MapDelete("/api/products/{id}",
-            [Authorize(Roles = "Admin")] async (IMediator mediator, int id) =>
-            {
-                try
-                {
+            [Authorize(Roles = "Admin")] async (IMediator mediator, int id) => {
+                try {
                     var command = new DeleteProductCommand(id);
                     var result = await mediator.Send(command);
-                    if (!result.IsSuccess || result.Value == null)
-                    {
+                    if (!result.IsSuccess || result.Value == null) {
                         return Results.Problem(title: result.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
                     }
                     return Results.Ok(result.Value);
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     return Results.Problem(title: ex.Message, statusCode: StatusCodes.Status400BadRequest);
                 }
             })

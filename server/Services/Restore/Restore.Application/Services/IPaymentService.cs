@@ -3,7 +3,6 @@ using Stripe;
 
 namespace Restore.Application.Services;
 
-public interface IPaymentService
-{
+public interface IPaymentService {
     Task<PaymentIntent> CreateOrUpdatePaymentIntent(Basket basket);
 }

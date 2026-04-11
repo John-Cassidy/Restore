@@ -8,22 +8,18 @@ using Restore.Infrastructure.Data;
 
 namespace Restore.Infrastructure.Repositories;
 
-public class ProductRepository : IProductRepository
-{
+public class ProductRepository : IProductRepository {
     private readonly StoreContext _context;
 
-    public ProductRepository(StoreContext context)
-    {
+    public ProductRepository(StoreContext context) {
         _context = context;
     }
 
-    public async Task<IReadOnlyList<Product>> GetProductsAsync()
-    {
+    public async Task<IReadOnlyList<Product>> GetProductsAsync() {
         return await _context.Products.ToListAsync();
     }
 
-    public async Task<PagedList<Product>> GetProductsAsync(ProductParams productParams)
-    {
+    public async Task<PagedList<Product>> GetProductsAsync(ProductParams productParams) {
         var query = _context.Products
             .Sort(productParams.OrderBy)
             .Search(productParams.SearchTerm)
@@ -35,36 +31,30 @@ public class ProductRepository : IProductRepository
         return new PagedList<Product>(items, count, productParams.PageNumber.Value, productParams.PageSize.Value);
     }
 
-    public async Task<Product?> GetByIdAsync(int id)
-    {
+    public async Task<Product?> GetByIdAsync(int id) {
         return await _context
             .Products
             .FindAsync(id);
     }
 
-    public async Task<(List<string> Brands, List<string> Types)> GetProductsFilters()
-    {
+    public async Task<(List<string> Brands, List<string> Types)> GetProductsFilters() {
         var brands = await _context.Products.Select(p => p.Brand).Distinct().ToListAsync();
         var types = await _context.Products.Select(p => p.Type).Distinct().ToListAsync();
         return (Brands: brands, Types: types);
     }
 
-    public Task<Product?> ReadAsync(int productId)
-    {
+    public Task<Product?> ReadAsync(int productId) {
         return _context.Products.Where(p => p.Id == productId).FirstOrDefaultAsync();
     }
 
-    public async Task AddAsync(Product product)
-    {
+    public async Task AddAsync(Product product) {
         await _context.Products.AddAsync(product);
     }
 
-    public async Task UpdateAsync(Product product)
-    {
+    public async Task UpdateAsync(Product product) {
         var productToUpdate = await _context.Products.FindAsync(product.Id);
 
-        if (productToUpdate == null)
-        {
+        if (productToUpdate == null) {
             throw new Exception("Product not found");
         }
 
@@ -72,8 +62,7 @@ public class ProductRepository : IProductRepository
         _context.Products.Update(productToUpdate);
     }
 
-    public Task DeleteAsync(Product product)
-    {
+    public Task DeleteAsync(Product product) {
         _context.Products.Remove(product);
         return Task.CompletedTask;
     }

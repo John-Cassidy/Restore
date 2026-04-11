@@ -1,22 +1,19 @@
-﻿using System.Text.Json;
-using Microsoft.AspNetCore.Diagnostics;
+﻿using Microsoft.AspNetCore.Diagnostics;
 using Restore.Core;
+using System.Text.Json;
 
 namespace Restore.API.Handlers;
 
-public class GeneralExceptionHandler : IExceptionHandler
-{
+public class GeneralExceptionHandler : IExceptionHandler {
     private readonly ILogger<GeneralExceptionHandler> _logger;
     private readonly IHostEnvironment _env;
 
-    public GeneralExceptionHandler(ILogger<GeneralExceptionHandler> logger, IHostEnvironment env)
-    {
+    public GeneralExceptionHandler(ILogger<GeneralExceptionHandler> logger, IHostEnvironment env) {
         _logger = logger;
         _env = env;
     }
 
-    public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
-    {
+    public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken) {
         _logger.LogError(exception, "Exception occured: {Message}", exception.Message);
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
 

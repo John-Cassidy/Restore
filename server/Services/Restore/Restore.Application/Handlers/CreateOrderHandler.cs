@@ -9,42 +9,34 @@ using Restore.Core.Results;
 
 namespace Restore.Application.Handlers;
 
-public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Result<OrderResponse>>
-{
+public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Result<OrderResponse>> {
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateOrderHandler(IUnitOfWork unitOfWork)
-    {
+    public CreateOrderHandler(IUnitOfWork unitOfWork) {
         _unitOfWork = unitOfWork;
     }
 
 
-    public async Task<Result<OrderResponse>> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
-    {
+    public async Task<Result<OrderResponse>> Handle(CreateOrderCommand command, CancellationToken cancellationToken) {
         var basket = await _unitOfWork.BasketRepository.ReadAsync(command.BuyerId);
 
-        if (basket == null || !basket.Items.Any())
-        {
+        if (basket == null || !basket.Items.Any()) {
             return Result<OrderResponse>.Failure("Could not locate basket");
         }
 
         var items = new List<OrderItem>();
 
-        foreach (var item in basket.Items)
-        {
+        foreach (var item in basket.Items) {
             var productItem = await _unitOfWork.ProductRepository.ReadAsync(item.ProductId);
-            if (productItem == null)
-            {
+            if (productItem == null) {
                 return Result<OrderResponse>.Failure("Product not found");
             }
-            var itemOrdered = new ProductItemOrdered
-            {
+            var itemOrdered = new ProductItemOrdered {
                 ProductId = productItem.Id,
                 Name = productItem.Name,
                 PictureUrl = productItem.PictureUrl
             };
-            var orderItem = new OrderItem
-            {
+            var orderItem = new OrderItem {
                 ItemOrdered = itemOrdered,
                 Price = productItem.Price,
                 Quantity = item.Quantity
@@ -58,8 +50,7 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Result<Ord
 
         var shippingAddress = command.ShippingAddress.ToShippingAddress();
 
-        var order = new Order
-        {
+        var order = new Order {
             OrderItems = items,
             BuyerId = command.BuyerId,
             ShippingAddress = shippingAddress,
@@ -71,15 +62,12 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Result<Ord
         await _unitOfWork.OrderRepository.AddAsync(order);
         await _unitOfWork.BasketRepository.DeleteAsync(basket);
 
-        if (command.SaveAddress)
-        {
+        if (command.SaveAddress) {
             var user = await _unitOfWork.UserRepository.ReadUserAddressAsync(command.UserName);
-            if (user == null)
-            {
+            if (user == null) {
                 return Result<OrderResponse>.Failure("User not found");
             }
-            var address = new UserAddress
-            {
+            var address = new UserAddress {
                 Id = user.Address?.Id ?? 0,
                 FullName = command.ShippingAddress.FullName,
                 Address1 = command.ShippingAddress.Address1,
@@ -96,8 +84,7 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Result<Ord
 
         var result = await _unitOfWork.CompleteAsync() > 0;
 
-        if (!result)
-        {
+        if (!result) {
             return Result<OrderResponse>.Failure("Problem saving changes");
         }
 

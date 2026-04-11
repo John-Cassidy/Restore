@@ -3,10 +3,8 @@ using Restore.Application.Responses;
 
 namespace Restore.API.Extensions;
 
-public static class BasketExtensions
-{
-    public static BasketDto MapBasketToDto(this BasketResponse basket)
-    {
+public static class BasketExtensions {
+    public static BasketDto MapBasketToDto(this BasketResponse basket) {
         return new BasketDto(
             basket.Id,
             basket.BuyerId,

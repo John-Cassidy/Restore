@@ -8,27 +8,23 @@ using Restore.Core.Results;
 
 namespace Restore.Application.Handlers;
 
-public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, Result<ProductResponse>>
-{
+public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, Result<ProductResponse>> {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IImageService _imageService;
 
-    public UpdateProductHandler(IUnitOfWork unitOfWork, IImageService imageService)
-    {
+    public UpdateProductHandler(IUnitOfWork unitOfWork, IImageService imageService) {
         _unitOfWork = unitOfWork;
         _imageService = imageService;
     }
 
-    public async Task<Result<ProductResponse>> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
-    {
+    public async Task<Result<ProductResponse>> Handle(UpdateProductCommand request, CancellationToken cancellationToken) {
         var product = await _unitOfWork.ProductRepository.GetByIdAsync(request.Id);
-        if (product == null) return Result<ProductResponse>.Failure("Product not found");
+        if (product == null)
+            return Result<ProductResponse>.Failure("Product not found");
 
-        if (request.File != null)
-        {
+        if (request.File != null) {
             var fileName = await _imageService.UpdateImageAsync(request.File, product.PictureUrl);
-            if (!fileName.IsSuccess)
-            {
+            if (!fileName.IsSuccess) {
                 return Result<ProductResponse>.Failure(fileName.ErrorMessage);
             }
             product.PictureUrl = fileName.Value;
@@ -42,8 +38,7 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, Result
 
         await _unitOfWork.ProductRepository.UpdateAsync(product);
         var result = await _unitOfWork.CompleteAsync() > 0;
-        if (!result)
-        {
+        if (!result) {
             return Result<ProductResponse>.Failure("Failed to update product");
         }
         return Result<ProductResponse>.Success(product.ToProductResponse());

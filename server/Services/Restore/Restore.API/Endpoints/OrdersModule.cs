@@ -11,8 +11,7 @@ using Restore.Core.Results;
 
 namespace Restore.API.Endpoints;
 
-public static class OrdersModule
-{
+public static class OrdersModule {
     /* endpoints:
      * 1. GetOrders
      * 2. GetOrderById
@@ -20,24 +19,18 @@ public static class OrdersModule
      * 4. UpdateOrder
      * 5. DeleteOrder
      */
-    public static IEndpointRouteBuilder AddOrderEndpoints(this IEndpointRouteBuilder endpoints)
-    {
+    public static IEndpointRouteBuilder AddOrderEndpoints(this IEndpointRouteBuilder endpoints) {
         endpoints.MapGet("/api/orders",
-            async (HttpContext context, IMediator mediator) =>
-            {
-                try
-                {
+            async (HttpContext context, IMediator mediator) => {
+                try {
                     var buyerId = context.GetBuyerId();
                     var query = new GetOrdersQuery(buyerId);
                     var result = await mediator.Send(query);
-                    if (!result.IsSuccess)
-                    {
+                    if (!result.IsSuccess) {
                         return Results.Problem(title: $"Orders for buyer with id {buyerId} not found", statusCode: StatusCodes.Status404NotFound);
                     }
                     return Results.Ok(result.Value.MapOrdersToDto());
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     return Results.BadRequest(ex.Message);
                 }
             })
@@ -47,21 +40,16 @@ public static class OrdersModule
             .Produces<string>(StatusCodes.Status400BadRequest);
 
         endpoints.MapGet("/api/orders/{orderId}",
-            async (HttpContext context, IMediator mediator, int orderId) =>
-            {
-                try
-                {
+            async (HttpContext context, IMediator mediator, int orderId) => {
+                try {
                     var buyerId = context.GetBuyerId();
                     var query = new GetOrderByIdQuery(buyerId, orderId);
                     Result<OrderResponse>? result = await mediator.Send(query);
-                    if (!result.IsSuccess || result.Value == null)
-                    {
+                    if (!result.IsSuccess || result.Value == null) {
                         return Results.Problem(title: $"Order with id {orderId} not found", statusCode: StatusCodes.Status404NotFound);
                     }
                     return Results.Ok(result.Value.MapOrderToDto());
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     return Results.BadRequest(ex.Message);
                 }
             })
@@ -71,41 +59,31 @@ public static class OrdersModule
             .Produces<string>(StatusCodes.Status400BadRequest);
 
         endpoints.MapPost("/api/orders",
-            async (HttpContext context, IMediator mediator, IValidationExceptionHandler validationExceptionHandler, CreateOrderCommandRequest request) =>
-            {
-                try
-                {
-                    if (context == null)
-                    {
+            async (HttpContext context, IMediator mediator, IValidationExceptionHandler validationExceptionHandler, CreateOrderCommandRequest request) => {
+                try {
+                    if (context == null) {
                         return Results.Problem(title: "Context is null", statusCode: StatusCodes.Status500InternalServerError);
                     }
 
-                    if ((context!.User?.Identity?.IsAuthenticated ?? false) == false)
-                    {
+                    if ((context!.User?.Identity?.IsAuthenticated ?? false) == false) {
                         return Results.Problem(title: "User is not authenticated", statusCode: StatusCodes.Status401Unauthorized);
                     }
                     var userName = context!.User?.Identity?.Name;
-                    if (string.IsNullOrEmpty(userName))
-                    {
+                    if (string.IsNullOrEmpty(userName)) {
                         return Results.Problem(title: "User name is not provided", statusCode: StatusCodes.Status400BadRequest);
                     }
 
                     var buyerId = context!.GetBuyerId();
                     var command = new CreateOrderCommand(buyerId, userName, request);
                     var result = await mediator.Send(command);
-                    if (!result.IsSuccess || result.Value == null)
-                    {
+                    if (!result.IsSuccess || result.Value == null) {
                         return Results.Problem(title: result.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
                     }
                     return Results.CreatedAtRoute("GetOrderById", new { orderId = result.Value.Id }, result.Value.MapOrderToDto());
-                }
-                catch (ValidationException ex)
-                {
+                } catch (ValidationException ex) {
                     var problemDetails = validationExceptionHandler.Handle(ex);
                     return Results.Problem(title: problemDetails.Title, statusCode: problemDetails.Status, detail: problemDetails.Detail);
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     return Results.BadRequest(ex.Message);
                 }
             })

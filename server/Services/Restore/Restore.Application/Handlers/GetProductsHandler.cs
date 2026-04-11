@@ -7,17 +7,14 @@ using Restore.Core.Repositories;
 
 namespace Restore.Application.Handlers;
 
-public class GetProductsHandler : IRequestHandler<GetProductsQuery, PagedList<ProductResponse>>
-{
+public class GetProductsHandler : IRequestHandler<GetProductsQuery, PagedList<ProductResponse>> {
     private readonly IProductRepository _productRepository;
 
-    public GetProductsHandler(IProductRepository productRepository)
-    {
+    public GetProductsHandler(IProductRepository productRepository) {
         _productRepository = productRepository;
     }
 
-    public async Task<PagedList<ProductResponse>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
-    {
+    public async Task<PagedList<ProductResponse>> Handle(GetProductsQuery request, CancellationToken cancellationToken) {
         var productList = await _productRepository.GetProductsAsync(request.ProductParams);
         return productList.ToProductResponsePagedList();
     }

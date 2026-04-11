@@ -1,21 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
 using Restore.API.Endpoints;
+using Restore.API.Handlers;
 using Restore.Application.Extensions;
+using Restore.Core.Entities;
 using Restore.Infrastructure.Data;
 using Restore.Infrastructure.Extensions;
-using Restore.API.Handlers;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Restore.Core.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.OpenApi;
-using Microsoft.AspNetCore.Antiforgery;
 
 namespace Restore.API.Extensions;
 
-public static class HostingExtensions
-{
-    public static void ConfigureServices(this WebApplicationBuilder builder)
-    {
+public static class HostingExtensions {
+    public static void ConfigureServices(this WebApplicationBuilder builder) {
         builder.Services.AddLogging();
 
         // builder.Services.AddAntiforgery();
@@ -31,11 +29,9 @@ public static class HostingExtensions
         builder.Services.AddAntiforgery(options => options.HeaderName = "X-XSRF-TOKEN");
 
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(c =>
-        {
+        builder.Services.AddSwaggerGen(c => {
             // Include 'SecurityScheme' to use JWT Authentication
-            c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
-            {
+            c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme {
                 BearerFormat = "JWT",
                 Name = "Authorization",
                 In = ParameterLocation.Header,
@@ -44,8 +40,7 @@ public static class HostingExtensions
                 Description = "JWT Authorization header using the Bearer scheme."
             });
 
-            c.AddSecurityRequirement(document => new OpenApiSecurityRequirement
-            {
+            c.AddSecurityRequirement(document => new OpenApiSecurityRequirement {
                 [new OpenApiSecuritySchemeReference(JwtBearerDefaults.AuthenticationScheme, document)] = []
             });
         });
@@ -63,27 +58,22 @@ public static class HostingExtensions
         builder.Services.AddExceptionHandler<GeneralExceptionHandler>();
     }
 
-    public static async Task<WebApplication> ConfigurePipeline(this WebApplication app, ConfigurationManager configuration)
-    {
-        if (app.Environment.IsDevelopment())
-        {
+    public static async Task<WebApplication> ConfigurePipeline(this WebApplication app, ConfigurationManager configuration) {
+        if (app.Environment.IsDevelopment()) {
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
+            app.UseSwaggerUI(c => {
                 c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
             });
         }
 
-        if (app.Environment.IsProduction())
-        {
+        if (app.Environment.IsProduction()) {
             app.UseHttpsRedirection();
         }
 
         app.UseDefaultFiles();
         app.UseStaticFiles();
 
-        app.UseCors(opt =>
-        {
+        app.UseCors(opt => {
             opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(configuration["Cors:ClientAddress"]);
         });
 
@@ -102,15 +92,13 @@ public static class HostingExtensions
         app.AddPaymentEndpoints();
 
         // Get token
-        app.MapGet("antiforgery/token", (IAntiforgery forgeryService, HttpContext context) =>
-        {
+        app.MapGet("antiforgery/token", (IAntiforgery forgeryService, HttpContext context) => {
             var tokens = forgeryService.GetAndStoreTokens(context);
             var xsrfToken = tokens.RequestToken!;
             return TypedResults.Content(xsrfToken, "text/plain");
         });
 
-        app.MapFallback(async context =>
-        {
+        app.MapFallback(async context => {
             context.Response.ContentType = "text/html";
             await context.Response.WriteAsync(File.ReadAllText(Path.Combine(app.Environment.ContentRootPath, "wwwroot", "index.html")));
         });
@@ -120,14 +108,11 @@ public static class HostingExtensions
         var context = scope.ServiceProvider.GetRequiredService<StoreContext>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
 
-        try
-        {
+        try {
             await context.Database.MigrateAsync();
             await context.Database.EnsureCreatedAsync();
             await DbInitializer.InitializeAsync(context, userManager);
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             logger.LogError(ex, "An error occurred during migration");
         }
 

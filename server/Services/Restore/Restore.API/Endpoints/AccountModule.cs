@@ -11,19 +11,14 @@ using Restore.Core.Results;
 
 namespace Restore.API.Endpoints;
 
-public static class AccountModule
-{
-    public static IEndpointRouteBuilder AddAccountEndpoints(this IEndpointRouteBuilder endpoints)
-    {
+public static class AccountModule {
+    public static IEndpointRouteBuilder AddAccountEndpoints(this IEndpointRouteBuilder endpoints) {
         endpoints.MapPost("/api/account/login",
-            async (HttpContext context, IMediator mediator, LoginDto loginDto) =>
-            {
-                try
-                {
+            async (HttpContext context, IMediator mediator, LoginDto loginDto) => {
+                try {
                     LoginCommand loginCommand = new LoginCommand(loginDto.Username, loginDto.Password);
                     var userResult = await mediator.Send(loginCommand);
-                    if (!userResult.IsSuccess)
-                    {
+                    if (!userResult.IsSuccess) {
                         return Results.Problem(title: userResult.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
                     }
 
@@ -34,20 +29,16 @@ public static class AccountModule
 
                     Result<BasketResponse>? anonBasket = null;
                     string buyerId = context.Request.Cookies["buyerId"];
-                    if (buyerId is not null)
-                    {
+                    if (buyerId is not null) {
                         basketQuery = new GetBasketQuery(buyerId);
                         anonBasket = await mediator.Send(basketQuery);
                     }
 
-                    if (anonBasket is not null && anonBasket.Value.Id > 0)
-                    {
-                        if (userBasket.Value.Id > 0)
-                        {
+                    if (anonBasket is not null && anonBasket.Value.Id > 0) {
+                        if (userBasket.Value.Id > 0) {
                             var deleteCommand = new DeleteBasketCommand(userBasket.Value.BuyerId);
                             var deleteResult = await mediator.Send(deleteCommand);
-                            if (!deleteResult.IsSuccess)
-                            {
+                            if (!deleteResult.IsSuccess) {
                                 return Results.Problem(title: deleteResult.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
                             }
                         }
@@ -55,8 +46,7 @@ public static class AccountModule
                         var updateCommand =
                             new UpdateBasketCommand(anonBasket.Value.BuyerId, userResult.Value.Username);
                         var updateResult = await mediator.Send(updateCommand);
-                        if (!updateResult.IsSuccess)
-                        {
+                        if (!updateResult.IsSuccess) {
                             return Results.Problem(title: updateResult.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
                         }
                         anonBasket.Value.BuyerId = userResult.Value.Username;
@@ -71,9 +61,7 @@ public static class AccountModule
                     );
 
                     return Results.Ok(userDto);
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     return Results.BadRequest(ex.Message);
                 }
             })
@@ -83,24 +71,19 @@ public static class AccountModule
             .Produces<string>(StatusCodes.Status400BadRequest);
 
         endpoints.MapPost("/api/account/register",
-            async (HttpContext context, IMediator mediator, IValidationExceptionHandler validationExceptionHandler, RegisterDto registerDto) =>
-            {
-                try
-                {
+            async (HttpContext context, IMediator mediator, IValidationExceptionHandler validationExceptionHandler, RegisterDto registerDto) => {
+                try {
                     var command = new RegisterCommand(registerDto.Username, registerDto.Password, registerDto.Email);
                     Result<Unit>? result = await mediator.Send(command);
 
-                    if (!result.IsSuccess)
-                    {
+                    if (!result.IsSuccess) {
                         var validationException = validationExceptionHandler.CreateValidationExceptionFromErrorMessage(result.ErrorMessage);
                         Restore.Core.ProblemDetails? problemDetails = validationExceptionHandler.Handle(validationException);
                         return Results.Problem(title: problemDetails.Title, statusCode: problemDetails.Status, detail: problemDetails.Detail);
                     }
 
                     return Results.Created("/api/account/login", result.Value);
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     return Results.BadRequest(ex.Message);
                 }
             })
@@ -116,43 +99,36 @@ public static class AccountModule
         If the user is not authenticated, return a 401 Unauthorized response.
         */
         endpoints.MapGet("/api/account/current",
-         [Authorize] async (HttpContext context, IMediator mediator) =>
-            {
-                try
-                {
-                    var username = context.User.Identity?.Name;
-                    if (string.IsNullOrEmpty(username))
-                    {
-                        return Results.Unauthorized();
-                    }
+         [Authorize] async (HttpContext context, IMediator mediator) => {
+             try {
+                 var username = context.User.Identity?.Name;
+                 if (string.IsNullOrEmpty(username)) {
+                     return Results.Unauthorized();
+                 }
 
-                    var query = new GetCurrentUserQuery(username);
-                    var user = await mediator.Send(query);
-                    if (!user.IsSuccess)
-                    {
-                        return Results.Problem(title: user.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
-                    }
+                 var query = new GetCurrentUserQuery(username);
+                 var user = await mediator.Send(query);
+                 if (!user.IsSuccess) {
+                     return Results.Problem(title: user.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
+                 }
 
-                    var basketQuery = new GetBasketQuery(username);
-                    var basketResult = await mediator.Send(basketQuery);
-                    if (!basketResult.IsSuccess)
-                    {
-                        return Results.Problem(title: basketResult.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
-                    }
+                 var basketQuery = new GetBasketQuery(username);
+                 var basketResult = await mediator.Send(basketQuery);
+                 if (!basketResult.IsSuccess) {
+                     return Results.Problem(title: basketResult.ErrorMessage, statusCode: StatusCodes.Status400BadRequest);
+                 }
 
-                    var userDto = new UserDto(
-                        user.Value.Email,
-                        user.Value.Token,
-                        basketResult.Value.MapBasketToDto()
-                    );
+                 var userDto = new UserDto(
+                     user.Value.Email,
+                     user.Value.Token,
+                     basketResult.Value.MapBasketToDto()
+                 );
 
-                    return Results.Ok(userDto);
-                }
-                catch (Exception ex)
-                {
-                    return Results.BadRequest(ex.Message);
-                }
-            })
+                 return Results.Ok(userDto);
+             } catch (Exception ex) {
+                 return Results.BadRequest(ex.Message);
+             }
+         })
             .WithName("GetCurrentUser")
             .WithOpenApi()
             .Produces<UserDto>(StatusCodes.Status200OK)
@@ -166,26 +142,21 @@ public static class AccountModule
         If the user is not authenticated, return a 401 Unauthorized response.
         */
         endpoints.MapGet("/api/account/address",
-         [Authorize] async (HttpContext context, IMediator mediator) =>
-            {
-                try
-                {
-                    var username = context.User.Identity?.Name;
-                    if (string.IsNullOrEmpty(username))
-                    {
-                        return Results.Unauthorized();
-                    }
+         [Authorize] async (HttpContext context, IMediator mediator) => {
+             try {
+                 var username = context.User.Identity?.Name;
+                 if (string.IsNullOrEmpty(username)) {
+                     return Results.Unauthorized();
+                 }
 
-                    var query = new GetUserAddressQuery(username);
-                    var address = await mediator.Send(query);
+                 var query = new GetUserAddressQuery(username);
+                 var address = await mediator.Send(query);
 
-                    return Results.Ok(address?.MapAddressToDto());
-                }
-                catch (Exception ex)
-                {
-                    return Results.BadRequest(ex.Message);
-                }
-            })
+                 return Results.Ok(address?.MapAddressToDto());
+             } catch (Exception ex) {
+                 return Results.BadRequest(ex.Message);
+             }
+         })
             .WithName("GetUserAddress")
             .WithOpenApi()
             .Produces<AddressDto>(StatusCodes.Status200OK)

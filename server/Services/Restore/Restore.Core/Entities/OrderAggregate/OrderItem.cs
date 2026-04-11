@@ -1,7 +1,6 @@
 ﻿namespace Restore.Core.Entities.OrderAggregate;
 
-public class OrderItem
-{
+public class OrderItem {
     public int Id { get; set; }
     public ProductItemOrdered ItemOrdered { get; set; }
     public long Price { get; set; }

@@ -3,12 +3,10 @@ using Restore.Application.Services;
 
 namespace Restore.Infrastructure.Services;
 
-public class FormFileService : IFormFileService
-{
+public class FormFileService : IFormFileService {
     private readonly IFormFile _formFile;
 
-    public FormFileService(IFormFile formFile)
-    {
+    public FormFileService(IFormFile formFile) {
         _formFile = formFile;
     }
 

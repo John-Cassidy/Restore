@@ -1,25 +1,21 @@
-﻿using System.Text.Json;
-using Microsoft.AspNetCore.Diagnostics;
+﻿using Microsoft.AspNetCore.Diagnostics;
 using Restore.Core;
 using Restore.Core.Exceptions;
+using System.Text.Json;
 
 namespace Restore.API.Handlers;
 
-public class GlobalExceptionHandler : IExceptionHandler
-{
+public class GlobalExceptionHandler : IExceptionHandler {
     private readonly ILogger<GlobalExceptionHandler> _logger;
     private readonly IHostEnvironment _env;
 
-    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IHostEnvironment env)
-    {
+    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IHostEnvironment env) {
         _logger = logger;
         _env = env;
     }
 
-    public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
-    {
-        (int statusCode, string errorMessage) = exception switch
-        {
+    public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken) {
+        (int statusCode, string errorMessage) = exception switch {
             InvalidCastException invalidCastException => (StatusCodes.Status400BadRequest, invalidCastException.Message),
             AggregateException aggregateException => (StatusCodes.Status400BadRequest, aggregateException.Message),
             ArgumentNullException argumentNullException => (StatusCodes.Status400BadRequest, argumentNullException.Message),
@@ -35,8 +31,7 @@ public class GlobalExceptionHandler : IExceptionHandler
             _ => default
         };
 
-        if (statusCode == default)
-        {
+        if (statusCode == default) {
             return false;
         }
 

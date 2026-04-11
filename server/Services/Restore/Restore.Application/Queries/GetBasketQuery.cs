@@ -4,10 +4,8 @@ using Restore.Core.Results;
 
 namespace Restore.Application.Queries;
 
-public class GetBasketQuery : IRequest<Result<BasketResponse>>
-{
-    public GetBasketQuery(string buyerId)
-    {
+public class GetBasketQuery : IRequest<Result<BasketResponse>> {
+    public GetBasketQuery(string buyerId) {
         BuyerId = buyerId;
     }
 

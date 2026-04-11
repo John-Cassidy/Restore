@@ -5,24 +5,20 @@ using Restore.Core.Repositories;
 
 namespace Restore.Application.Handlers;
 
-public class GetUserAddressHandler : IRequestHandler<GetUserAddressQuery, AddressResponse?>
-{
+public class GetUserAddressHandler : IRequestHandler<GetUserAddressQuery, AddressResponse?> {
     private readonly IUserRepository _userRepository;
 
-    public GetUserAddressHandler(IUserRepository userRepository)
-    {
+    public GetUserAddressHandler(IUserRepository userRepository) {
         _userRepository = userRepository;
     }
 
-    public async Task<AddressResponse?> Handle(GetUserAddressQuery request, CancellationToken cancellationToken)
-    {
+    public async Task<AddressResponse?> Handle(GetUserAddressQuery request, CancellationToken cancellationToken) {
         var result = await _userRepository.ReadUserAddressAsync(request.Username);
 
         if (result?.Address is null)
             return null;
 
-        var addressResponse = new AddressResponse
-        {
+        var addressResponse = new AddressResponse {
             FullName = result.Address.FullName,
             Address1 = result.Address.Address1,
             Address2 = result.Address.Address2,
