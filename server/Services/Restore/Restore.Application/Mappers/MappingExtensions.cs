@@ -95,4 +95,34 @@ public static class MappingExtensions
         Zip = address.Zip,
         Country = address.Country
     };
+
+    public static void UpdateFrom(this Product target, Product source)
+    {
+        target.Name = source.Name;
+        target.Description = source.Description;
+        target.Price = source.Price;
+        target.PictureUrl = source.PictureUrl;
+        target.Type = source.Type;
+        target.Brand = source.Brand;
+        target.QuantityInStock = source.QuantityInStock;
+    }
+
+    public static void UpdateFrom(this Basket target, Basket source)
+    {
+        target.BuyerId = source.BuyerId;
+        target.PaymentIntentId = source.PaymentIntentId;
+        target.ClientSecret = source.ClientSecret;
+    }
+
+    public static void UpdateFrom(this Order target, Order source)
+    {
+        target.BuyerId = source.BuyerId;
+        target.ShippingAddress = source.ShippingAddress;
+        target.OrderDate = source.OrderDate;
+        target.OrderItems = source.OrderItems;
+        target.Subtotal = source.Subtotal;
+        target.DeliveryFee = source.DeliveryFee;
+        target.OrderStatus = source.OrderStatus;
+        target.PaymentIntentId = source.PaymentIntentId;
+    }
 }

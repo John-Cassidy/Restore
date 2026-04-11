@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Restore.Application.Mappers;
 using Restore.Core.Entities.OrderAggregate;
 using Restore.Core.Repositories;
 using Restore.Core.Results;
@@ -73,14 +74,7 @@ public class OrderRepository : IOrderRepository
             throw new Exception("Order not found");
         }
 
-        orderToUpdate.BuyerId = order.BuyerId;
-        orderToUpdate.ShippingAddress = order.ShippingAddress;
-        orderToUpdate.OrderDate = order.OrderDate;
-        orderToUpdate.OrderItems = order.OrderItems;
-        orderToUpdate.Subtotal = order.Subtotal;
-        orderToUpdate.DeliveryFee = order.DeliveryFee;
-        orderToUpdate.OrderStatus = order.OrderStatus;
-        orderToUpdate.PaymentIntentId = order.PaymentIntentId;
+        orderToUpdate.UpdateFrom(order);
         _context.Orders.Update(orderToUpdate);
     }
 }

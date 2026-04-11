@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Restore.Application.Mappers;
 using Restore.Core.Entities;
 using Restore.Core.Repositories;
 using Restore.Core.Results;
@@ -118,9 +119,7 @@ public class BasketRepository : IBasketRepository
             throw new Exception("Basket not found");
         }
 
-        basketToUpdate.BuyerId = basket.BuyerId;
-        basketToUpdate.PaymentIntentId = basket.PaymentIntentId;
-        basketToUpdate.ClientSecret = basket.ClientSecret;
+        basketToUpdate.UpdateFrom(basket);
         _context.Baskets.Update(basketToUpdate);
     }
 

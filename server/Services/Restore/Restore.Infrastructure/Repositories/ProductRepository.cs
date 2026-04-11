@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Restore.Application.Extensions;
+using Restore.Application.Mappers;
 using Restore.Core.Entities;
 using Restore.Core.Pagination;
 using Restore.Core.Repositories;
@@ -67,13 +68,7 @@ public class ProductRepository : IProductRepository
             throw new Exception("Product not found");
         }
 
-        productToUpdate.Name = product.Name;
-        productToUpdate.Description = product.Description;
-        productToUpdate.Price = product.Price;
-        productToUpdate.PictureUrl = product.PictureUrl;
-        productToUpdate.Type = product.Type;
-        productToUpdate.Brand = product.Brand;
-        productToUpdate.QuantityInStock = product.QuantityInStock;
+        productToUpdate.UpdateFrom(product);
         _context.Products.Update(productToUpdate);
     }
 
