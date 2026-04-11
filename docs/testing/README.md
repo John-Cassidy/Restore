@@ -24,6 +24,39 @@ This folder contains testing guides, test credentials templates, and test result
   - Contains your actual test user accounts, Stripe keys, etc.
   - Safe for storing sensitive test data
 
+## API Test Collection (Thunder Client / Postman)
+
+Two files in this folder provide a ready-to-use API test suite:
+
+| File                           | Purpose                                                 |
+| ------------------------------ | ------------------------------------------------------- |
+| `restore-api-collection.json`  | 30+ requests across 7 folders with automated assertions |
+| `restore-api-environment.json` | Environment variables (baseUrl, tokens, IDs)            |
+
+### Import into Thunder Client (VS Code)
+
+1. Open the Thunder Client sidebar (lightning bolt icon)
+2. **Collections** tab → ⋮ menu → **Import** → select `restore-api-collection.json`
+3. **Env** tab → ⋮ menu → **Import** → select `restore-api-environment.json`
+4. Activate the **"Restore Local"** environment in the Env tab
+
+### Import into Postman
+
+1. **File → Import** → upload `restore-api-collection.json` and `restore-api-environment.json`
+2. Select **Restore Local** environment from the top-right dropdown
+
+### Recommended Test Order
+
+1. **Auth → Login as Bob** — captures `{{token}}` for all member-auth requests
+2. **Auth → Login as Admin** — captures `{{adminToken}}` for admin requests
+3. **Products** — all read-only, no auth needed
+4. **Basket** — add items before running Orders or Payments
+5. **Payments → Create or Update Payment Intent** — required before creating an order
+6. **Orders → Create Order** — captures `{{orderId}}` for the Get by ID request
+7. **Admin** — Create runs first (captures `{{newProductId}}`), then Update, then Delete
+
+---
+
 ## Getting Started with Testing
 
 ### 1. Setup Test Credentials

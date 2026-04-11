@@ -7,7 +7,7 @@ using Restore.API.Handlers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Restore.Core.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Microsoft.AspNetCore.Antiforgery;
 
 namespace Restore.API.Extensions;
@@ -34,27 +34,19 @@ public static class HostingExtensions
         builder.Services.AddSwaggerGen(c =>
         {
             // Include 'SecurityScheme' to use JWT Authentication
-            var jwtSecurityScheme = new OpenApiSecurityScheme
+            c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
             {
                 BearerFormat = "JWT",
                 Name = "Authorization",
                 In = ParameterLocation.Header,
-                Type = SecuritySchemeType.ApiKey,
-                Scheme = JwtBearerDefaults.AuthenticationScheme,
-                Description = "Put Bearer + your token in the box below",
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                Description = "JWT Authorization header using the Bearer scheme."
+            });
 
-                Reference = new OpenApiReference
-                {
-                    Id = JwtBearerDefaults.AuthenticationScheme,
-                    Type = ReferenceType.SecurityScheme
-                }
-            };
-
-            c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
-
-            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            c.AddSecurityRequirement(document => new OpenApiSecurityRequirement
             {
-                { jwtSecurityScheme, Array.Empty<string>() }
+                [new OpenApiSecuritySchemeReference(JwtBearerDefaults.AuthenticationScheme, document)] = []
             });
         });
 

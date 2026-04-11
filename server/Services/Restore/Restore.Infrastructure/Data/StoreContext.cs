@@ -28,8 +28,8 @@ public class StoreContext : IdentityDbContext<User, Role, int>
 
         modelBuilder.Entity<Role>()
             .HasData(
-                new Role { Id = 1, Name = "Member", NormalizedName = "MEMBER" },
-                new Role { Id = 2, Name = "Admin", NormalizedName = "ADMIN" }
+                new Role { Id = 1, Name = "Member", NormalizedName = "MEMBER", ConcurrencyStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e575" },
+                new Role { Id = 2, Name = "Admin", NormalizedName = "ADMIN", ConcurrencyStamp = "c7d013f0-0c8e-4cc9-b9a9-6e89a4b6a4a5" }
             );
     }
 }

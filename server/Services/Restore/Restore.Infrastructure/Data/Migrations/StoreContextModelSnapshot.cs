@@ -17,7 +17,7 @@ namespace Restore.Infrastructure.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.1")
+                .HasAnnotation("ProductVersion", "10.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -301,12 +301,14 @@ namespace Restore.Infrastructure.Data.Migrations
                         new
                         {
                             Id = 1,
+                            ConcurrencyStamp = "a18be9c0-aa65-4af8-bd17-00bd9344e575",
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         },
                         new
                         {
                             Id = 2,
+                            ConcurrencyStamp = "c7d013f0-0c8e-4cc9-b9a9-6e89a4b6a4a5",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
