@@ -1,10 +1,14 @@
 ﻿using Restore.Application.Services;
 using Restore.Core.Results;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Restore.Infrastructure.Services;
 
-public class ImageService : IImageService {
-    public async Task<Result<string>> AddImageAsync(IFormFileService formFileService) {
+[ExcludeFromCodeCoverage]
+public class ImageService : IImageService
+{
+    public async Task<Result<string>> AddImageAsync(IFormFileService formFileService)
+    {
         var file = formFileService;
         if (file.FileName == null && file.FileName?.Length == 0)
             return Result<string>.Failure("File is required");
@@ -25,7 +29,8 @@ public class ImageService : IImageService {
             return Result<string>.Failure("File already exists");
 
         // use file.OpenReadStream() to get the file stream and then save it to the server using the fullPath
-        using (var stream = new FileStream(fullPath, FileMode.Create)) {
+        using (var stream = new FileStream(fullPath, FileMode.Create))
+        {
             await file.OpenReadStream().CopyToAsync(stream);
         }
 
@@ -33,7 +38,8 @@ public class ImageService : IImageService {
         return Result<string>.Success(dbPath);
     }
 
-    public async Task<Result<string>> UpdateImageAsync(IFormFileService formFileService, string pictureUrl) {
+    public async Task<Result<string>> UpdateImageAsync(IFormFileService formFileService, string pictureUrl)
+    {
         var file = formFileService;
         if (file.FileName == null && file.FileName?.Length == 0)
             return Result<string>.Failure("File is required");
@@ -58,17 +64,20 @@ public class ImageService : IImageService {
             return Result<string>.Failure("File already exists");
 
         // use file.OpenReadStream() to get the file stream and then save it to the server using the fullPath
-        using (var stream = new FileStream(fullPath, FileMode.Create)) {
+        using (var stream = new FileStream(fullPath, FileMode.Create))
+        {
             await file.OpenReadStream().CopyToAsync(stream);
         }
 
         return Result<string>.Success(dbPath);
     }
 
-    public async Task<Result<bool>> DeleteImageAsync(string imagePath) {
+    public async Task<Result<bool>> DeleteImageAsync(string imagePath)
+    {
         var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", imagePath.TrimStart('/'));
 
-        if (File.Exists(fullPath)) {
+        if (File.Exists(fullPath))
+        {
             await Task.Run(() => File.Delete(fullPath));
         }
         return Result<bool>.Success(true);

@@ -4,16 +4,22 @@ using Microsoft.IdentityModel.Tokens;
 using Restore.Infrastructure.Authentication;
 using System.Text;
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Restore.API;
 
-public class JwtBearerOptionsConfiguration : IConfigureOptions<JwtBearerOptions> {
+[ExcludeFromCodeCoverage]
+public class JwtBearerOptionsConfiguration : IConfigureOptions<JwtBearerOptions>
+{
     private readonly JwtOptions _jwtOptions;
 
-    public JwtBearerOptionsConfiguration(IOptions<JwtOptions> jwtOptions) {
+    public JwtBearerOptionsConfiguration(IOptions<JwtOptions> jwtOptions)
+    {
         _jwtOptions = jwtOptions.Value;
     }
 
-    public void Configure(JwtBearerOptions options) {
+    public void Configure(JwtBearerOptions options)
+    {
         // options.TokenValidationParameters = new TokenValidationParameters
         // {
         //     ValidateIssuer = true,
@@ -25,7 +31,8 @@ public class JwtBearerOptionsConfiguration : IConfigureOptions<JwtBearerOptions>
         //     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.SecretKey))
         // };
 
-        options.TokenValidationParameters = new TokenValidationParameters {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
             ValidateIssuer = false,
             ValidateAudience = false,
             ValidateLifetime = true,

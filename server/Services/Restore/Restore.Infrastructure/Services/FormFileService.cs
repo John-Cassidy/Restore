@@ -1,12 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Restore.Application.Services;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Restore.Infrastructure.Services;
 
-public class FormFileService : IFormFileService {
+[ExcludeFromCodeCoverage]
+public class FormFileService : IFormFileService
+{
     private readonly IFormFile _formFile;
 
-    public FormFileService(IFormFile formFile) {
+    public FormFileService(IFormFile formFile)
+    {
         _formFile = formFile;
     }
 

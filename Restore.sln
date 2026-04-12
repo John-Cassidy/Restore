@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
@@ -16,6 +16,16 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Restore.Infrastructure", "server\Services\Restore\Restore.Infrastructure\Restore.Infrastructure.csproj", "{18D912EC-2C5C-49C8-8C08-D985E2DFACE4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Restore.API", "server\Services\Restore\Restore.API\Restore.API.csproj", "{8E9F8C25-3225-4A7B-A8E5-3F1AE3C4BE27}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{C4304173-7191-E074-18A0-D65FBB0CE70C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Restore.Core.Tests", "server\tests\Restore.Core.Tests\Restore.Core.Tests.csproj", "{76C9EA0C-729E-4A26-9ACB-8DADA37D3D98}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Restore.Application.Tests", "server\tests\Restore.Application.Tests\Restore.Application.Tests.csproj", "{A1FAD2C9-79A1-4B99-949D-A7C7E02DB23F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Restore.Infrastructure.Tests", "server\tests\Restore.Infrastructure.Tests\Restore.Infrastructure.Tests.csproj", "{D99010B7-4148-4A9E-B4C0-52DCFCD75542}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Restore.API.Tests", "server\tests\Restore.API.Tests\Restore.API.Tests.csproj", "{04EF161C-A31E-403B-932D-58743F6662BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +49,22 @@ Global
 		{8E9F8C25-3225-4A7B-A8E5-3F1AE3C4BE27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E9F8C25-3225-4A7B-A8E5-3F1AE3C4BE27}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E9F8C25-3225-4A7B-A8E5-3F1AE3C4BE27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76C9EA0C-729E-4A26-9ACB-8DADA37D3D98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76C9EA0C-729E-4A26-9ACB-8DADA37D3D98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76C9EA0C-729E-4A26-9ACB-8DADA37D3D98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76C9EA0C-729E-4A26-9ACB-8DADA37D3D98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1FAD2C9-79A1-4B99-949D-A7C7E02DB23F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1FAD2C9-79A1-4B99-949D-A7C7E02DB23F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1FAD2C9-79A1-4B99-949D-A7C7E02DB23F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1FAD2C9-79A1-4B99-949D-A7C7E02DB23F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D99010B7-4148-4A9E-B4C0-52DCFCD75542}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D99010B7-4148-4A9E-B4C0-52DCFCD75542}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D99010B7-4148-4A9E-B4C0-52DCFCD75542}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D99010B7-4148-4A9E-B4C0-52DCFCD75542}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04EF161C-A31E-403B-932D-58743F6662BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04EF161C-A31E-403B-932D-58743F6662BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04EF161C-A31E-403B-932D-58743F6662BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04EF161C-A31E-403B-932D-58743F6662BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -50,5 +76,10 @@ Global
 		{B8B25AD6-F725-478D-86B0-077E38E384C6} = {0B17AE5F-6AC4-4B66-B3BB-4794A116C603}
 		{18D912EC-2C5C-49C8-8C08-D985E2DFACE4} = {0B17AE5F-6AC4-4B66-B3BB-4794A116C603}
 		{8E9F8C25-3225-4A7B-A8E5-3F1AE3C4BE27} = {0B17AE5F-6AC4-4B66-B3BB-4794A116C603}
+		{C4304173-7191-E074-18A0-D65FBB0CE70C} = {127FE9DB-1EF0-46EA-8DAF-43C0B0EE8804}
+		{76C9EA0C-729E-4A26-9ACB-8DADA37D3D98} = {C4304173-7191-E074-18A0-D65FBB0CE70C}
+		{A1FAD2C9-79A1-4B99-949D-A7C7E02DB23F} = {C4304173-7191-E074-18A0-D65FBB0CE70C}
+		{D99010B7-4148-4A9E-B4C0-52DCFCD75542} = {C4304173-7191-E074-18A0-D65FBB0CE70C}
+		{04EF161C-A31E-403B-932D-58743F6662BC} = {C4304173-7191-E074-18A0-D65FBB0CE70C}
 	EndGlobalSection
 EndGlobal

@@ -1,13 +1,18 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Restore.Core.Entities;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Restore.Infrastructure.Data;
 
-
-public static class DbInitializer {
-    public static async Task InitializeAsync(StoreContext context, UserManager<User> userManager) {
-        if (!userManager.Users.Any()) {
-            var user = new User {
+[ExcludeFromCodeCoverage]
+public static class DbInitializer
+{
+    public static async Task InitializeAsync(StoreContext context, UserManager<User> userManager)
+    {
+        if (!userManager.Users.Any())
+        {
+            var user = new User
+            {
                 UserName = "bob",
                 Email = "bob@test.com"
             };
@@ -15,7 +20,8 @@ public static class DbInitializer {
             await userManager.CreateAsync(user, "Admin_1234");
             await userManager.AddToRoleAsync(user, "Member");
 
-            var admin = new User {
+            var admin = new User
+            {
                 UserName = "admin",
                 Email = "admin@test.com"
             };

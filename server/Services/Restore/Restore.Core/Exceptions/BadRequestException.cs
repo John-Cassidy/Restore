@@ -1,14 +1,21 @@
-﻿namespace Restore.Core.Exceptions;
+﻿using System.Diagnostics.CodeAnalysis;
 
-public class BadRequestException : Exception {
-    public BadRequestException() {
+namespace Restore.Core.Exceptions;
+
+[ExcludeFromCodeCoverage]
+public class BadRequestException : Exception
+{
+    public BadRequestException()
+    {
     }
 
     public BadRequestException(string message)
-        : base(message) {
+        : base(message)
+    {
     }
 
     public BadRequestException(string message, Exception inner)
-        : base(message, inner) {
+        : base(message, inner)
+    {
     }
 }

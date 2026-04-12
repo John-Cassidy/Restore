@@ -9,9 +9,11 @@ using Restore.Infrastructure.Authentication;
 using Restore.Infrastructure.Data;
 using Restore.Infrastructure.Repositories;
 using Restore.Infrastructure.Services;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Restore.Infrastructure.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class InfrastructureServices {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration) {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
@@ -30,6 +32,7 @@ public static class InfrastructureServices {
 
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IPaymentService, PaymentService>();
+        services.AddScoped<IStripeEventParser, StripeEventParser>();
         services.AddScoped<IImageService, ImageService>();
         // create a factory method to create IFormFileService by using a delegate. This delegate can be registered in the dependency injection container and then injected into the endpoint.
         services.AddScoped<Func<IFormFile, IFormFileService>>(serviceProvider => formFile => {

@@ -1,6 +1,10 @@
-﻿namespace Restore.Core.Exceptions;
+﻿using System.Diagnostics.CodeAnalysis;
 
-public class UnauthorizedException : Exception {
+namespace Restore.Core.Exceptions;
+
+[ExcludeFromCodeCoverage]
+public class UnauthorizedException : Exception
+{
     public UnauthorizedException() { }
 
     public UnauthorizedException(string? message) : base(message) { }
