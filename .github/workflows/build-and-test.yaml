@@ -40,7 +40,7 @@ jobs:
           --no-build
           --verbosity normal
           --filter "Category!=Integration"
-          --collect:"XPUnit Code Coverage"
+          --collect:"XPlat Code Coverage"
           --results-directory ./TestResults
 
       - name: Integration Tests
@@ -49,5 +49,27 @@ jobs:
           --no-build
           --verbosity normal
           --filter "Category=Integration"
-          --collect:"XPUnit Code Coverage"
+          --collect:"XPlat Code Coverage"
           --results-directory ./TestResults
+
+      - name: Install ReportGenerator
+        run: dotnet tool install -g dotnet-reportgenerator-globaltool
+
+      - name: Merge Coverage Reports
+        run: >-
+          reportgenerator
+          -reports:"**/TestResults/**/coverage.cobertura.xml"
+          -targetdir:coveragereport
+          -reporttypes:Cobertura
+          -filefilters:"-**/obj/**"
+
+      - name: Check Coverage Threshold
+        run: |
+          LINE_RATE=$(grep -oP 'line-rate="\K[^"]+' coveragereport/Cobertura.xml | head -1)
+          PERCENT=$(echo "$LINE_RATE * 100" | bc -l | xargs printf "%.1f")
+          echo "Line coverage: ${PERCENT}%"
+          THRESHOLD=70
+          if (( $(echo "$LINE_RATE < 0.${THRESHOLD}" | bc -l) )); then
+            echo "::error::Coverage ${PERCENT}% is below the ${THRESHOLD}% threshold"
+            exit 1
+          fi
