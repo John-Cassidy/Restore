@@ -9,23 +9,40 @@ This repository now includes one xUnit test project for each backend service pro
 
 All test projects are located under `server/tests` and are included in `Restore.sln`.
 
+## Test Categories
+
+Tests are organized into two categories:
+
+- **Unit Tests** — Fast, isolated tests with no external dependencies. Run without Docker.
+- **Integration Tests** — End-to-end API tests using [Testcontainers](https://testcontainers.com/) to spin up a PostgreSQL container. Require Docker to be running.
+
+Integration tests are tagged with `[Trait("Category", "Integration")]`.
+
 ## Test File Naming Convention
 
 Test files are named for the type under test and each file contains tests for that specific type only.
 
 ## Run Tests
 
-Run these commands from the repository root (`Restore` folder) to produce test result files per test project.
+### All Tests (requires Docker)
 
 ```powershell
-dotnet test server/tests/Restore.Core.Tests/Restore.Core.Tests.csproj --logger "trx;LogFileName=Restore.Core.Tests.trx" --results-directory ./TestResults/Restore.Core.Tests
-
-dotnet test server/tests/Restore.Application.Tests/Restore.Application.Tests.csproj --logger "trx;LogFileName=Restore.Application.Tests.trx" --results-directory ./TestResults/Restore.Application.Tests
-
-dotnet test server/tests/Restore.Infrastructure.Tests/Restore.Infrastructure.Tests.csproj --logger "trx;LogFileName=Restore.Infrastructure.Tests.trx" --results-directory ./TestResults/Restore.Infrastructure.Tests
-
-dotnet test server/tests/Restore.API.Tests/Restore.API.Tests.csproj --logger "trx;LogFileName=Restore.API.Tests.trx" --results-directory ./TestResults/Restore.API.Tests
+dotnet test Restore.sln --verbosity normal
 ```
+
+### Unit Tests Only (no Docker needed)
+
+```powershell
+dotnet test Restore.sln --filter "Category!=Integration" --verbosity normal
+```
+
+### Integration Tests Only (requires Docker)
+
+```powershell
+dotnet test Restore.sln --filter "Category=Integration" --verbosity normal
+```
+
+### Per-Project with TRX Logging
 
 ## Prerequisite for Generating Code Coverage Report
 
@@ -73,3 +90,21 @@ Remove the generated report and all `TestResults` folders from the repository ro
 Remove-Item -Recurse -Force coveragereport
 Get-ChildItem -Path . -Recurse -Filter TestResults -Directory | Remove-Item -Recurse -Force
 ```
+
+## Integration Test Infrastructure
+
+Integration tests use the following packages and patterns:
+
+- **Testcontainers.PostgreSql** — Spins up a `postgres:16-alpine` container shared across all integration test classes via `ICollectionFixture<PostgresContainerFixture>`
+- **Microsoft.AspNetCore.Mvc.Testing** — `WebApplicationFactory<Program>` creates an in-memory test server with the real app pipeline
+- **CustomWebApplicationFactory** — Overrides the DbContext connection string to point at the Testcontainer and stubs external services (Stripe, Cloudinary)
+- **IntegrationTestBase** — Abstract base class providing `AuthenticateAsync()` helper that logs in as the seeded "bob" user
+
+### Key files
+
+| File                                    | Purpose                                      |
+| --------------------------------------- | -------------------------------------------- |
+| `Fixtures/PostgresContainerFixture.cs`  | Manages PostgreSQL container lifecycle       |
+| `Fixtures/IntegrationTestCollection.cs` | Collection definition for shared container   |
+| `CustomWebApplicationFactory.cs`        | WebApplicationFactory with service overrides |
+| `IntegrationTestBase.cs`                | Base class with auth helper and client setup |

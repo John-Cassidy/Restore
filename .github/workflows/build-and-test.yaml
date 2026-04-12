@@ -34,5 +34,20 @@ jobs:
       - name: Build
         run: dotnet build Restore.sln --no-restore
 
-    #   - name: Test
-    #     run: dotnet test Restore.sln --no-build --verbosity normal
+      - name: Unit Tests
+        run: >-
+          dotnet test Restore.sln
+          --no-build
+          --verbosity normal
+          --filter "Category!=Integration"
+          --collect:"XPUnit Code Coverage"
+          --results-directory ./TestResults
+
+      - name: Integration Tests
+        run: >-
+          dotnet test Restore.sln
+          --no-build
+          --verbosity normal
+          --filter "Category=Integration"
+          --collect:"XPUnit Code Coverage"
+          --results-directory ./TestResults
