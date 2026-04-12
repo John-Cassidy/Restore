@@ -1,5 +1,9 @@
-﻿namespace Restore.Core.Entities;
+﻿using System.Diagnostics.CodeAnalysis;
 
-public class UserAddress : Address {
+namespace Restore.Core.Entities;
+
+[ExcludeFromCodeCoverage]
+public class UserAddress : Address
+{
     public int Id { get; set; }
 }
